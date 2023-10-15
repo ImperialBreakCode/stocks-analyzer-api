@@ -1,48 +1,53 @@
 # Stocks Analyzer Api
 
-## Routes
+## Microservice Architecture
+
+## Contributors
+
+## Routes (work in progress)
 
 ### 1. Gateway
-* .../current-profitability
-* .../percentage-change
-* .../portfolio-risk
-* .../daily-profitability-changes
+* .../Analyzer/CurrentProfitability
+* .../Analyzer/PercentageChange
+* .../Analyzer/PortfolioRisk
+* .../Analyzer/DailyProfitabilityChanges
 
-* .../register
-* .../login
-* .../deposit
-* .../buy-stock
-* .../finalize/
-* .../track-stock
-* .../create-wallet
-* .../user-information/{user}
+* .../Account/Register
+* .../Account/Login
+* .../Account/deposit
+* .../Account/CreateWallet
+* .../Account/UserInformation/{user}
 
-* .../get-current-stocks
-* .../get-weekly-stocks
-* .../get-monthly-stocks
+* .../Stocks/BuyStock
+* .../Stocks/Finalize
+* .../Stocks/TrackStock
+
+* .../StockInfo/GetCurrentStocks
+* .../StockInfo/GetWeeklyStocks
+* .../StockInfo/GetMonthlyStocks
 
 ### 2. Accounts
-* .../register
-* .../login
-* .../deposit
-* .../buy-stock
-* .../finalize/
-* .../track-stock
-* .../create-wallet
-* .../user-information/{user}
+* .../User/register
+* .../User/login
+* .../User/UserInformation
+* .../Wallet/Deposit
+* .../Wallet/CreateWallet
+* .../Stock/BuyStock
+* .../Stock/Finalize
+* .../Stock/TrackStock
 
 ### 3. Analyzer
-* .../portfolio-summary
-* .../current-profitability
-* .../percentage-change
-* .../portfolio-risk
-* .../daily-profitability-changes
+* .../PortfolioSummary
+* .../CurrentProfitability
+* .../PercentageChange
+* .../PortfolioRisk
+* .../DailyProfitabilityChanges
 
 ### 4. StockAPI
-* .../get-current-stocks
-* .../get-weekly-stocks
-* .../get-monthly-stocks
+* .../GetCurrentStocks
+* .../GetWeeklyStocks
+* .../GetMonthlyStocks
 
 ### 5. Settlement
-* .../buy-stocks
-* .../sell-stocks
+* .../BuyStocks
+* .../SellStocks
