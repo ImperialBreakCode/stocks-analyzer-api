@@ -1,0 +1,206 @@
+{
+  "Routes": [
+    // Accounts
+    {
+      "UpstreamPathTemplate": "/api/Accounts/Register",
+      "UpstreamHttpMethod": [ "Post" ],
+
+      "DownstreamPathTemplate": "/api/Accounts/Register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5032
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Accounts/Login",
+      "UpstreamHttpMethod": [ "Post" ],
+
+      "DownstreamPathTemplate": "/api/Accounts/Login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5032
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Accounts/Deposit",
+      "UpstreamHttpMethod": [ "Post" ],
+
+      "DownstreamPathTemplate": "/api/Accounts/Deposit",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5032
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Accounts/UserInformation/{user}",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/Accounts/UserInformation/{user}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5032
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Accounts/CreateWallet",
+      "UpstreamHttpMethod": [ "Post" ],
+
+      "DownstreamPathTemplate": "/api/Accounts/CreateWallet",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5032
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Stocks/BuyStock",
+      "UpstreamHttpMethod": [ "Put" ],
+
+      "DownstreamPathTemplate": "/api/Accounts/BuyStocks",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5032
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Stocks/Finalize",
+      "UpstreamHttpMethod": [ "Put" ],
+
+      "DownstreamPathTemplate": "/api/Accounts/Finalize",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5032
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Stocks/TrackStock",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/Accounts/TrackStock",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5032
+        }
+      ]
+    },
+    // Analyzer
+    {
+      "UpstreamPathTemplate": "/api/Analyzer/CurrentProfitability",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/Analyzer/CurrentProfitabilityt",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5033
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Analyzer/PercentageChange",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/Analyzer/PercentageChange",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5033
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Analyzer/PortfolioRisk",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/Analyzer/PortfolioRisk",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5033
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/Analyzer/DailiyProfitabilityChanges",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/Analyzer/DailiProfitabilityChanges",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5033
+        }
+      ]
+    },
+    //StockAPI
+
+    {
+      "UpstreamPathTemplate": "/api/StockInfo/GetCurrentStocks",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/StockInfo/GetCurrentStocks",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5031
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/StockInfo/GetWeeklyStocks",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/StockInfo/GetWeeklyStocks",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5031
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/StockInfo/GetMonthlyStocks",
+      "UpstreamHttpMethod": [ "Get" ],
+
+      "DownstreamPathTemplate": "/api/StockInfo/GetMonthlyStocks",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5031
+        }
+      ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:7291"
+  }
+}
