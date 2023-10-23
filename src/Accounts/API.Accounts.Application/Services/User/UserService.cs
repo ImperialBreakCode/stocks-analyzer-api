@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Accounts.Application.Services.User
 {
-    internal class UserService
+    public class UserService
     {
     }
 }

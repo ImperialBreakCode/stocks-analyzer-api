@@ -4,6 +4,6 @@ namespace API.Accounts.Domain.Interfaces
 {
     public interface IUserRepository : IRepository<User>
     {
-        User GetOneByUserName(int username);
+        User GetOneByUserName(string username);
     }
 }

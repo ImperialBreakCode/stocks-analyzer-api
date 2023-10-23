@@ -8,6 +8,6 @@ namespace API.Accounts.Domain.Interfaces
 {
     public interface IEntity
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 }

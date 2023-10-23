@@ -14,7 +14,7 @@ namespace API.Accounts.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public T GetOneById(int id)
+        public T GetOneById(string id)
         {
             throw new NotImplementedException();
         }

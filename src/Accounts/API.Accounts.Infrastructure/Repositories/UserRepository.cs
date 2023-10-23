@@ -5,7 +5,7 @@ namespace API.Accounts.Infrastructure.Repositories
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
-        public User GetOneByUserName(int username)
+        public User GetOneByUserName(string username)
         {
             throw new NotImplementedException();
         }

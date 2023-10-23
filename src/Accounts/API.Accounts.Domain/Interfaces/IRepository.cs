@@ -2,7 +2,7 @@
 {
     public interface IRepository<T> where T : IEntity
     {
-        T GetOneById(int id);
+        T GetOneById(string id);
         void Insert(T entity);
         void Update(T entity);
         void Delete(T entity);
