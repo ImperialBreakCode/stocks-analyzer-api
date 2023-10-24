@@ -43,7 +43,7 @@ namespace API.Settlement.Infrastructure.Services
 		public async Task<SellStockResponseDTO> SellStock(SellStockDTO sellStockDTO)
 		{
 			decimal accountBalance = decimal.Parse(await _httpClient.GetStringAsync($"api/accounts/{sellStockDTO.UserId}/balance"));
-			decimal totalSellingPriceWithCommission = sellStockDTO.TotalSellingPriceWithoutCommission * 0.05m;
+			decimal totalSellingPriceWithCommission = sellStockDTO.TotalSellingPriceWithoutCommission * 0.95m;
 			decimal updatedAccountBalance = accountBalance + totalSellingPriceWithCommission;
 
 			var responseDTO = new SellStockResponseDTO
