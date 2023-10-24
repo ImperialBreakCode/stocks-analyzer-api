@@ -34,5 +34,26 @@ namespace API.StockAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("Stock/Daily/{symbol}")]
+        public async Task<IActionResult> GetDailyStock(string symbol)
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("Stock/Weekly/{symbol}")]
+        public async Task<IActionResult> GetWeeklyStock(string symbol)
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("Stock/Monthly/{symbol}")]
+        public async Task<IActionResult> GetMonthlyStock(string symbol)
+        {
+            return Ok();
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace API.StockAPI.Services
 
         public StockServices()
         {
-            apiKey = "IMMIS8YCRHPXCOJP";
+            apiKey = "";
         }
         public async Task<TimeSeriesData> GetCurrentStock(string symbol, string function)
         {
