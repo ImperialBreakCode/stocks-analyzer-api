@@ -2,6 +2,7 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.DTOs.Request;
+using API.Settlement.Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +22,11 @@ namespace API.Settlement.Infrastructure.Services
 
 		public async Task<BuyStockResponseDTO> BuyStock(BuyStockDTO buyStockDTO)
 		{
-			decimal accountBalance = decimal.Parse(await _httpClient.GetStringAsync($"api/accounts/{buyStockDTO.UserId}/balance"));
-			decimal totalBuyingPriceWithCommission = buyStockDTO.TotalBuyingPriceWithoutCommission * 1.05m;
+			string accountBalanceAsString = await _httpClient.GetStringAsync(APIAccountRoutes.GetAccountBalance(buyStockDTO.UserId));
+			decimal accountBalance = decimal.Parse(accountBalanceAsString);
+			decimal totalBuyingPriceWithCommission = buyStockDTO.TotalBuyingPriceWithoutCommission * 1.0005m;
+			decimal updatedAccountBalance;
+
 
 			var responseDTO = new BuyStockResponseDTO();
 
@@ -30,11 +34,15 @@ namespace API.Settlement.Infrastructure.Services
 			{
 				responseDTO.IsSuccessful = false;
 				responseDTO.Message = "Transaction declined!";
+				responseDTO.UpdatedAccountBalance = accountBalance;
 			}
 			else
 			{
+				updatedAccountBalance = accountBalance - totalBuyingPriceWithCommission;
+
 				responseDTO.IsSuccessful = true;
 				responseDTO.Message = "Transaction accepted!";
+				responseDTO.UpdatedAccountBalance = updatedAccountBalance;
 			}
 
 			return responseDTO;
@@ -42,8 +50,9 @@ namespace API.Settlement.Infrastructure.Services
 
 		public async Task<SellStockResponseDTO> SellStock(SellStockDTO sellStockDTO)
 		{
-			decimal accountBalance = decimal.Parse(await _httpClient.GetStringAsync($"api/accounts/{sellStockDTO.UserId}/balance"));
-			decimal totalSellingPriceWithCommission = sellStockDTO.TotalSellingPriceWithoutCommission * 0.95m;
+			string accountBalanceAsString = await _httpClient.GetStringAsync(APIAccountRoutes.GetAccountBalance(sellStockDTO.UserId));
+			decimal accountBalance = decimal.Parse(accountBalanceAsString);
+			decimal totalSellingPriceWithCommission = sellStockDTO.TotalSellingPriceWithoutCommission * 0.9995m;
 			decimal updatedAccountBalance = accountBalance + totalSellingPriceWithCommission;
 
 			var responseDTO = new SellStockResponseDTO
@@ -55,18 +64,6 @@ namespace API.Settlement.Infrastructure.Services
 
 			return responseDTO;
 		}
-		
-		/*
-		private async Task SendMessageToUserAccount(string userId, string message)
-		{
-			await _httpClient.PostAsync($"api/accounts/{userId}/messages", message);
-		}
-
-		private async Task CloseExposure(string userId)
-		{
-			await _httpClient.DeleteAsync($"api/accounts/{userId}/exposure");
-		}
-		*/
 
 	}
 }

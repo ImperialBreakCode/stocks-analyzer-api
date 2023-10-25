@@ -1,4 +1,5 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
+using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.DTOs.Request;
 using API.Settlement.Infrastructure.Services;
@@ -28,51 +29,74 @@ namespace API.Settlement.Tests
 		[Test]
 		public async Task BuyStock_EnoughBalance_ReturnsSuccess()
 		{
+			//Arrange
 			_httpClientMock.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync("5000");
 			var buyStockDTO = new BuyStockDTO { UserId = "1", StockId = "1", TotalBuyingPriceWithoutCommission = 1000m };
+			var expectedUpdatedAccountBalance = 5000 - (buyStockDTO.TotalBuyingPriceWithoutCommission * 1.0005m);
+			var expectedBuyStockResponseDTO = new BuyStockResponseDTO { IsSuccessful = true, Message = "Transaction accepted!", UpdatedAccountBalance = expectedUpdatedAccountBalance };
 
-			var result = await _settlementService.BuyStock(buyStockDTO);
+			//Act
+			var actualBuyStockResponseDTO = await _settlementService.BuyStock(buyStockDTO);
 
-			Assert.IsTrue(result.IsSuccessful);
-			Assert.AreEqual("Transaction accepted!", result.Message);
+			//Assert
+			Assert.AreEqual(expectedBuyStockResponseDTO.IsSuccessful, actualBuyStockResponseDTO.IsSuccessful);
+			Assert.AreEqual(expectedBuyStockResponseDTO.Message, actualBuyStockResponseDTO.Message);
+			Assert.AreEqual(expectedBuyStockResponseDTO.UpdatedAccountBalance, actualBuyStockResponseDTO.UpdatedAccountBalance);
 		}
+
 		[Test]
 		public async Task BuyStock_ExactBalance_ReturnsSuccess()
 		{
-			_httpClientMock.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync("1050");
+			//Arrange
+			_httpClientMock.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync("1000.5");
 			var buyStockDTO = new BuyStockDTO { UserId = "1", StockId = "1", TotalBuyingPriceWithoutCommission = 1000m };
+			var expectedUpdatedAccountBalance = 1000.5m - (buyStockDTO.TotalBuyingPriceWithoutCommission * 1.0005m);
+			var expectedBuyStockResponseDTO = new BuyStockResponseDTO { IsSuccessful = true, Message = "Transaction accepted!", UpdatedAccountBalance = expectedUpdatedAccountBalance };
 
-			var result = await _settlementService.BuyStock(buyStockDTO);
+			//Act
+			var actualBuyStockResponseDTO = await _settlementService.BuyStock(buyStockDTO);
 
-			Assert.IsTrue(result.IsSuccessful);
-			Assert.AreEqual("Transaction accepted!", result.Message);
+			//Assert
+			Assert.AreEqual(expectedBuyStockResponseDTO.IsSuccessful, actualBuyStockResponseDTO.IsSuccessful);
+			Assert.AreEqual(expectedBuyStockResponseDTO.Message, actualBuyStockResponseDTO.Message);
+			Assert.AreEqual(expectedBuyStockResponseDTO.UpdatedAccountBalance, actualBuyStockResponseDTO.UpdatedAccountBalance);
 		}
 
 		[Test]
 		public async Task BuyStock_NotEnoughBalance_ReturnsFail()
 		{
-			_httpClientMock.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync("1000");
-			var buyStockDTO = new BuyStockDTO { UserId = "1", StockId = "1", TotalBuyingPriceWithoutCommission = 1000m };
+			//Arrange
+			_httpClientMock.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync("1");
+			var buyStockDTO = new BuyStockDTO { UserId = "1", StockId = "1", TotalBuyingPriceWithoutCommission = 1000 };
+			var expectedUpdatedAccountBalance = 1;
+			var expectedBuyStockResponseDTO = new BuyStockResponseDTO { IsSuccessful = false, Message = "Transaction declined!", UpdatedAccountBalance = expectedUpdatedAccountBalance };
 
-			var result = await _settlementService.BuyStock(buyStockDTO);
+			//Act
+			var actualBuyStockResponseDTO = await _settlementService.BuyStock(buyStockDTO);
 
-			Assert.IsFalse(result.IsSuccessful);
-			Assert.AreEqual("Transaction declined!", result.Message);
+			//Assert
+			Assert.AreEqual(expectedBuyStockResponseDTO.IsSuccessful, actualBuyStockResponseDTO.IsSuccessful);
+			Assert.AreEqual(expectedBuyStockResponseDTO.Message, actualBuyStockResponseDTO.Message);
+			Assert.AreEqual(expectedBuyStockResponseDTO.UpdatedAccountBalance, actualBuyStockResponseDTO.UpdatedAccountBalance);
 		}
 
 		[Test]
 		public async Task SellStock_ReturnsSuccess()
 		{
+			//Arrange
 			_httpClientMock.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync("0");
 			var sellStockDTO = new SellStockDTO { UserId = "1", StockId = "1", TotalSellingPriceWithoutCommission = 1000m };
-			decimal currentBalance = 0;
-			decimal expectedUpdatedBalance = currentBalance + (sellStockDTO.TotalSellingPriceWithoutCommission * 0.95m);
+			decimal expectedUpdatedAccountBalance = 0 + (sellStockDTO.TotalSellingPriceWithoutCommission * 0.9995m);
+			var expectedSellStockResponseDTO = new SellStockResponseDTO { IsSuccessful = true, Message = "Transaction accepted!", UpdatedAccountBalance = expectedUpdatedAccountBalance };
 
-			var result = await _settlementService.SellStock(sellStockDTO);
+			//Act
+			var actualSellStockResponseDTO = await _settlementService.SellStock(sellStockDTO);
 
-			Assert.IsTrue(result.IsSuccessful);
-			Assert.AreEqual("Transaction accepted!", result.Message);
-			Assert.AreEqual(expectedUpdatedBalance, result.UpdatedAccountBalance);
+			//Assert
+			Assert.AreEqual(expectedSellStockResponseDTO.IsSuccessful, actualSellStockResponseDTO.IsSuccessful);
+			Assert.AreEqual(expectedSellStockResponseDTO.Message, actualSellStockResponseDTO.Message);
+			Assert.AreEqual(expectedSellStockResponseDTO.UpdatedAccountBalance, actualSellStockResponseDTO.UpdatedAccountBalance);
 		}
+
 	}
 }
