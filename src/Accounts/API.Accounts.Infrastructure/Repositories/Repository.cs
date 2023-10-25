@@ -4,12 +4,12 @@ namespace API.Accounts.Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : IEntity
     {
-        public void Delete(T entity)
+        public void Delete(string id)
         {
             throw new NotImplementedException();
         }
 
-        public ICollection<T> GetAll()
+        public ICollection<T> GetManyByCondition(Func<T, bool> condition)
         {
             throw new NotImplementedException();
         }

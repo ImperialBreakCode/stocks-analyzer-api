@@ -2,10 +2,11 @@
 
 namespace API.Accounts.Domain.Entities
 {
-    public class User : IEntity
+    public class User : BaseEntity
     {
-        public string Id { get; set; }
         public string UserName { get; set; }
         public string PasswordHash { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }
