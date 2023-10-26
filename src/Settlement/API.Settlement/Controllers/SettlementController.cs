@@ -24,10 +24,7 @@ namespace API.Settlement.Controllers
 		{
 			var responseDTO = await _settlementService.BuyStock(buyStockDTO);
 
-			if (!responseDTO.IsSuccessful)
-			{
-				return BadRequest(responseDTO);
-			}
+			if (!responseDTO.IsSuccessful) { return BadRequest(responseDTO); }
 
 			return Ok(responseDTO);
 		}
@@ -37,10 +34,7 @@ namespace API.Settlement.Controllers
 		public async Task<IActionResult> SellStock(SellStockDTO sellStockDTO)
 		{
 			var responseDTO = await _settlementService.SellStock(sellStockDTO);
-			if (!responseDTO.IsSuccessful)
-			{
-				return BadRequest(responseDTO);
-			}
+			if (!responseDTO.IsSuccessful) { return BadRequest(responseDTO); }
 
 			return Ok(responseDTO);
 		}
