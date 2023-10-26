@@ -1,6 +1,4 @@
-﻿using API.Accounts.Domain.Interfaces;
-
-namespace API.Accounts.Domain.Entities
+﻿namespace API.Accounts.Domain.Entities
 {
     public class User : BaseEntity
     {
