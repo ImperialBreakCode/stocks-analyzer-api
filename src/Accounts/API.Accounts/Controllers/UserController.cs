@@ -1,6 +1,5 @@
 ﻿using API.Accounts.Application.DTOs;
 using API.Accounts.Application.Services.UserService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Accounts.Controllers

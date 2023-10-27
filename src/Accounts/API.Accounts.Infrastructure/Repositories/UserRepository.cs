@@ -1,5 +1,6 @@
 ﻿using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces;
+using API.Accounts.Infrastructure.Helpers;
 using Microsoft.Data.SqlClient;
 
 namespace API.Accounts.Infrastructure.Repositories
@@ -12,12 +13,15 @@ namespace API.Accounts.Infrastructure.Repositories
 
         public void DeleteByUserName(string userName)
         {
-            throw new NotImplementedException();
+            var command = CreateCommand($"DELETE FROM {typeof(User).Name} WHERE UserName=@userName", true);
+            command.Parameters.AddWithValue("@userName", userName);
+            command.ExecuteNonQuery();
         }
 
         public User GetOneByUserName(string username)
         {
-            throw new NotImplementedException();
+            var command = CreateCommand($"SELECT * FROM {typeof(User).Name} WHERE UserName=@userName", false);
+            return EntityConverterHelper.ToEntityCollection<User>(command).First();
         }
     }
 }

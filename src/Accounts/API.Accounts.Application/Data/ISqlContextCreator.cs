@@ -2,7 +2,7 @@
 
 namespace API.Accounts.Application.Data
 {
-    public interface IDbContextFactoryAdaptee
+    public interface ISqlContextCreator
     {
         IAccountsDbContext CreateDbContext(string connectionString);
     }

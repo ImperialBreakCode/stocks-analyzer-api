@@ -3,18 +3,18 @@ using API.Accounts.Domain.Interfaces.DbContext;
 
 namespace API.Accounts.Data
 {
-    public class DataSourceFactory : IDataSourceFactory
+    public class AccountDataAdapter : IAccountsData
     {
         private readonly IConfiguration _configuration;
-        private IDbContextFactoryAdaptee _dbContext;
+        private ISqlContextCreator _dbContext;
 
-        public DataSourceFactory(IConfiguration configuration, IDbContextFactoryAdaptee dbContext)
+        public AccountDataAdapter(IConfiguration configuration, ISqlContextCreator dbContext)
         {
             _configuration = configuration;
             _dbContext = dbContext;
         }
 
-        public IAccountsDbContext Create()
+        public IAccountsDbContext CreateDbContext()
         {
             string connectionString = _configuration.GetConnectionString("AccountsDbContextConnection");
             return _dbContext.CreateDbContext(connectionString);

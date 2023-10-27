@@ -11,6 +11,10 @@ namespace API.Accounts.Infrastructure.Repositories
 
         private readonly string _insertQuery;
         private readonly string _updateQuery;
+        private readonly string _getByIdQuery;
+        private readonly string _getAllQuery;
+        private readonly string _deleteByIdQuery;
+
 
         public Repository(SqlConnection sqlConnection, SqlTransaction sqlTransaction)
         {
@@ -19,39 +23,30 @@ namespace API.Accounts.Infrastructure.Repositories
 
             _insertQuery = SqlQueryGeneratorHelper.GenerateInsertQuery<T>();
             _updateQuery = SqlQueryGeneratorHelper.GenerateUpdateQuery<T>();
+            _deleteByIdQuery = $"DELETE FROM {typeof(T).Name} WHERE Id=@id";
+            _getByIdQuery = $"SELECT * FROM {typeof(T).Name} WHERE Id=@id";
+            _getAllQuery = $"SELECT * FROM {typeof(T).Name}";
         }
 
         protected string InsertQuery => _insertQuery;
         protected string UpdateQuery => _updateQuery;
+        protected string GetByIdQuery => _getByIdQuery;
+        protected string GetAllQuery => _getAllQuery;
+        protected string DeleteByIdQuery => _deleteByIdQuery;
 
         public void Delete(string id)
         {
-            string query = $"DELETE FROM {typeof(T).Name} WHERE Id=@id";
-            var command = CreateCommand(query, true);
+            var command = CreateCommand(DeleteByIdQuery, true);
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
         }
 
-        public ICollection<T> GetManyByCondition(Func<T, bool> condition)
-        {
-            throw new NotImplementedException();
-        }
-
         public T GetOneById(string id)
         {
-            string query = $"SELECT * FROM {typeof(T).Name} WHERE Id=@id";
-            var command = CreateCommand(query, false);
+            var command = CreateCommand(GetByIdQuery, false);
             command.Parameters.AddWithValue("@id", id);
 
-            T entity = (T)Activator.CreateInstance(typeof(T))!;
-
-            using (var reader = command.ExecuteReader())
-            {
-                reader.Read();
-                EntityConverterHelper.ToEntity(ref entity, reader);
-            }
-
-            return entity;
+            return EntityConverterHelper.ToEntityCollection<T>(command).First();
         }
 
         public void Insert(T entity)
@@ -71,6 +66,17 @@ namespace API.Accounts.Infrastructure.Repositories
 
             command.Parameters.AddWithValue("@id", entity.Id);
             command.ExecuteNonQuery();
+        }
+
+        public ICollection<T> GetAll()
+        {
+            var command = CreateCommand(GetAllQuery, false);
+            return EntityConverterHelper.ToEntityCollection<T>(command);
+        }
+
+        public ICollection<T> GetManyByCondition(Func<T, bool> condition)
+        {
+            return GetAll().Where(condition).ToList();
         }
 
         protected SqlCommand CreateCommand(string query, bool useTransaction)

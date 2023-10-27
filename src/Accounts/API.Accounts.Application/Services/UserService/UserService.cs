@@ -6,9 +6,9 @@ namespace API.Accounts.Application.Services.UserService
 {
     public class UserService : IUserService
     {
-        private readonly IDataSourceFactory _data;
+        private readonly IAccountsData _data;
 
-        public UserService(IDataSourceFactory data)
+        public UserService(IAccountsData data)
         {
             _data = data;
         }
@@ -25,7 +25,8 @@ namespace API.Accounts.Application.Services.UserService
 
         public string RegisterUser(RegisterLoginUserDTO userDTO)
         {
-            using(var context = _data.Create())
+            // for testing purposes 
+            using(var context = _data.CreateDbContext())
             {
                 User user = new User()
                 {
