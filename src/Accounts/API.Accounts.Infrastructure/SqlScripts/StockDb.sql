@@ -5,8 +5,9 @@ CREATE TABLE [User] (
 	Id varchar(36) NOT NULL PRIMARY KEY,
 	UserName varchar(50) NOT NULL UNIQUE,
 	PasswordHash text NOT NULL,
+	Salt text NOT NULL,
 	FirstName varchar(50),
-	LastName varchar(50),
+	LastName varchar(50)
 );
 
 CREATE TABLE Wallet (

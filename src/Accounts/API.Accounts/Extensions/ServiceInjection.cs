@@ -1,4 +1,5 @@
-﻿using API.Accounts.Application.Data;
+﻿using API.Accounts.Application.Auth.PasswordManager;
+using API.Accounts.Application.Data;
 using API.Accounts.Application.Services.UserService;
 using API.Accounts.Data;
 
@@ -16,6 +17,7 @@ namespace API.Accounts.Extensions
 
         public static IServiceCollection InjectServices(this IServiceCollection services)
         {
+            services.AddSingleton<IPasswordManager, PasswordManager>();
             services.AddTransient<IUserService, UserService>();
 
             return services;
