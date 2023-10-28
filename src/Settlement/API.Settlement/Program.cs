@@ -1,5 +1,6 @@
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Services;
+using API.Settlement.Infrastructure.Services.DateTimeService;
 using API.Settlement.Infrastructure.Services.Settlement_Services;
 using Hangfire;
 
@@ -24,7 +25,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddScoped<IHttpClient, MyHttpClient>();
+builder.Services.AddScoped<IHttpClientService, HttpClientService>();
+builder.Services.AddScoped<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<ISettlementService, SettlementService>();
 
 var app = builder.Build();

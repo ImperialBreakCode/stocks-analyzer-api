@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace API.Settlement.Infrastructure.Helpers
+﻿namespace API.Settlement.Infrastructure.Helpers
 {
 	public static class APIAccountRoutes
 	{

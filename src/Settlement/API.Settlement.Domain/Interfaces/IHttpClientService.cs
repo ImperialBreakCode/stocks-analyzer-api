@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Interfaces
 {
-	public interface IHttpClient
+	public interface IHttpClientService
 	{
 		Task<string> GetStringAsync(string uri);
 		Task<string> PostAsync(string uri, string message);

@@ -1,9 +1,5 @@
 ﻿using API.Settlement.Domain.DTOs.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using API.Settlement.Infrastructure.Constants;
 
 namespace API.Settlement.Infrastructure.Services.Settlement_Services
 {
@@ -11,7 +7,7 @@ namespace API.Settlement.Infrastructure.Services.Settlement_Services
 	{
 		private decimal CalculateTotalSellingPriceWithCommission(decimal totalSellingPriceWithoutCommission)
 		{
-			return totalSellingPriceWithoutCommission * 0.9995m;
+			return totalSellingPriceWithoutCommission + (totalSellingPriceWithoutCommission * InfrastructureConstants.Commission);
 		}
 		private decimal CalculateUpdatedAccountBalanceForSell(decimal accountBalance, decimal totalSellingPriceWithCommission)
 		{
@@ -22,7 +18,7 @@ namespace API.Settlement.Infrastructure.Services.Settlement_Services
 			decimal updatedAccountBalance = accountBalance + totalSellingPriceWithCommission;
 
 			responseDTO.IsSuccessful = true;
-			responseDTO.Message = "Transaction accepted!";
+			responseDTO.Message = InfrastructureConstants.TransactionSuccessMessage;
 			responseDTO.UpdatedAccountBalance = updatedAccountBalance;
 		}
 		

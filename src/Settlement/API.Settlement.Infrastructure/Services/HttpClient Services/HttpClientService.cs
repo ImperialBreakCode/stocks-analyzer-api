@@ -1,36 +1,32 @@
 ﻿using API.Settlement.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace API.Settlement.Infrastructure.Services
 {
-	public class MyHttpClient : IHttpClient
+	public class HttpClientService : IHttpClientService
 	{
-		private HttpClient _httpClient;
+		private HttpClient _httpClientService;
 
-        public MyHttpClient(HttpClient httpClient)
+        public HttpClientService(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            _httpClientService = httpClient;
         }
 		public async Task<string> GetStringAsync(string uri)
 		{
-			var response = await _httpClient.GetAsync(uri);
+			var response = await _httpClientService.GetAsync(uri);
 			response.EnsureSuccessStatusCode();
 			return await response.Content.ReadAsStringAsync();
 		}
 		public async Task<string> PostAsync(string uri, string message)
 		{
 			var content = new StringContent(message, Encoding.UTF8, "application/json");
-			var response = await _httpClient.PostAsync(uri, content);
+			var response = await _httpClientService.PostAsync(uri, content);
 			response.EnsureSuccessStatusCode();
 			return await response.Content.ReadAsStringAsync();
 		}
 		public async Task<string> DeleteAsync(string uri)
 		{
-			var response = await _httpClient.DeleteAsync(uri);
+			var response = await _httpClientService.DeleteAsync(uri);
 			response.EnsureSuccessStatusCode();
 			return await response.Content.ReadAsStringAsync();
 		}

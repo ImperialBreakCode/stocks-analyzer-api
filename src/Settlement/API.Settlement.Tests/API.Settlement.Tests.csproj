@@ -13,9 +13,4 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\API.Settlement.Domain\API.Settlement.Domain.csproj" />
-    <ProjectReference Include="..\API.Settlement\API.Settlement.csproj" />
-  </ItemGroup>
-
 </Project>

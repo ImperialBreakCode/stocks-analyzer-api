@@ -2,23 +2,20 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.DTOs.Request;
-using API.Settlement.Infrastructure.Helpers;
+using API.Settlement.Infrastructure.Constants;
 using Hangfire;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace API.Settlement.Infrastructure.Services.Settlement_Services
 {
 	public partial class SettlementService : ISettlementService
 	{
-		private IHttpClient _httpClient;
+		private readonly IHttpClientService _httpClientService;
+		private readonly IDateTimeService _dateTimeService;
 
-		public SettlementService(IHttpClient httpClient)
+		public SettlementService(IHttpClientService httpClientService, IDateTimeService dateTimeService)
 		{
-			_httpClient = httpClient;
+			_httpClientService = httpClientService;
+			_dateTimeService = dateTimeService;
 		}
 
 		public async Task<BuyStockResponseDTO> BuyStock(BuyStockDTO buyStockDTO)
@@ -32,13 +29,13 @@ namespace API.Settlement.Infrastructure.Services.Settlement_Services
 			if (accountBalance < totalBuyingPriceWithCommission)
 			{
 				responseDTO.IsSuccessful = false;
-				responseDTO.Message = "Transaction declined!";
+				responseDTO.Message = InfrastructureConstants.TransactionDeclinedMessage;
 				responseDTO.UpdatedAccountBalance = accountBalance;
 			}
 			else
 			{
 				responseDTO.IsSuccessful = false;
-				responseDTO.Message = "Transaction scheduled for execution at 00:01:00 next day.";
+				responseDTO.Message = InfrastructureConstants.TransactionScheduledMessage;
 				responseDTO.UpdatedAccountBalance = null;
 
 				BackgroundJob.Schedule(() => PerformBuyStock(responseDTO, accountBalance, totalBuyingPriceWithCommission), GetTimeSpanToNextExecution());
@@ -56,7 +53,7 @@ namespace API.Settlement.Infrastructure.Services.Settlement_Services
 			var responseDTO = new SellStockResponseDTO
 			{
 				IsSuccessful = false,
-				Message = "Transaction scheduled for execution at 00:01:00 next day.",
+				Message = InfrastructureConstants.TransactionScheduledMessage,
 				UpdatedAccountBalance = null
 			};
 			BackgroundJob.Schedule(() => PerformSellStock(responseDTO, accountBalance, totalSellingPriceWithCommission), GetTimeSpanToNextExecution());
