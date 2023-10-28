@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Settlement Services\SettlementService.BuyStockExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Services\Settlement Services\SettlementService_BuyStockExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.6" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.6" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.6" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\API.Settlement.Domain\API.Settlement.Domain.csproj" />
   </ItemGroup>
 
