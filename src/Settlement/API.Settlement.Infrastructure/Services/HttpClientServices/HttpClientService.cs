@@ -1,7 +1,7 @@
 ﻿using API.Settlement.Domain.Interfaces;
 using System.Text;
 
-namespace API.Settlement.Infrastructure.Services
+namespace API.Settlement.Infrastructure.Services.HttpClientServices
 {
 	public class HttpClientService : IHttpClientService
 	{

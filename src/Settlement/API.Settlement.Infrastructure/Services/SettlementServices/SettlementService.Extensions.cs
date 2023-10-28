@@ -1,6 +1,6 @@
 ﻿using API.Settlement.Infrastructure.Helpers;
 
-namespace API.Settlement.Infrastructure.Services.Settlement_Services
+namespace API.Settlement.Infrastructure.Services.SettlementServices
 {
 	public partial class SettlementService
 	{

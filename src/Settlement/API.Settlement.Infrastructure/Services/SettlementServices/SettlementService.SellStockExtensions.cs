@@ -1,7 +1,7 @@
 ﻿using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Infrastructure.Constants;
 
-namespace API.Settlement.Infrastructure.Services.Settlement_Services
+namespace API.Settlement.Infrastructure.Services.SettlementServices
 {
 	public partial class SettlementService
 	{

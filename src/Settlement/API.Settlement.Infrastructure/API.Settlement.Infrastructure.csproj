@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\Settlement Services\SettlementService.BuyStockExtensions.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Services\Settlement Services\SettlementService_BuyStockExtensions.cs" />
+    <None Include="Services\SettlementServices\SettlementService.BuyStockExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

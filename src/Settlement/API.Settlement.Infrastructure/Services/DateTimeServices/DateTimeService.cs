@@ -1,6 +1,6 @@
 ﻿using API.Settlement.Domain.Interfaces;
 
-namespace API.Settlement.Infrastructure.Services.DateTimeService
+namespace API.Settlement.Infrastructure.Services.DateTimeServices
 {
 	public class DateTimeService : IDateTimeService
 	{

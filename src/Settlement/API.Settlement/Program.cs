@@ -1,7 +1,7 @@
 using API.Settlement.Domain.Interfaces;
-using API.Settlement.Infrastructure.Services;
-using API.Settlement.Infrastructure.Services.DateTimeService;
-using API.Settlement.Infrastructure.Services.Settlement_Services;
+using API.Settlement.Infrastructure.Services.DateTimeServices;
+using API.Settlement.Infrastructure.Services.HttpClientServices;
+using API.Settlement.Infrastructure.Services.SettlementServices;
 using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,8 +25,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddScoped<IHttpClientService, HttpClientService>();
-builder.Services.AddScoped<IDateTimeService, DateTimeService>();
+builder.Services.AddSingleton<IHttpClientService, HttpClientService>();
+builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 builder.Services.AddScoped<ISettlementService, SettlementService>();
 
 var app = builder.Build();
