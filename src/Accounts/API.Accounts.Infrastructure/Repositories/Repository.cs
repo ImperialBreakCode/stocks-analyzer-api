@@ -23,9 +23,9 @@ namespace API.Accounts.Infrastructure.Repositories
 
             _insertQuery = SqlQueryGeneratorHelper.GenerateInsertQuery<T>();
             _updateQuery = SqlQueryGeneratorHelper.GenerateUpdateQuery<T>();
-            _deleteByIdQuery = $"DELETE FROM {typeof(T).Name} WHERE Id=@id";
-            _getByIdQuery = $"SELECT * FROM {typeof(T).Name} WHERE Id=@id";
-            _getAllQuery = $"SELECT * FROM {typeof(T).Name}";
+            _deleteByIdQuery = $"DELETE FROM [{typeof(T).Name}] WHERE Id=@id";
+            _getByIdQuery = $"SELECT * FROM [{typeof(T).Name}] WHERE Id=@id";
+            _getAllQuery = $"SELECT * FROM [{typeof(T).Name}]";
         }
 
         protected string InsertQuery => _insertQuery;
@@ -36,22 +36,22 @@ namespace API.Accounts.Infrastructure.Repositories
 
         public void Delete(string id)
         {
-            var command = CreateCommand(DeleteByIdQuery, true);
+            var command = CreateCommand(DeleteByIdQuery);
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
         }
 
-        public T GetOneById(string id)
+        public T? GetOneById(string id)
         {
-            var command = CreateCommand(GetByIdQuery, false);
+            var command = CreateCommand(GetByIdQuery);
             command.Parameters.AddWithValue("@id", id);
 
-            return EntityConverterHelper.ToEntityCollection<T>(command).First();
+            return EntityConverterHelper.ToEntityCollection<T>(command).FirstOrDefault();
         }
 
         public void Insert(T entity)
         {
-            var command = CreateCommand(InsertQuery, true);
+            var command = CreateCommand(InsertQuery);
 
             EntityConverterHelper.ToQuery(entity, command);
 
@@ -60,7 +60,7 @@ namespace API.Accounts.Infrastructure.Repositories
 
         public void Update(T entity)
         {
-            var command = CreateCommand(UpdateQuery, true);
+            var command = CreateCommand(UpdateQuery);
 
             EntityConverterHelper.ToQuery(entity, command);
 
@@ -70,7 +70,7 @@ namespace API.Accounts.Infrastructure.Repositories
 
         public ICollection<T> GetAll()
         {
-            var command = CreateCommand(GetAllQuery, false);
+            var command = CreateCommand(GetAllQuery);
             return EntityConverterHelper.ToEntityCollection<T>(command);
         }
 
@@ -79,15 +79,11 @@ namespace API.Accounts.Infrastructure.Repositories
             return GetAll().Where(condition).ToList();
         }
 
-        protected SqlCommand CreateCommand(string query, bool useTransaction)
+        protected SqlCommand CreateCommand(string query)
         {
             SqlCommand sqlCommand = _connection.CreateCommand();
             sqlCommand.CommandText = query;
-            
-            if (useTransaction)
-            {
-                sqlCommand.Transaction = _transaction;
-            }
+            sqlCommand.Transaction = _transaction;
 
             return sqlCommand;
         }

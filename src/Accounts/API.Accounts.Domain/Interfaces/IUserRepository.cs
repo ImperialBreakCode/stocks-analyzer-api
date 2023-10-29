@@ -6,6 +6,6 @@ namespace API.Accounts.Domain.Interfaces
     public interface IUserRepository : IRepoInsert<User>, IRepoUpdate<User>, IRepoReadMany<User>
     {
         void DeleteByUserName(string userName);
-        User GetOneByUserName(string username);
+        User? GetOneByUserName(string username);
     }
 }

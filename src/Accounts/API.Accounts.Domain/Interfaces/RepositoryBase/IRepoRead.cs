@@ -2,6 +2,6 @@
 {
     public interface IRepoRead<T> where T : IEntity
     {
-        T GetOneById(string id);
+        T? GetOneById(string id);
     }
 }
