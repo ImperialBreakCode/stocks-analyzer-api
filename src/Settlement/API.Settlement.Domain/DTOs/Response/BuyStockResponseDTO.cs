@@ -10,5 +10,6 @@ namespace API.Settlement.Domain.DTOs.Response
 	{
 		public bool IsSuccessful { get; set; } = false;
 		public string Message { get; set; }
+		public decimal? UpdatedAccountBalance { get; set; }
 	}
 }

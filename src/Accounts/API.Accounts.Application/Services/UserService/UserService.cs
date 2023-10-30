@@ -1,0 +1,72 @@
+﻿using API.Accounts.Application.Auth.PasswordManager;
+using API.Accounts.Application.Auth.TokenManager;
+using API.Accounts.Application.Data;
+using API.Accounts.Application.DTOs.Request;
+using API.Accounts.Application.DTOs.Response;
+using API.Accounts.Domain.Entities;
+
+namespace API.Accounts.Application.Services.UserService
+{
+    public class UserService : IUserService
+    {
+        private readonly IAccountsData _data;
+        private readonly IPasswordManager _passwordManager;
+        private readonly ITokenManager _tokenManager;
+
+        public UserService(IAccountsData data, IPasswordManager passwordManager, ITokenManager tokenManager)
+        {
+            _data = data;
+            _passwordManager = passwordManager;
+            _tokenManager = tokenManager;
+        }
+
+        public string GetUserByUserName(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public LoginResponseDTO LoginUser(LoginUserDTO loginDTO, string secretKey)
+        {
+            LoginResponseDTO responseDTO = new LoginResponseDTO();
+
+            using(var context = _data.CreateDbContext())
+            {
+                User? user = context.Users.GetOneByUserName(loginDTO.Username);
+
+                if (user is null)
+                {
+                    responseDTO.Message = ResponseMessages.AuthUserNotFound;
+                }
+                else if (!_passwordManager.VerifyPassword(loginDTO.Password, user.PasswordHash, user.Salt))
+                {
+                    responseDTO.Message = ResponseMessages.AuthPassIncorrect;
+                }
+                else
+                {
+                    responseDTO.Message = ResponseMessages.AuthSuccess;
+                    responseDTO.Token = _tokenManager.CreateToken(loginDTO.Username, 60, secretKey);
+                }
+            }
+
+            return responseDTO;
+        }
+
+        public void RegisterUser(RegisterUserDTO registerDTO)
+        {
+            using(var context = _data.CreateDbContext())
+            {
+                User user = new User()
+                {
+                    FirstName = registerDTO.FirstName,
+                    LastName = registerDTO.LastName,
+                    UserName = registerDTO.Username,
+                    PasswordHash = _passwordManager.HashPassword(registerDTO.Password, out string salt),
+                    Salt = salt
+                };
+
+                context.Users.Insert(user);
+                context.Commit();
+            }
+        }
+    }
+}
