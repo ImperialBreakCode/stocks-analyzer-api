@@ -1,3 +1,6 @@
+using API.Settlement.Domain.Interfaces;
+using API.Settlement.Infrastructure.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<IHttpClient, MyHttpClient>();
+builder.Services.AddScoped<ISettlementService, SettlementService>();
 
 var app = builder.Build();
 
