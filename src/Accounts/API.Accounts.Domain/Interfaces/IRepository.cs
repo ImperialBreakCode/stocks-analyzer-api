@@ -1,11 +1,9 @@
-﻿namespace API.Accounts.Domain.Interfaces
+﻿using API.Accounts.Domain.Interfaces.RepositoryBase;
+
+namespace API.Accounts.Domain.Interfaces
 {
-    public interface IRepository<T> where T : IEntity
+    public interface IRepository<T> : IRepoInsert<T>, IRepoRead<T>, IRepoUpdate<T>, IRepoDelete, IRepoReadMany<T>
+        where T : IEntity
     {
-        T GetOneById(string id);
-        void Insert(T entity);
-        void Update(T entity);
-        void Delete(T entity);
-        ICollection<T> GetAll();
     }
 }
