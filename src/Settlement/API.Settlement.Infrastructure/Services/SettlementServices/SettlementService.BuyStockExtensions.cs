@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Infrastructure.Constants;
+using Hangfire;
 
 namespace API.Settlement.Infrastructure.Services.SettlementServices
 {
@@ -9,13 +10,14 @@ namespace API.Settlement.Infrastructure.Services.SettlementServices
 		{
 			return totalBuyingPriceWithoutCommission + (totalBuyingPriceWithoutCommission * InfrastructureConstants.Commission);
 		}
-		private decimal CalculateUpdatedAccountBalanceForBuy(decimal accountBalance, decimal totalSellingPriceWithCommission)
+		private decimal CalculateUpdatedAccountBalanceForBuy(decimal accountBalance, decimal totalBuyingPriceWithCommission)
 		{
-			return accountBalance - totalSellingPriceWithCommission;
+			return accountBalance - totalBuyingPriceWithCommission;
 		}
+
 		public void PerformBuyStock(BuyStockResponseDTO responseDTO, decimal accountBalance, decimal totalBuyingPriceWithCommission)
 		{
-			decimal updatedAccountBalance = accountBalance - totalBuyingPriceWithCommission;
+			decimal updatedAccountBalance = CalculateUpdatedAccountBalanceForBuy(accountBalance,totalBuyingPriceWithCommission);
 
 			responseDTO.IsSuccessful = true;
 			responseDTO.Message = InfrastructureConstants.TransactionSuccessMessage;

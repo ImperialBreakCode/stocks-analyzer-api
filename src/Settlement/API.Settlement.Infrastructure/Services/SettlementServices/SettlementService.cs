@@ -22,7 +22,6 @@ namespace API.Settlement.Infrastructure.Services.SettlementServices
 		{
 			decimal accountBalance = await GetAccountBalance(buyStockDTO.UserId);
 			decimal totalBuyingPriceWithCommission = CalculateTotalBuyingPriceWithCommission(buyStockDTO.TotalBuyingPriceWithoutCommission);
-			decimal updatedAccountBalance = CalculateUpdatedAccountBalanceForBuy(accountBalance, totalBuyingPriceWithCommission);
 
 			var responseDTO = new BuyStockResponseDTO();
 
@@ -48,7 +47,6 @@ namespace API.Settlement.Infrastructure.Services.SettlementServices
 		{
 			decimal accountBalance = await GetAccountBalance(sellStockDTO.UserId);
 			decimal totalSellingPriceWithCommission = CalculateTotalSellingPriceWithCommission(sellStockDTO.TotalSellingPriceWithoutCommission);
-			decimal updatedAccountBalance = CalculateUpdatedAccountBalanceForSell(accountBalance, totalSellingPriceWithCommission);
 
 			var responseDTO = new SellStockResponseDTO
 			{

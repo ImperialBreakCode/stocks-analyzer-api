@@ -5,7 +5,7 @@ namespace API.Settlement.Infrastructure.Services.HttpClientServices
 {
 	public class HttpClientService : IHttpClientService
 	{
-		private HttpClient _httpClientService;
+		private readonly HttpClient _httpClientService;
 
         public HttpClientService(HttpClient httpClient)
         {
