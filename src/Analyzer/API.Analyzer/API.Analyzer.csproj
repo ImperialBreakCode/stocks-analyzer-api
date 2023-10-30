@@ -11,4 +11,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\API.Analyzer.Domain\API.Analyzer.Domain.csproj" />
+    <ProjectReference Include="..\API.Analyzer.Infrastructure\API.Analyzer.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
