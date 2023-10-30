@@ -8,15 +8,17 @@ namespace API.StockAPI.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        StockServices _services = new();
+        private readonly ExternalRequestService _externalRequestServices;
+        private readonly StockService _stockServices;
 
-        public StockController(StockServices services)
+        public StockController(StockService services, ExternalRequestService externalServices)
         {
-            _services = services;
+            _stockServices = services;
+            _externalRequestServices = externalServices;
         }
 
         [HttpGet]
-        [Route("Stock/Current/{symbol}")]
+        [Route("Current/{symbol}")]
         public async Task<IActionResult> GetCurrentStock(string symbol)
         {
             if (symbol == null)
@@ -24,36 +26,53 @@ namespace API.StockAPI.Controllers
                 return BadRequest();
             }
 
-            string function = "TIME_SERIES_INTRADAY";
-            var result = await _services.GetCurrentStock(symbol, function);
+            string function = "TIME_SERIES_INTRADAY&interval=60min";
+            var query = _externalRequestServices.QueryStringGenerator(symbol, function);
+            var response = await _externalRequestServices.JsonDataGenerator(query);
 
-            if (result == null)
+            if (query == null)
             {
                 return NotFound();
             }
 
+            var result = await _stockServices.GetCurrentStock(response, symbol);
             return Ok(result);
         }
 
         [HttpGet]
-        [Route("Stock/Daily/{symbol}")]
+        [Route("Daily/{symbol}")]
         public async Task<IActionResult> GetDailyStock(string symbol)
         {
-            return Ok();
+            if (symbol == null)
+            {
+                return BadRequest();
+            }
+
+            string function = "TIME_SERIES_DAILY";
+            var query = _externalRequestServices.QueryStringGenerator(symbol, function);
+            var response = await _externalRequestServices.JsonDataGenerator(query);
+
+            if (query == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _stockServices.GetDailyStock(response, symbol);
+            return Ok(result);
         }
 
         [HttpGet]
-        [Route("Stock/Weekly/{symbol}")]
+        [Route("Weekly/{symbol}")]
         public async Task<IActionResult> GetWeeklyStock(string symbol)
         {
-            return Ok();
+            return Ok(symbol);
         }
 
         [HttpGet]
-        [Route("Stock/Monthly/{symbol}")]
+        [Route("Monthly/{symbol}")]
         public async Task<IActionResult> GetMonthlyStock(string symbol)
         {
-            return Ok();
+            return Ok(symbol);
         }
     }
 }

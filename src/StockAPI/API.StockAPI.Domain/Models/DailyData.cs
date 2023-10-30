@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 
-namespace API.StockAPI.Models
+namespace API.StockAPI.Domain.Models
 {
-    public class StockData
+    public class DailyData
     {
-        [JsonProperty("Time Series (60min)")]
+        [JsonProperty("Time Series (Daily)")]
         public Dictionary<string, TimeSeriesData> TimeSeries { get; set; }
     }
 }
