@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Gateway.Infrastructure"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Gateway.Domain", "src\Gateway\API.Gateway.Domain\API.Gateway.Domain.csproj", "{DD35D6CF-11B8-4389-9FB0-962EA4CC8EC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Accounts.Application", "src\Accounts\API.Accounts.Application\API.Accounts.Application.csproj", "{94264B06-5049-4D16-A5B3-CCA152F4B14C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Accounts.Application", "src\Accounts\API.Accounts.Application\API.Accounts.Application.csproj", "{94264B06-5049-4D16-A5B3-CCA152F4B14C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

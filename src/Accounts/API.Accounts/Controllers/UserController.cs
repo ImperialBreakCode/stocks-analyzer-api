@@ -1,5 +1,6 @@
-﻿using API.Accounts.Application.DTOs;
-using Microsoft.AspNetCore.Http;
+﻿using API.Accounts.Application.DTOs.Request;
+using API.Accounts.Application.DTOs.Response;
+using API.Accounts.Application.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Accounts.Controllers
@@ -8,20 +9,39 @@ namespace API.Accounts.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        [HttpPost]
-        public IActionResult Register(RegisterLoginUserDTO userDTO)
+        private readonly IUserService _userService;
+        private readonly IConfiguration _conf;
+
+        public UserController(IUserService userService, IConfiguration configuration)
         {
-            return Ok();
+            _userService = userService;
+            _conf = configuration;
         }
 
         [HttpPost]
-        public IActionResult Login(RegisterLoginUserDTO userDTO)
+        [Route("Register")]
+        public IActionResult Register(RegisterUserDTO userDTO)
         {
-            return Ok();
+            _userService.RegisterUser(userDTO);
+            return Created($"/api/User/{userDTO.Username}", userDTO);
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public IActionResult Login(LoginUserDTO userDTO)
+        {
+            var response = _userService.LoginUser(userDTO, _conf.GetSection("Secrets")["SecretKey"]);
+
+            if (response.Message == ResponseMessages.AuthSuccess)
+            {
+                return Ok(response);
+            }
+
+            return Unauthorized(response);
         }
 
         [HttpGet]
-        public IActionResult UserInformation()
+        public IActionResult UserInformation(string username)
         {
             return Ok();
         }

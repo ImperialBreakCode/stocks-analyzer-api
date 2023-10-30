@@ -1,3 +1,4 @@
+using API.StockAPI.Domain.InterFaces;
 using API.StockAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<StockServices, StockServices>();
+builder.Services.AddTransient<StockService>();
+builder.Services.AddTransient<ExternalRequestService>();
 
 var app = builder.Build();
 
