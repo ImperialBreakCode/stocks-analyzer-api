@@ -10,8 +10,8 @@ namespace API.Gateway.Services
 		public GwHttpClient(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
+			_httpClient.DefaultRequestHeaders.Add("Gateway", "");
 		}
-
 
 		public async Task<string> PostAsJsonAsyncReturnString(string url, object obj)
 		{

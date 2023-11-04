@@ -1,5 +1,6 @@
 ﻿using API.Gateway.Domain.DTOs;
 using API.Gateway.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
 
@@ -10,7 +11,7 @@ namespace API.Gateway.Controllers
 	public class AccountController : Controller
 	{
 
-		public IAccountService _accountService { get; set; }
+		private readonly IAccountService _accountService;
 
         public AccountController(IAccountService service)
         {
@@ -20,35 +21,38 @@ namespace API.Gateway.Controllers
 
 		[HttpPost]
 		[Route("Register")]
-		public async Task<ActionResult> Register(RegisterUserDTO regUserDTO)
+		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
 		{
 			var response = await _accountService.Register(regUserDTO);
 
-			return (ActionResult)response;
+			return (IActionResult)response;
 		}
 		[HttpPost]
 		[Route("Login")]
-		public async Task<ActionResult> Login(UserDTO userDTO)
+		public async Task<IActionResult> Login(UserDTO userDTO)
 		{
 			var response = await _accountService.Login(userDTO);
 
-			return (ActionResult)response;
+			return (IActionResult)response;
 		}
+		[Authorize]
 		[HttpPut]
 		[Route("Deposit")]
-		public async Task<ActionResult> Deposit()
+		public async Task<IActionResult> Deposit()
 		{
 			return Ok();
 		}
+		[Authorize]
 		[HttpPost]
 		[Route("CreateWallet")]
-		public async Task<ActionResult> CreateWallet()
+		public async Task<IActionResult> CreateWallet()
 		{
 			return Ok();
 		}
+		[Authorize]
 		[HttpGet]
 		[Route("UserInformation")]
-		public async Task<ActionResult> UserInformation()
+		public async Task<IActionResult> UserInformation()
 		{
 			return Ok();
 		}

@@ -1,32 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API.Gateway.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Gateway.Controllers
 {
+	[ApiController]
+	[Route("api/StockInfo/{dataType}/{companyName}")]
 	public class StocksController : Controller
 	{
-		public async Task<ActionResult> BuyStock()
+		private readonly IStocksService _stocksService;
+
+		public StocksController(IStocksService service)
 		{
-			return Ok();
+			_stocksService = service;
 		}
-		public async Task<ActionResult> Finalize()
+
+		[Authorize]
+		[HttpGet]
+		public async Task<IActionResult> GetStockData(string dataType, string companyName)
 		{
-			return Ok();
-		}
-		public async Task<ActionResult> TrackStock()
-		{
-			return Ok();
-		}
-		public async Task<ActionResult> GetCurrentStocks()
-		{
-			return Ok();
-		}
-		public async Task<ActionResult> GetWeeklyStocks()
-		{
-			return Ok();
-		}
-		public async Task<ActionResult> GetMonthlyStocks()
-		{
-			return Ok();
+			var res = await _stocksService.GetStockData(dataType,companyName);
+			return res;
 		}
 	}
 }
