@@ -23,17 +23,21 @@ namespace API.Gateway.Controllers
 		[Route("Register")]
 		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
 		{
-			var response = await _accountService.Register(regUserDTO);
+			await _accountService.Register(regUserDTO);
 
-			return (IActionResult)response;
+
+			return Ok();
 		}
 		[HttpPost]
 		[Route("Login")]
 		public async Task<IActionResult> Login(UserDTO userDTO)
 		{
-			var response = await _accountService.Login(userDTO);
+			LoginResponse response = await _accountService.Login(userDTO);
 
-			return (IActionResult)response;
+			if (response.Token == string.Empty)
+				return BadRequest(response);
+
+			return Ok(response);
 		}
 		[Authorize]
 		[HttpPut]

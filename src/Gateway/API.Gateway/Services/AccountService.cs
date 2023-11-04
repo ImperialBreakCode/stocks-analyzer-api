@@ -16,44 +16,34 @@ namespace API.Gateway.Services
 			_httpClient = httpClient;
 		}
 
-			[HttpPost]
-		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
+		public async Task Register(RegisterUserDTO regUserDTO)
 		{
 
-			IActionResult response = await _httpClient.PostAsJsonAsync("api/User/Register", regUserDTO);
+			 await _httpClient.PostAsJsonAsync("api/User/Register", regUserDTO);
 
-			return response;
 		}
 	   
-		[HttpPost]
-		public async Task<IActionResult> Login(UserDTO userDTO)
+		public async Task<LoginResponse> Login(UserDTO userDTO)
 		{
 
 			string response = await _httpClient.PostAsJsonAsyncReturnString("api/User/Login", userDTO);
-			if (response == string.Empty) 
-			{
-				return new BadRequestResult();
-			}
 
 			LoginResponse loginResponse = JsonConvert.DeserializeObject<LoginResponse>(response);
 
-			return new OkObjectResult(loginResponse);
+			return loginResponse;
 
 		}
 
-		[HttpPut]
 		public async Task<IActionResult> Deposit()
 		{
 			return new OkResult();
 		}
 
-		[HttpPost]
 		public async Task<IActionResult> CreateWallet()
 		{
 			return new OkResult();
 		}
 
-		[HttpGet]
 		public async Task<IActionResult> UserInformation()
 		{
 			return new OkResult();
