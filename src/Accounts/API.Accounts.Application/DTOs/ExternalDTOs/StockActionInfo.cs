@@ -1,8 +1,7 @@
-﻿namespace API.Accounts.Application.DTOs.SharedDTOs
+﻿namespace API.Accounts.Application.DTOs.ExternalDTOs
 {
-    public class FinalizeStockActionDTO
+    public class StockActionInfo
     {
-        public string WalletId { get; set; }
         public string StockId { get; set; }
         public int Quantity { get; set; }
         public decimal SinglePrice { get; set; }

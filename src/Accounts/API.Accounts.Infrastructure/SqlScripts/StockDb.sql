@@ -12,7 +12,7 @@ CREATE TABLE [User] (
 
 CREATE TABLE Wallet (
 	Id varchar(36) NOT NULL PRIMARY KEY,
-	Balance decimal(4, 2) NOT NULL,
+	Balance decimal(10, 2) NOT NULL,
 	UserId varchar(36) FOREIGN KEY REFERENCES [User](Id) ON DELETE SET NULL
 );
 
@@ -20,15 +20,16 @@ CREATE TABLE Stock (
 	Id varchar(36) NOT NULL PRIMARY KEY,
 	StockName varchar(20) UNIQUE,
 	Quantity int NOT NULL,
+	WaitingForPurchaseCount int NOT NULL,
+	WaitingForSaleCount int NOT NULL,
 	WalletId varchar(36) FOREIGN KEY REFERENCES Wallet(Id) ON DELETE SET NULL
 );
 
 CREATE TABLE [Transaction] (
 	Id varchar(36) NOT NULL PRIMARY KEY,
-	TotalAmount decimal(4, 2),
+	TotalAmount decimal(10, 2),
 	Quantity int NOT NULL,
 	[Date] datetime NOT NULL,
-	IsSuccessful bit NOT NULL,
 	StockId varchar(36) FOREIGN KEY REFERENCES Stock(Id) ON DELETE SET NULL,
 	WalletId varchar(36) FOREIGN KEY REFERENCES Wallet(Id) ON DELETE SET NULL
 );
