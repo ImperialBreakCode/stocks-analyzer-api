@@ -5,6 +5,6 @@ namespace API.Settlement.Domain.Interfaces
 {
     public interface ISellService
 	{
-		Task<ICollection<SellStockResponseDTO>> SellStocks(ICollection<SellStockDTO> sellStocksDTOs);
+		Task<IEnumerable<ResponseStockDTO>> SellStocks(IEnumerable<RequestStockDTO> requestStockDTOs);
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace API.Settlement.Domain.Interfaces
+﻿using API.Settlement.Domain.DTOs.Response;
+
+namespace API.Settlement.Domain.Interfaces
 {
 	public interface IInfrastructureConstants
 	{
@@ -6,6 +8,7 @@
 		string TransactionScheduledMessage { get; }
 		string TransactionSuccessMessage { get; }
 		decimal Commission { get; }
-		string GetAccountBalanceRoute(string userId);
+		string GetWalletBalanceRoute(string walletId);
+		string GetFinalizeStocksRoute(IEnumerable<ResponseStockDTO> responseStockDTOs);
 	}
 }

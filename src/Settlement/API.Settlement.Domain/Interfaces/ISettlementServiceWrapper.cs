@@ -7,7 +7,6 @@ namespace API.Settlement.Domain.Interfaces
 	{
 		IBuyService BuyService { get; }
 		ISellService SellService { get; }
-		Task<ICollection<BuyStockResponseDTO>> BuyStocks(ICollection<BuyStockDTO> buyStockDTOs);
-		Task<ICollection<SellStockResponseDTO>> SellStocks(ICollection<SellStockDTO> sellStocksDTOs);
+		Task<IEnumerable<ResponseStockDTO>> ProcessTransactions(IEnumerable<RequestStockDTO> requestStockDTOs);
 	}
 }

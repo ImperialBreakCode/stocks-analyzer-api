@@ -1,51 +1,48 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
+using API.Settlement.Infrastructure.Helpers.Enums;
 
 namespace API.Settlement.Infrastructure.Services
 {
-    public class SellService : ISellService
+	public class SellService : ISellService
 	{
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly ITransactionMapperService _transactionMapperService;
-		private readonly IHangfireService _hangfireService;
-		private readonly IUserDictionaryService _userDictionaryService;
+		private readonly IUserWalletDictionaryService _userDictionaryService;
 
 
-		public SellService(IInfrastructureConstants infrastructureConstants, 
-						ITransactionMapperService transactionMapperService, 
-						IHangfireService hangfireService, 
-						IUserDictionaryService userDictionaryService)
+		public SellService(IInfrastructureConstants infrastructureConstants,
+						ITransactionMapperService transactionMapperService,
+						IUserWalletDictionaryService userDictionaryService)
 		{
 			_infrastructureConstants = infrastructureConstants;
 			_transactionMapperService = transactionMapperService;
-			_hangfireService = hangfireService;
 			_userDictionaryService = userDictionaryService;
 
 		}
 
-		public async Task<ICollection<SellStockResponseDTO>> SellStocks(ICollection<SellStockDTO> sellStocksDTOs)
+		public async Task<IEnumerable<ResponseStockDTO>> SellStocks(IEnumerable<RequestStockDTO> requestStockDTOs)
 		{
-			var sellStocksResponseDTOs = new List<SellStockResponseDTO>();
-			foreach (var sellStockDTO in sellStocksDTOs)
+			var responseStockDTOs = new List<ResponseStockDTO>();
+			foreach (var requestStockDTO in requestStockDTOs)
 			{
-				decimal totalSellingPriceIncludingCommission = CalculateTotalSellingPriceIncludingCommission(sellStockDTO.TotalSellingPriceExcludingCommission);
+				decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(requestStockDTO.TotalPriceExcludingCommission);
 
-				var sellStockResponseDTO = _transactionMapperService.CreateSellTransactionResponse(sellStockDTO, totalSellingPriceIncludingCommission);
+				var responseStockDTO = _transactionMapperService.CreateTransactionResponse(requestStockDTO, totalPriceIncludingCommission, Status.Scheduled);
 
-				sellStocksResponseDTOs.Add(sellStockResponseDTO);
+				responseStockDTOs.Add(responseStockDTO);
 
-				_hangfireService.ScheduleSellStockJob(sellStockResponseDTO);
-
-				// TODO: Да добавя логиката за изтриване от кеша на продадените акции
-				// _userDictionaryService.DeleteStock(...);
+				var stock = _transactionMapperService.CreateStockDTO(requestStockDTO);
+				//_userDictionaryService.CloseWallet(stock.WalletId, stock.StockId);
 			}
-			return sellStocksResponseDTOs;
+
+			return responseStockDTOs;
 		}
 
-		private decimal CalculateTotalSellingPriceIncludingCommission(decimal totalSellingPriceExcludingCommission)
+		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
 		{
-			return totalSellingPriceExcludingCommission - (totalSellingPriceExcludingCommission * _infrastructureConstants.Commission);
+			return totalPriceExcludingCommission - (totalPriceExcludingCommission * _infrastructureConstants.Commission);
 		}
 
 	}

@@ -13,25 +13,14 @@ namespace API.Settlement.Controllers
 		{
 			_settlementServiceWrapper = serviceWrapper;
 		}
-
 		[HttpPost]
-		[Route("buy-stocks")]
-		[ProducesResponseType(204)]
-		public async Task<IActionResult> BuyStocks([FromBody] ICollection<BuyStockDTO> buyStockDTOs)
+		[Route("processTransactions")]
+		public async Task<IActionResult> ProcessTransactions([FromBody] IEnumerable<RequestStockDTO> requestStockDTOs)
 		{
-			var buyStocksResponseDTOs = await _settlementServiceWrapper.BuyService.BuyStocks(buyStockDTOs);
+			var responseStockDTOs = await _settlementServiceWrapper.ProcessTransactions(requestStockDTOs);
 
 			return NoContent();
 		}
 
-		[HttpPost]
-		[Route("sell-stocks")]
-		[ProducesResponseType(204)]
-		public async Task<IActionResult> SellStocks([FromBody] ICollection<SellStockDTO> sellStockDTOs)
-		{
-			var sellStocksResponseDTOs = await _settlementServiceWrapper.SellService.SellStocks(sellStockDTOs);
-
-			return NoContent();
-		}
 	}
 }

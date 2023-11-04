@@ -16,8 +16,8 @@ namespace API.Settlement.Extensions
 			services.AddSingleton<IInfrastructureConstants, InfrastructureConstants>();
 			services.AddTransient<ITransactionMapperService, TransactionMapperService>();
 			services.AddTransient<IDateTimeService, DateTimeService>();
-			services.AddSingleton<IDictionary<string, ICollection<Stock>>>(new Dictionary<string, ICollection<Stock>>());
-			services.AddSingleton<IUserDictionaryService, UserDictionaryService>();
+			services.AddSingleton<IDictionary<string, ICollection<Wallet>>>(new Dictionary<string, ICollection<Wallet>>());
+			services.AddSingleton<IUserWalletDictionaryService, UserWalletDictionaryService>();
 			services.AddTransient<IJobService, JobService>();
 			services.AddSingleton<IHangfireService, HangfireService>();
 			services.AddTransient<IBuyService, BuyService>();

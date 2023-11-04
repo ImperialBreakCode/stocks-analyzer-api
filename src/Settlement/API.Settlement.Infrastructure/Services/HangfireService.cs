@@ -15,14 +15,10 @@ namespace API.Settlement.Infrastructure.Services
 			_jobService = jobService;
 		}
 
-		public void ScheduleBuyStockJob(BuyStockResponseDTO buyStockResponseDTO)
+		public void ScheduleStockProcessingJob(IEnumerable<ResponseStockDTO> responseStockDTOs)
 		{
-			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountPurchase(buyStockResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
+			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransactions(responseStockDTOs), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
 		}
 
-		public void ScheduleSellStockJob(SellStockResponseDTO sellStockResponseDTO)
-		{
-			BackgroundJob.Schedule(()=> _jobService.ProcessNextDayAccountSale(sellStockResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
-		}
 	}
 }

@@ -6,22 +6,34 @@ namespace API.Settlement.Infrastructure.Services
 {
 	public class SettlementServiceWrapper : ISettlementServiceWrapper
 	{
+		private readonly IHangfireService _hangfireService;
 		public IBuyService BuyService { get; }
 		public ISellService SellService { get; }
 
-		public SettlementServiceWrapper(IBuyService buyService, ISellService sellService)
+		public SettlementServiceWrapper(IBuyService buyService, ISellService sellService, IHangfireService hangfireService)
 		{
 			BuyService = buyService;
 			SellService = sellService;
+			_hangfireService = hangfireService;
+
+
 		}
-		public async Task<ICollection<BuyStockResponseDTO>> BuyStocks(ICollection<BuyStockDTO> buyStocksDTOs)
+
+		public async Task<IEnumerable<ResponseStockDTO>> ProcessTransactions(IEnumerable<RequestStockDTO> requestStockDTOs)
 		{
-			return await BuyService.BuyStocks(buyStocksDTOs);
+			var requestBuyStockDTOs = requestStockDTOs.Where(x => !x.IsSale);
+			var requestSellStockDTOs = requestStockDTOs.Where(x => x.IsSale);
+
+			var responseBuyStockDTOs = await BuyService.BuyStocks(requestBuyStockDTOs);
+			var responseSellStockDTOs = await SellService.SellStocks(requestSellStockDTOs);
+
+			var responseStockDTOs = responseBuyStockDTOs.Concat(responseSellStockDTOs);
+
+			_hangfireService.ScheduleStockProcessingJob(responseStockDTOs);
+
+			return responseStockDTOs;
 		}
-		public async Task<ICollection<SellStockResponseDTO>> SellStocks(ICollection<SellStockDTO> sellStocksDTO)
-		{
-			return await SellService.SellStocks(sellStocksDTO);
-		}
+
 
 	}
 }

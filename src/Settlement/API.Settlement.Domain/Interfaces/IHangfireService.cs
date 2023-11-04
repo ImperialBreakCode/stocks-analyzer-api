@@ -4,7 +4,6 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface IHangfireService
 	{
-		void ScheduleBuyStockJob(BuyStockResponseDTO buyStockResponseDTO);
-		void ScheduleSellStockJob(SellStockResponseDTO sellStockResponseDTO);
+		void ScheduleStockProcessingJob(IEnumerable<ResponseStockDTO> responseStockDTOs);
 	}
 }

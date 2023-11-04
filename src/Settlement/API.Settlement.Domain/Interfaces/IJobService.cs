@@ -4,7 +4,6 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface IJobService
 	{
-		void ProcessNextDayAccountPurchase(BuyStockResponseDTO buyStockResponseDTO);
-		void ProcessNextDayAccountSale(SellStockResponseDTO sellStockResponseDTO);
+		void ProcessNextDayAccountTransactions(IEnumerable<ResponseStockDTO> responseStockDTOs);
 	}
 }

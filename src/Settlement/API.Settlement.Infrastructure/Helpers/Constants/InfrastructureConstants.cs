@@ -1,4 +1,5 @@
-﻿using API.Settlement.Domain.Interfaces;
+﻿using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.Interfaces;
 
 namespace API.Settlement.Infrastructure.Helpers.Constants
 {
@@ -15,6 +16,8 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 		public string TransactionSuccessMessage { get { return _transactionSuccessMessage; } }
 
 		public decimal Commission { get { return _commission; } }
-		public string GetAccountBalanceRoute(string userId) { return $"api/accounts/{userId}/balance"; }
+
+		public string GetWalletBalanceRoute(string userId) { return $"api/accounts/{userId}/balance"; }
+		public string GetFinalizeStocksRoute(IEnumerable<ResponseStockDTO> responseStockDTOs) { return "api/accounts/finalize"; }
 	}
 }

@@ -1,12 +1,13 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.Entities;
 using API.Settlement.Infrastructure.Helpers.Enums;
 
 namespace API.Settlement.Domain.Interfaces
 {
 	public interface ITransactionMapperService
 	{
-		BuyStockResponseDTO CreateBuyTransactionResponse(BuyStockDTO buyStockDTO, decimal totalBuyingPriceIncludingCommission, Status status);
-		SellStockResponseDTO CreateSellTransactionResponse(SellStockDTO sellStockDTO, decimal totalSellingPriceIncludingCommission);
+		ResponseStockDTO CreateTransactionResponse(RequestStockDTO requestStockDTO, decimal totalPriceIncludingCommission, Status status);
+		Wallet CreateStockDTO(RequestStockDTO requestStockDTO);
 	}
 }

@@ -6,6 +6,6 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface IBuyService
 	{
-		Task<ICollection<BuyStockResponseDTO>> BuyStocks(ICollection<BuyStockDTO> buyStocksDTOs);
+		Task<IEnumerable<ResponseStockDTO>> BuyStocks(IEnumerable<RequestStockDTO> requestStockDTOs);
 	}
 }
