@@ -1,8 +1,9 @@
 ﻿using API.Accounts.Application.Auth.PasswordManager;
 using API.Accounts.Application.Auth.TokenManager;
 using API.Accounts.Application.Data;
+using API.Accounts.Application.Services.HttpService;
 using API.Accounts.Application.Services.UserService;
-using API.Accounts.Data;
+using API.Accounts.Implementations;
 
 namespace API.Accounts.Extensions
 {
@@ -19,6 +20,8 @@ namespace API.Accounts.Extensions
         public static IServiceCollection InjectServices(this IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IHttpService, HttpService>();
+            services.AddHttpClient();
 
             return services;
         }

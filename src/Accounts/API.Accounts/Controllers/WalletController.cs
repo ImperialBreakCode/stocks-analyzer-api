@@ -12,5 +12,11 @@ namespace API.Accounts.Controllers
         {
             return Ok();
         }
+
+        [HttpGet]
+        public IActionResult GetWalletBalance(string id)
+        {
+            return Ok();
+        }
     }
 }
