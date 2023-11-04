@@ -51,5 +51,25 @@ namespace API.Gateway.Services
 			return await response.Content.ReadAsStringAsync();
 
 		}
+		public async Task<string> GetStringAsync(string url)
+		{
+			var response = await _httpClient.GetAsync(url);
+			try
+			{
+				response.EnsureSuccessStatusCode();
+			}
+			catch (Exception)
+			{
+
+				return string.Empty;
+			}
+			return await response.Content.ReadAsStringAsync();
+		}
+		public async Task<IActionResult> GetActionResult(string url)
+		{
+			var response = await _httpClient.GetAsync(url);
+
+			return (IActionResult)response;
+		}
 	}
 }
