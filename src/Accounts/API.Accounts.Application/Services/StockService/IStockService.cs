@@ -6,7 +6,7 @@ namespace API.Accounts.Application.Services.StockService
     {
         Task<string> AddForPurchase(StockActionDTO stockActionDTO);
         string AddForSale(StockActionDTO stockActionDTO);
-        string ConfirmSales(string walletId);
-        string ConfirmPurchase(string walletId);
+        Task<string> ConfirmSales(string walletId);
+        Task<string> ConfirmPurchase(string walletId);
     }
 }

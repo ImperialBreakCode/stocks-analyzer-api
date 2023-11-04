@@ -101,9 +101,6 @@ namespace API.Accounts.Application.Services.StockService
         
         public async Task<string> ConfirmPurchase(string walletId)
         {
-            FinalizeStockActionDTO finalizeDto = new FinalizeStockActionDTO();
-            finalizeDto.IsSale = false;
-
             using (var context = _accountsData.CreateDbContext())
             {
                 Wallet? wallet = context.Wallets.GetOneById(walletId);
@@ -113,13 +110,10 @@ namespace API.Accounts.Application.Services.StockService
                     return ResponseMessages.WalletNotFound;
                 }
 
-                finalizeDto.WalletId = wallet.Id;
-                finalizeDto.UserId = wallet.UserId;
-                finalizeDto.Stocks = new List<StockActionInfo>();
-
                 var stocks = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForPurchaseCount != 0);
 
+                var finalizeDto = CreateFinalizeStockDto(false, wallet.Id, wallet.UserId);
                 await _stockActionManager.ExecutePurchase(finalizeDto, stocks);
 
                 foreach (var stock in stocks)
@@ -134,9 +128,20 @@ namespace API.Accounts.Application.Services.StockService
             return ResponseMessages.TransactionSendForProccessing;
         }
 
-        public string ConfirmSales(string walletId)
+        public async Task<string> ConfirmSales(string walletId)
         {
             throw new NotImplementedException();
+        }
+
+        private FinalizeStockActionDTO CreateFinalizeStockDto(bool forSale, string walletId, string userId)
+        {
+            FinalizeStockActionDTO finalizeDto = new FinalizeStockActionDTO();
+            finalizeDto.IsSale = forSale;
+            finalizeDto.WalletId = walletId;
+            finalizeDto.UserId = userId;
+            finalizeDto.Stocks = new List<StockActionInfo>();
+
+            return finalizeDto;
         }
     }
 }

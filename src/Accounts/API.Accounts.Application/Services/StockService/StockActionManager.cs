@@ -18,21 +18,12 @@ namespace API.Accounts.Application.Services.StockService
         {
             foreach (var stock in stocks)
             {
-                var stockInfo = finalizeDto.Stocks.Where(s => s.StockId == stock.Id).FirstOrDefault();
-
-                if (stockInfo is null)
+                finalizeDto.Stocks.Add(new StockActionInfo()
                 {
-                    finalizeDto.Stocks.Add(new StockActionInfo()
-                    {
-                        Quantity = stock.WaitingForPurchaseCount,
-                        SinglePrice = await GetStockPrice(stock.StockName),
-                        StockId = stock.Id
-                    });
-                }
-                else
-                {
-                    stockInfo.Quantity += stock.WaitingForPurchaseCount;
-                }
+                    Quantity = stock.WaitingForPurchaseCount,
+                    SinglePrice = await GetStockPrice(stock.StockName),
+                    StockId = stock.Id
+                });
             }
 
             await _httpService.PostAsync("url...", finalizeDto);
