@@ -27,11 +27,11 @@ namespace API.Gateway.Services
 			}
 			return await response.Content.ReadAsStringAsync();
 		}
-		public async Task<IActionResult> PostAsJsonAsync(string url, object obj)
+		public async Task<HttpResponseMessage> PostAsJsonAsync(string url, object obj)
 		{
 			var response = await _httpClient.PostAsJsonAsync(url, obj);
 
-			return (IActionResult)response;
+			return response;
 		}
 
 		public async Task<string> PostAsync(string url, string message)
@@ -65,11 +65,11 @@ namespace API.Gateway.Services
 			}
 			return await response.Content.ReadAsStringAsync();
 		}
-		public async Task<IActionResult> GetActionResult(string url)
+		public async Task<HttpResponseMessage> GetActionResult(string url)
 		{
 			var response = await _httpClient.GetAsync(url);
 
-			return (IActionResult)response;
+			return response;
 		}
 	}
 }

@@ -20,7 +20,11 @@ namespace API.Gateway.Controllers
 		public async Task<IActionResult> GetStockData(string dataType, string companyName)
 		{
 			var res = await _stocksService.GetStockData(dataType,companyName);
-			return res;
+
+			if (res.IsSuccessStatusCode)
+				return Ok(res);
+			else 
+				return BadRequest(res);
 		}
 	}
 }

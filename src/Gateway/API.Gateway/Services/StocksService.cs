@@ -12,7 +12,7 @@ namespace API.Gateway.Services
 			_httpClient = httpClient;
 		}
 
-		public async Task<IActionResult> GetStockData(string dataType, string companyName)
+		public async Task<HttpResponseMessage> GetStockData(string dataType, string companyName)
 		{
 			var res = await _httpClient.GetActionResult($"api/Stock/{dataType}/{companyName}");
 			return res;
