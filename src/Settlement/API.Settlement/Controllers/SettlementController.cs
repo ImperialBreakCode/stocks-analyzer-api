@@ -1,6 +1,5 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.Interfaces;
-using API.Settlement.DTOs.Request;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Settlement.Controllers
@@ -9,33 +8,30 @@ namespace API.Settlement.Controllers
 	[ApiController]
 	public class SettlementController : ControllerBase
 	{
-		public readonly ISettlementService _settlementService;
-
-		public SettlementController(ISettlementService settlementService)
+		private readonly ISettlementServiceWrapper _settlementServiceWrapper;
+		public SettlementController(ISettlementServiceWrapper serviceWrapper)
 		{
-			_settlementService = settlementService;
+			_settlementServiceWrapper = serviceWrapper;
 		}
 
 		[HttpPost]
-		[Route("buyStock")]
-		public async Task<IActionResult> BuyStock([FromBody] BuyStockDTO buyStockDTO)
+		[Route("buy-stocks")]
+		[ProducesResponseType(204)]
+		public async Task<IActionResult> BuyStocks([FromBody] ICollection<BuyStockDTO> buyStockDTOs)
 		{
-			var responseDTO = await _settlementService.BuyStock(buyStockDTO);
+			var buyStocksResponseDTOs = await _settlementServiceWrapper.BuyService.BuyStocks(buyStockDTOs);
 
-			if (!responseDTO.IsSuccessful) { return BadRequest(responseDTO); }
-
-			return Ok(responseDTO);
+			return NoContent();
 		}
 
 		[HttpPost]
-		[Route("sellStock")]
-		public async Task<IActionResult> SellStock([FromBody] SellStockDTO sellStockDTO)
+		[Route("sell-stocks")]
+		[ProducesResponseType(204)]
+		public async Task<IActionResult> SellStocks([FromBody] ICollection<SellStockDTO> sellStockDTOs)
 		{
-			var responseDTO = await _settlementService.SellStock(sellStockDTO);
-			if (!responseDTO.IsSuccessful) { return BadRequest(responseDTO); }
+			var sellStocksResponseDTOs = await _settlementServiceWrapper.SellService.SellStocks(sellStockDTOs);
 
-			return Ok(responseDTO);
+			return NoContent();
 		}
-
 	}
 }
