@@ -96,7 +96,6 @@ namespace API.Accounts.Application.Services.StockService
                 }
 
                 stock.WaitingForSaleCount += stockActionDTO.Quantity;
-                stock.Quantity -= stockActionDTO.Quantity;
                 context.Stocks.Update(stock);
 
                 context.Commit();
@@ -163,6 +162,29 @@ namespace API.Accounts.Application.Services.StockService
             }
 
             return ResponseMessages.TransactionSendForProccessing;
+        }
+
+        public GetStockResponseDTO? GetStockById(string stockId)
+        {
+            GetStockResponseDTO? result = null;
+
+            using (var context = _accountsData.CreateDbContext())
+            {
+                Stock? stock = context.Stocks.GetOneById(stockId);
+
+                if (stock is not null)
+                {
+                    result = new GetStockResponseDTO()
+                    {
+                        StockId = stock.Id,
+                        Quantity = stock.Quantity,
+                        StockName = stock.StockName,
+                        WalletId = stock.WalletId
+                    };
+                }
+            }
+
+            return result;
         }
 
         private FinalizeStockActionDTO CreateFinalizeStockDto(bool forSale, string walletId, string userId)

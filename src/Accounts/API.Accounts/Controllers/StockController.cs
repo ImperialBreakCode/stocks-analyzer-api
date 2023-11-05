@@ -16,6 +16,20 @@ namespace API.Accounts.Controllers
             _stockService = stockService;
         }
 
+        [HttpGet]
+        [Route("GetStock/{stockId}")]
+        public IActionResult GetStock(string stockId)
+        {
+            GetStockResponseDTO? resposne = _stockService.GetStockById(stockId);
+
+            if (resposne is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(resposne);
+        }
+
         [HttpPost]
         [Route("AddStockForPurchase")]
         public async Task<IActionResult> AddStockForPurchase(StockActionDTO stockAction)

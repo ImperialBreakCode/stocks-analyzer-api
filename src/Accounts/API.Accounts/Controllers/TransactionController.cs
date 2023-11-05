@@ -10,9 +10,8 @@ namespace API.Accounts.Controllers
     {
         [HttpPost]
         [Route("CompleteTransaction")]
-        public IActionResult CompleteTransaction(TransactionInfoDTO transactionInfo)
+        public IActionResult CompleteTransactions(ICollection<TransactionInfoDTO> transactionInfo)
         {
-
             return Ok();
         }
     }

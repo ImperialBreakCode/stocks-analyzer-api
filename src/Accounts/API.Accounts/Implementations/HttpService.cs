@@ -10,6 +10,7 @@ namespace API.Accounts.Implementations
         public HttpService(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient();
+            _httpClient.DefaultRequestHeaders.Add("ApiSender", "Api.Accounts");
         }
 
         public async Task<T?> GetAsync<T>(string url)
