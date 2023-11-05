@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Auth\**" />
+    <Content Remove="Auth\**" />
+    <EmbeddedResource Remove="Auth\**" />
+    <None Remove="Auth\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.24" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
@@ -14,10 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\API.Gateway.Domain\API.Gateway.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Auth\" />
   </ItemGroup>
 
 </Project>
