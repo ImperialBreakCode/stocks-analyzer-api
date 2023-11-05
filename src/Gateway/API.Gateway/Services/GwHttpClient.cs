@@ -27,11 +27,19 @@ namespace API.Gateway.Services
 			}
 			return await response.Content.ReadAsStringAsync();
 		}
-		public async Task<HttpResponseMessage> PostAsJsonAsync(string url, object obj)
+		public async Task<IActionResult> PostAsJsonAsync(string url, object obj)
 		{
 			var response = await _httpClient.PostAsJsonAsync(url, obj);
 
-			return response;
+			if (response.IsSuccessStatusCode)
+			{
+				var content = await response.Content.ReadAsStringAsync();
+				return new OkObjectResult(content);
+			}
+			else
+			{
+				return new StatusCodeResult((int)response.StatusCode);
+			}
 		}
 
 		public async Task<string> PostAsync(string url, string message)
@@ -65,11 +73,19 @@ namespace API.Gateway.Services
 			}
 			return await response.Content.ReadAsStringAsync();
 		}
-		public async Task<HttpResponseMessage> GetActionResult(string url)
+		public async Task<IActionResult> GetActionResult(string url)
 		{
 			var response = await _httpClient.GetAsync(url);
 
-			return response;
+			if (response.IsSuccessStatusCode)
+			{
+				var content = await response.Content.ReadAsStringAsync();
+				return new OkObjectResult(content);
+			}
+			else
+			{
+				return new StatusCodeResult((int)response.StatusCode);
+			}
 		}
 	}
 }

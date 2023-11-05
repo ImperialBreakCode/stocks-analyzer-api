@@ -55,10 +55,6 @@ public static class Program
 		builder.Services.AddAuthorization();
 
 		builder.Services.AddHttpClient();
-		//builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-		//.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
-		//.AddEnvironmentVariables();
-		//builder.Services.AddOcelot(builder.Configuration);
 
 		var app = builder.Build();
 

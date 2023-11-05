@@ -10,9 +10,9 @@ namespace API.Gateway.Domain.Interfaces
 	public interface IHttpClient
 	{
 		Task<string> PostAsync(string url, string message);
-		Task<HttpResponseMessage> PostAsJsonAsync(string url, object obj);
+		Task<IActionResult> PostAsJsonAsync(string url, object obj);
 		Task<string> PostAsJsonAsyncReturnString(string url, object obj);
 		Task<string> GetStringAsync(string url);
-		Task<HttpResponseMessage> GetActionResult(string url);
+		Task<IActionResult> GetActionResult(string url);
 	}
 }

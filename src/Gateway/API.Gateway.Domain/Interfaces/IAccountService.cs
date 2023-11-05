@@ -10,7 +10,7 @@ namespace API.Gateway.Domain.Interfaces
 {
 	public interface IAccountService
 	{
-		Task Register(RegisterUserDTO regUserDTO);
+		Task<IActionResult> Register(RegisterUserDTO regUserDTO);
 		Task<LoginResponse> Login(UserDTO userDTO);
 		Task<IActionResult> Deposit();
 		Task<IActionResult> CreateWallet();

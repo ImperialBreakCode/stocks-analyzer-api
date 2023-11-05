@@ -16,4 +16,8 @@
     <ProjectReference Include="..\API.Gateway.Domain\API.Gateway.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Auth\" />
+  </ItemGroup>
+
 </Project>

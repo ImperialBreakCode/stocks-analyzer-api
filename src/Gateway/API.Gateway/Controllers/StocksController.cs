@@ -21,10 +21,7 @@ namespace API.Gateway.Controllers
 		{
 			var res = await _stocksService.GetStockData(dataType,companyName);
 
-			if (res.IsSuccessStatusCode)
-				return Ok(res);
-			else 
-				return BadRequest(res);
+			return res;
 		}
 	}
 }

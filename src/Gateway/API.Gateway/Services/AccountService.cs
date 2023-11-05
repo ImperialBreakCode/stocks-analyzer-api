@@ -16,17 +16,19 @@ namespace API.Gateway.Services
 			_httpClient = httpClient;
 		}
 
-		public async Task Register(RegisterUserDTO regUserDTO)
+		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
 		{
 
-			 await _httpClient.PostAsJsonAsync("api/User/Register", regUserDTO);
+			 var res = await _httpClient.PostAsJsonAsync("https://localhost:7291/api/User/Register", regUserDTO);
+
+			return res;
 
 		}
 	   
 		public async Task<LoginResponse> Login(UserDTO userDTO)
 		{
 
-			string response = await _httpClient.PostAsJsonAsyncReturnString("api/User/Login", userDTO);
+			string response = await _httpClient.PostAsJsonAsyncReturnString("https://localhost:7291/api/User/Login", userDTO);
 
 			LoginResponse loginResponse = JsonConvert.DeserializeObject<LoginResponse>(response);
 

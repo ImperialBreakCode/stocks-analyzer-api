@@ -23,10 +23,10 @@ namespace API.Gateway.Controllers
 		[Route("Register")]
 		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
 		{
-			await _accountService.Register(regUserDTO);
+			var res = await _accountService.Register(regUserDTO);
 
+			return res;
 
-			return Ok();
 		}
 		[HttpPost]
 		[Route("Login")]
