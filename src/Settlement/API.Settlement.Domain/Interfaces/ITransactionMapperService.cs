@@ -7,7 +7,7 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface ITransactionMapperService
 	{
-		ResponseStockDTO CreateTransactionResponse(RequestStockDTO requestStockDTO, decimal totalPriceIncludingCommission, Status status);
-		Wallet CreateStockDTO(RequestStockDTO requestStockDTO);
+		StockInfoResponseDTO MapToStockResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status);
+		FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<StockInfoResponseDTO> stockInfoResponseDTOs);
 	}
 }

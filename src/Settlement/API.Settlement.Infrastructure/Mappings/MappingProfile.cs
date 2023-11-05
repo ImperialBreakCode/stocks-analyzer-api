@@ -9,19 +9,15 @@ namespace API.Settlement.Infrastructure.Mappings
 	{
 		public MappingProfile()
 		{
-			CreateMap<RequestStockDTO, ResponseStockDTO>()
+			CreateMap<FinalizeTransactionRequestDTO, FinalizeTransactionResponseDTO>()
 				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-				.ForMember(dest => dest.StockId, opt => opt.MapFrom(src => src.StockId))
-				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
 				.ForMember(dest => dest.IsSale, opt => opt.MapFrom(src => src.IsSale));
 
-			CreateMap<RequestStockDTO, Wallet>()
-				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
-				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+			CreateMap<StockInfoRequestDTO, StockInfoResponseDTO>()
 				.ForMember(dest => dest.StockId, opt => opt.MapFrom(src => src.StockId))
-				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-				.ForMember(dest => dest.InvestedAmount, opt => opt.MapFrom(src => src.TotalPriceExcludingCommission));
+				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
 		}
 	}
 }

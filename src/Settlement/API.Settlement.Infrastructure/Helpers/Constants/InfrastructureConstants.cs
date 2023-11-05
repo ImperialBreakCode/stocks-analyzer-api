@@ -17,7 +17,8 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 
 		public decimal Commission { get { return _commission; } }
 
-		public string GetWalletBalanceRoute(string userId) { return $"api/accounts/{userId}/balance"; }
-		public string GetFinalizeStocksRoute(IEnumerable<ResponseStockDTO> responseStockDTOs) { return "api/accounts/finalize"; }
+		public string GETWalletBalanceRoute(string walletId) { return $"/api/Wallet/GetWalletBalance/{walletId}"; }
+		public string POSTCompleteTransactionRoute(IEnumerable<FinalizeTransactionResponseDTO> responseStockDTOs) { return "/api/Transaction/CompleteTransaction"; }
+		public string GETStockRoute(string stockId) { return $"/api/Stock/GetStock/{stockId}"; }
 	}
 }

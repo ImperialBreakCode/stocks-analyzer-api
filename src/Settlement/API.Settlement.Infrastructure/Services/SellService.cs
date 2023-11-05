@@ -2,42 +2,75 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
+using Newtonsoft.Json;
 
 namespace API.Settlement.Infrastructure.Services
 {
 	public class SellService : ISellService
 	{
+		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly ITransactionMapperService _transactionMapperService;
-		private readonly IUserWalletDictionaryService _userDictionaryService;
 
 
-		public SellService(IInfrastructureConstants infrastructureConstants,
-						ITransactionMapperService transactionMapperService,
-						IUserWalletDictionaryService userDictionaryService)
+		public SellService(IHttpClientFactory httpClientFactory, 
+						IInfrastructureConstants infrastructureConstants,
+						ITransactionMapperService transactionMapperService)
 		{
+			_httpClientFactory = httpClientFactory;
 			_infrastructureConstants = infrastructureConstants;
 			_transactionMapperService = transactionMapperService;
-			_userDictionaryService = userDictionaryService;
 
 		}
 
-		public async Task<IEnumerable<ResponseStockDTO>> SellStocks(IEnumerable<RequestStockDTO> requestStockDTOs)
+		public async Task<IEnumerable<FinalizeTransactionResponseDTO>> SellStocks(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
 		{
-			var responseStockDTOs = new List<ResponseStockDTO>();
-			foreach (var requestStockDTO in requestStockDTOs)
+			var finalizeTransactionResponseDTOs = new List<FinalizeTransactionResponseDTO>();
+			foreach (var finalizeTransactionRequestDTO in finalizeTransactionRequestDTOs)
 			{
-				decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(requestStockDTO.TotalPriceExcludingCommission);
+				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
+				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
+				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
+				{
+					var stockInfoResponseDTO = new StockInfoResponseDTO();
+					var stockDTO = new StockDTO() { WalletId = "1", StockId = "1", Quantity = 1, StockName = "MC" };//await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
+					decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
+					if (stockDTO.Quantity < stockInfoRequestDTO.Quantity)
+					{
+						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
+					}
+					else
+					{
+						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Success);
+						//var stock = _transactionMapperService.CreateStockDTO();
+						//TODO: _userDictionaryService.RemoveStock(stockDTO.StockId);
+					}
 
-				var responseStockDTO = _transactionMapperService.CreateTransactionResponse(requestStockDTO, totalPriceIncludingCommission, Status.Scheduled);
+					stockInfoResponseDTOs.Add(stockInfoResponseDTO);
+				}
 
-				responseStockDTOs.Add(responseStockDTO);
+				finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
 
-				var stock = _transactionMapperService.CreateStockDTO(requestStockDTO);
-				//_userDictionaryService.CloseWallet(stock.WalletId, stock.StockId);
+				finalizeTransactionResponseDTOs.Add(finalizeTransactionResponseDTO);
 			}
 
-			return responseStockDTOs;
+			return finalizeTransactionResponseDTOs;
+		}
+
+		private async Task<StockDTO> GetStockDTO(string uri)
+		{
+			using (var _httpClient = _httpClientFactory.CreateClient())
+			{
+				var response = await _httpClient.GetAsync(uri);
+
+				if (response.IsSuccessStatusCode)
+				{
+					var jsonResponse = await response.Content.ReadAsStringAsync();
+					var stockDTO = JsonConvert.DeserializeObject<StockDTO>(jsonResponse);
+					return stockDTO;
+				}
+			}
+			return null;
 		}
 
 		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)

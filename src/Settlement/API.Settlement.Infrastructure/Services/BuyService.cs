@@ -10,42 +10,51 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly ITransactionMapperService _transactionMapperService;
-		private readonly IUserWalletDictionaryService _userDictionaryService;
 
 
-		public BuyService(IHttpClientFactory httpClientFactory, IInfrastructureConstants constants, ITransactionMapperService buyTransactionMapperService, IHangfireService hangfireService, IUserWalletDictionaryService userDictionaryService)
+		public BuyService(IHttpClientFactory httpClientFactory,
+						IInfrastructureConstants constants,
+						ITransactionMapperService buyTransactionMapperService
+			)
 		{
 			_httpClientFactory = httpClientFactory;
 			_infrastructureConstants = constants;
 			_transactionMapperService = buyTransactionMapperService;
-			_userDictionaryService = userDictionaryService;
 		}
 
-		public async Task<IEnumerable<ResponseStockDTO>> BuyStocks(IEnumerable<RequestStockDTO> requestStockDTOs)
+		public async Task<IEnumerable<FinalizeTransactionResponseDTO>> BuyStocks(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
 		{
-			var responseStockDTOs = new List<ResponseStockDTO>();
-			foreach (var requestStockDTO in requestStockDTOs)
+			var finalizeTransactionResponseDTOs = new List<FinalizeTransactionResponseDTO>();
+			foreach (var finalizeTransactionRequestDTO in finalizeTransactionRequestDTOs)
 			{
 				decimal walletBalance = 1000.50M;//await GetWalletBalance(requestStockDTO.WalletId);
-				decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(requestStockDTO.TotalPriceExcludingCommission);
-
-				var responseStockDTO = new ResponseStockDTO();
-				if (walletBalance < totalPriceIncludingCommission)
+				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
+				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
+				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 				{
-					responseStockDTO = _transactionMapperService.CreateTransactionResponse(requestStockDTO, totalPriceIncludingCommission, Status.Declined);
-				}
-				else
-				{
-					responseStockDTO = _transactionMapperService.CreateTransactionResponse(requestStockDTO, totalPriceIncludingCommission, Status.Scheduled);
+					var stockInfoResponseDTO = new StockInfoResponseDTO();
+					decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
+					if (walletBalance < totalPriceIncludingCommission)
+					{
+						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
+					}
+					else
+					{
+						walletBalance -= totalPriceIncludingCommission;
+						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Success);
+						//var stock = _transactionMapperService.CreateStockDTO();
+						//TODO: _userDictionaryService.CreateOrUpdateWallet(stock);
+					}
 
-					var stock = _transactionMapperService.CreateStockDTO(requestStockDTO);
-					//_userDictionaryService.CreateOrUpdateWallet(stock);
+					stockInfoResponseDTOs.Add(stockInfoResponseDTO);
 				}
 
-				responseStockDTOs.Add(responseStockDTO);
+				finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
+
+				finalizeTransactionResponseDTOs.Add(finalizeTransactionResponseDTO);
 			}
 
-			return responseStockDTOs;
+			return finalizeTransactionResponseDTOs;
 		}
 
 		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
@@ -58,7 +67,7 @@ namespace API.Settlement.Infrastructure.Services
 			decimal balance = 0;
 			using (var _httpClient = _httpClientFactory.CreateClient())
 			{
-				balance = decimal.Parse(await _httpClient.GetStringAsync(_infrastructureConstants.GetWalletBalanceRoute(walletId)));
+				balance = decimal.Parse(await _httpClient.GetStringAsync(_infrastructureConstants.GETWalletBalanceRoute(walletId)));
 			}
 			return balance;
 		}

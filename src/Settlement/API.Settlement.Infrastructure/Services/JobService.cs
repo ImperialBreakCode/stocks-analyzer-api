@@ -1,6 +1,9 @@
-﻿using API.Settlement.Domain.DTOs.Response;
+﻿using API.Settlement.Domain.DTOs.Request;
+using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
+using API.Settlement.Infrastructure.Helpers.Constants;
 using Newtonsoft.Json;
+using System.Net.Http;
 using System.Text;
 
 namespace API.Settlement.Infrastructure.Services
@@ -9,43 +12,25 @@ namespace API.Settlement.Infrastructure.Services
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IInfrastructureConstants _InfrastructureConstants;
-		public JobService(IHttpClientFactory httpClientFactory, IInfrastructureConstants infrastructureConstants)
+		private readonly ITransactionWrapper _transactionWrapper;
+
+
+		public JobService(IHttpClientFactory httpClientFactory, IInfrastructureConstants infrastructureConstants, ITransactionWrapper transactionWrapper)
 		{
 			_httpClientFactory = httpClientFactory;
 			_InfrastructureConstants = infrastructureConstants;
+			_transactionWrapper = transactionWrapper;
 		}
 
-		public void ProcessNextDayAccountTransactions(IEnumerable<ResponseStockDTO> responseStockDTOs)
+		public async Task ProcessNextDayAccountTransactions(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
 		{
-			using (var httpClient = _httpClientFactory.CreateClient())
+			var finalizeTransactionResponseDTOs = await _transactionWrapper.ProcessNextDayAccountTransactions(finalizeTransactionRequestDTOs);
+            using (var httpClient = _httpClientFactory.CreateClient())
 			{
-				var json = JsonConvert.SerializeObject(responseStockDTOs);
+				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTOs);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
-				var response = httpClient.PostAsync(_InfrastructureConstants.GetFinalizeStocksRoute(responseStockDTOs), content);
+				var response = httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTOs), content);
 			}
 		}
-
-
-		//public void ProcessNextDayAccountPurchase(ResponseStockDTO buyStockResponseDTO)
-		//{
-		//	//using(var httpClient = _httpClientFactory.CreateClient())
-		//	//{
-		//	//	var json = JsonConvert.SerializeObject(buyStockResponseDTO);
-		//	//	var content = new StringContent(json, Encoding.UTF8, "application/json");
-		//	//	var response = httpClient.PostAsync("api/accounts/finalize...", content);
-		//	//}
-		//	Console.WriteLine("account updated");
-		//}
-
-		//public void ProcessNextDayAccountSale(SellStockResponseDTO sellStockResponseDTO)
-		//{
-		//	//using(var httpClient = _httpClientFactory.CreateClient())
-		//	//{
-		//	//	var json = JsonConvert.SerializeObject(sellStockResponseDTO);
-		//	//	var content = new StringContent(json, Encoding.UTF8, "application/json");
-		//	//	var response = httpClient.PostAsync("api/accounts/sale...", content);
-		//	//}
-		//	Console.WriteLine("account updated");
-		//}
 	}
 }

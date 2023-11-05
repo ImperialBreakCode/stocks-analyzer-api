@@ -8,16 +8,16 @@ namespace API.Settlement.Controllers
 	[ApiController]
 	public class SettlementController : ControllerBase
 	{
-		private readonly ISettlementServiceWrapper _settlementServiceWrapper;
-		public SettlementController(ISettlementServiceWrapper serviceWrapper)
+		private readonly ISettlementService _settlementService;
+		public SettlementController(ISettlementService settlementService)
 		{
-			_settlementServiceWrapper = serviceWrapper;
+			_settlementService = settlementService;
 		}
 		[HttpPost]
 		[Route("processTransactions")]
-		public async Task<IActionResult> ProcessTransactions([FromBody] IEnumerable<RequestStockDTO> requestStockDTOs)
+		public IActionResult ProcessTransactions([FromBody] IEnumerable<FinalizeTransactionRequestDTO> requestStockDTOs)
 		{
-			var responseStockDTOs = await _settlementServiceWrapper.ProcessTransactions(requestStockDTOs);
+			_settlementService.ProcessTransactions(requestStockDTOs);
 
 			return NoContent();
 		}

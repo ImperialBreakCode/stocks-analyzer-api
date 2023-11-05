@@ -18,11 +18,14 @@ namespace API.Settlement.Extensions
 			services.AddTransient<IDateTimeService, DateTimeService>();
 			services.AddSingleton<IDictionary<string, ICollection<Wallet>>>(new Dictionary<string, ICollection<Wallet>>());
 			services.AddSingleton<IUserWalletDictionaryService, UserWalletDictionaryService>();
-			services.AddTransient<IJobService, JobService>();
-			services.AddSingleton<IHangfireService, HangfireService>();
+
 			services.AddTransient<IBuyService, BuyService>();
 			services.AddTransient<ISellService, SellService>();
-			services.AddScoped<ISettlementServiceWrapper, SettlementServiceWrapper>();
+			services.AddTransient<ITransactionWrapper, TransactionWrapper>();
+
+			services.AddTransient<IJobService, JobService>();
+			services.AddSingleton<IHangfireService, HangfireService>();
+			services.AddScoped<ISettlementService, SettlementService>();
 		}
 		public static void AddHangfireConfiguration(this IServiceCollection services, IConfiguration configuration)
 		{

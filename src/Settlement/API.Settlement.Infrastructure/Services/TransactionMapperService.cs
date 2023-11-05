@@ -17,20 +17,23 @@ namespace API.Settlement.Infrastructure.Services
 			_mapper = mapper;
 			_InfrastructureConstants = constants;
 		}
-		public ResponseStockDTO CreateTransactionResponse(RequestStockDTO requestStockDTO, decimal totalPriceIncludingCommission, Status status)
+		public StockInfoResponseDTO MapToStockResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
 		{
-			var responseStockDTO = _mapper.Map<ResponseStockDTO>(requestStockDTO);
-			responseStockDTO.IsSuccessful = status == Status.Scheduled;
-			responseStockDTO.Message = GetMessageBasedOnStatus(status);
-			responseStockDTO.SinglePrice = GetSinglePriceWithCommission(totalPriceIncludingCommission, responseStockDTO.Quantity);
-			responseStockDTO.TotalPriceIncludingCommission = totalPriceIncludingCommission;
-			return responseStockDTO;
-		}
-		public Wallet CreateStockDTO(RequestStockDTO requestStockDTO)
-		{
-			return _mapper.Map<Wallet>(requestStockDTO);
+			var stockInfoResponseDTO = _mapper.Map<StockInfoResponseDTO>(stockInfoRequestDTO);
+			stockInfoResponseDTO.IsSuccessful = status == Status.Success;
+			stockInfoResponseDTO.Message = GetMessageBasedOnStatus(status);
+			stockInfoResponseDTO.SinglePriceIncludingCommission = GetSinglePriceWithCommission(totalPriceIncludingCommission, stockInfoResponseDTO.Quantity);
+
+			return stockInfoResponseDTO;
 		}
 
+		public FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<StockInfoResponseDTO> stockInfoResponseDTOs)
+		{
+			var finalizeTransactionResponseDTO = _mapper.Map<FinalizeTransactionResponseDTO>(finalizeTransactionRequestDTO);
+			finalizeTransactionResponseDTO.StockInfoResponseDTOs = stockInfoResponseDTOs;
+
+			return finalizeTransactionResponseDTO;
+		}
 		private decimal GetSinglePriceWithCommission(decimal totalPriceIncludingCommission, decimal quantity)
 		{
 			return totalPriceIncludingCommission / quantity;
