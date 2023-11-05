@@ -1,6 +1,7 @@
 ﻿using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.UserService;
+using API.Accounts.Application.Settings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Accounts.Controllers
@@ -10,12 +11,12 @@ namespace API.Accounts.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IConfiguration _conf;
+        private readonly IAccountsSettingsManager _settingsManager;
 
-        public UserController(IUserService userService, IConfiguration configuration)
+        public UserController(IUserService userService, IAccountsSettingsManager settingsManager)
         {
             _userService = userService;
-            _conf = configuration;
+            _settingsManager = settingsManager;
         }
 
         [HttpPost]
@@ -30,7 +31,7 @@ namespace API.Accounts.Controllers
         [Route("Login")]
         public IActionResult Login(LoginUserDTO userDTO)
         {
-            var response = _userService.LoginUser(userDTO, _conf.GetSection("Secrets")["SecretKey"]);
+            var response = _userService.LoginUser(userDTO, _settingsManager.GetSecretKey());
 
             if (response.Message == ResponseMessages.AuthSuccess)
             {

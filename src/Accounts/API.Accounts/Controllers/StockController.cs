@@ -68,9 +68,16 @@ namespace API.Accounts.Controllers
 
         [HttpPost]
         [Route("ConfirmSale/{walletId}")]
-        public IActionResult ConfirmSale(string walletId)
+        public async Task<IActionResult> ConfirmSale(string walletId)
         {
-            return Ok();
+            string response = await _stockService.ConfirmSales(walletId);
+
+            if (response == ResponseMessages.WalletNotFound)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
         }
     }
 }

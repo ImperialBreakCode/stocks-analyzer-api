@@ -28,5 +28,10 @@ namespace API.Accounts.Implementations
             var response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
         }
+
+        public void Dispose()
+        {
+            _httpClient.Dispose();
+        }
     }
 }
