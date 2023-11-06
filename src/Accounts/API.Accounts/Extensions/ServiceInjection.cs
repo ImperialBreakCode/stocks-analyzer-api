@@ -3,6 +3,7 @@ using API.Accounts.Application.Auth.TokenManager;
 using API.Accounts.Application.Data;
 using API.Accounts.Application.Services.HttpService;
 using API.Accounts.Application.Services.StockService;
+using API.Accounts.Application.Services.TransactionService;
 using API.Accounts.Application.Services.UserService;
 using API.Accounts.Application.Services.WalletService;
 using API.Accounts.Application.Settings;
@@ -22,16 +23,17 @@ namespace API.Accounts.Extensions
 
         public static IServiceCollection InjectServices(this IServiceCollection services)
         {
-            services.AddSingleton<IAccountsSettingsManager, AccountSettingsManager>();
+            services.AddSingleton<IAccountsSettingsManager, AccountSettingsAdapter>();
             
             services.AddSingleton<IHttpClientRoutes, HttpClientRoutes>();
-            services.AddScoped<IHttpService, HttpService>();
+            services.AddScoped<IHttpService, HttpServiceDecorator>();
             services.AddHttpClient();
 
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IStockService, StockService>();
             services.AddTransient<IStockActionManager, StockActionManager>();
             services.AddTransient<IWalletService, WalletService>();
+            services.AddTransient<ITransactionService, TransactionService>();
 
             return services;
         }

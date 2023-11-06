@@ -31,7 +31,7 @@ namespace API.Accounts.Controllers
         [Route("Login")]
         public IActionResult Login(LoginUserDTO userDTO)
         {
-            var response = _userService.LoginUser(userDTO, _settingsManager.GetSecretKey());
+            var response = _userService.LoginUser(userDTO, _settingsManager.GetSecretKey);
 
             if (response.Message == ResponseMessages.AuthSuccess)
             {

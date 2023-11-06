@@ -2,8 +2,8 @@
 {
     public interface IAccountsSettingsManager
     {
-        ExternalMicroservicesHosts GetExternalHosts();
-        ICollection<string> GetAllowedHosts();
-        string GetSecretKey();
+        ExternalMicroservicesHosts GetExternalHosts { get; }
+        ICollection<string> GetAllowedHosts { get; }
+        string GetSecretKey { get; }
     }
 }

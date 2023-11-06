@@ -17,7 +17,7 @@ namespace API.Accounts.Middleware
             //string ip = $"{httpContext.Connection.RemoteIpAddress}:{httpContext.Connection.RemotePort}";
             string ip = $"{httpContext.Connection.RemoteIpAddress}";
 
-            if (settingsManager.GetAllowedHosts().Contains(ip))
+            if (settingsManager.GetAllowedHosts.Contains(ip))
             {
                 await _next.Invoke(httpContext);
             }

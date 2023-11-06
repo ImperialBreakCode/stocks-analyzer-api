@@ -1,16 +1,14 @@
-﻿using API.Accounts.Application.Services.HttpService;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace API.Accounts.Implementations
+namespace API.Accounts.Application.Services.HttpService
 {
     public class HttpService : IHttpService
     {
         private HttpClient _httpClient;
 
-        public HttpService(IHttpClientFactory httpClientFactory)
+        public HttpService(HttpClient httpClient)
         {
-            _httpClient = httpClientFactory.CreateClient();
-            _httpClient.DefaultRequestHeaders.Add("ApiSender", "Api.Accounts");
+            _httpClient = httpClient;
         }
 
         public async Task<T?> GetAsync<T>(string url)
