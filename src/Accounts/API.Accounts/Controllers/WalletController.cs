@@ -31,6 +31,10 @@ namespace API.Accounts.Controllers
             {
                 return StatusCode(StatusCodes.Status201Created, response);
             }
+            else if (response == ResponseMessages.WalletAlreadyExists)
+            {
+                return BadRequest(response);
+            }
 
             return NotFound(response);
         }
@@ -50,9 +54,10 @@ namespace API.Accounts.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetWallet(string id)
+        [Route("GetWallet/{walletId}")]
+        public IActionResult GetWallet(string walletId)
         {
-            var response = _walletService.GetWallet(id);
+            var response = _walletService.GetWallet(walletId);
 
             if (response is null)
             {

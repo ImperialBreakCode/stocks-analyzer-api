@@ -1,7 +1,9 @@
-﻿namespace API.Accounts.Application.Services.TransactionService
+﻿using API.Accounts.Application.DTOs.Request;
+
+namespace API.Accounts.Application.Services.TransactionService
 {
     public interface ITransactionService
     {
-        public void CreateTransaction();
+        void CompleteTransactions(FinalizeTransactionDTO finalizeTransactionDTO);
     }
 }

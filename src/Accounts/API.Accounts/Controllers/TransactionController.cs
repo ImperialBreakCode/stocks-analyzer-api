@@ -1,5 +1,5 @@
 ﻿using API.Accounts.Application.DTOs.Request;
-using Microsoft.AspNetCore.Http;
+using API.Accounts.Application.Services.TransactionService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Accounts.Controllers
@@ -8,10 +8,22 @@ namespace API.Accounts.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
+        private readonly ITransactionService _transactionService;
+
+        public TransactionController(ITransactionService transactionService)
+        {
+            _transactionService = transactionService;
+        }
+
         [HttpPost]
         [Route("CompleteTransaction")]
-        public IActionResult CompleteTransactions(ICollection<TransactionInfoDTO> transactionInfo)
+        public IActionResult CompleteTransactions(FinalizeTransactionDTO transactionInfo)
         {
+            if (transactionInfo.IsSuccessfull)
+            {
+                _transactionService.CompleteTransactions(transactionInfo);
+            }
+
             return Ok();
         }
     }

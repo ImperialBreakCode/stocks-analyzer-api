@@ -10,6 +10,7 @@
         
         public const string WalletNotFound = "Wallet does not exist.";
         public const string WalletCreated = "Wallet created.";
+        public const string WalletAlreadyExists = "The user already has a wallet.";
         public const string NotEnoughBalance = "Not enough balance.";
 
         public const string StockNotFoundInWallet = "This wallet does not contain the desired stock.";
