@@ -24,7 +24,7 @@ namespace API.Settlement.Infrastructure.Services
 
 		public async Task<FinalizeTransactionResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-				decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
+			decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
 				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
 				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
 				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)

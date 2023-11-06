@@ -8,6 +8,3 @@
 		public IEnumerable<StockInfoRequestDTO> StockInfoRequestDTOs { get; set; }
 	}
 }
-/*
- * Един walletId може да съдържа няколко вида stockId
- */

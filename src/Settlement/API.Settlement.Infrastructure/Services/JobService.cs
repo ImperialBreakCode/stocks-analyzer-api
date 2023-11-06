@@ -29,8 +29,9 @@ namespace API.Settlement.Infrastructure.Services
 			{
 				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
-				var response = httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
+				await httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
 			}
 		}
+
 	}
 }
