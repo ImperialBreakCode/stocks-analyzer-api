@@ -52,7 +52,7 @@ namespace API.Accounts.Application.Services.StockService
         private async Task<decimal> GetStockPrice(string name)
         {
             var stockApiResponse = await _httpService
-                .GetAsync<StockApiResponseDTO>($"https://localhost:7160/api/Stock/Current/{name}");
+                .GetAsync<StockApiResponseDTO>(_httpRoutes.GetCurrentStockInfoRoute(name));
 
             return (decimal)stockApiResponse.Close;
         }

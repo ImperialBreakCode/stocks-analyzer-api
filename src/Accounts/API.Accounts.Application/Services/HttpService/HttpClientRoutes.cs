@@ -12,7 +12,7 @@ namespace API.Accounts.Application.Services.HttpService
         }
 
         public string FinalizeStockActionRoute
-            => $"{_settingsManager.GetExternalHosts.SettlementHost}/api/...";
+            => $"{_settingsManager.GetExternalHosts.SettlementHost}/api/Settlement/processTransactions";
 
         public string GetCurrentStockInfoRoute(string stockName)
         {
