@@ -19,10 +19,7 @@ namespace API.Accounts.Controllers
         [Route("CompleteTransaction")]
         public IActionResult CompleteTransactions(FinalizeTransactionDTO transactionInfo)
         {
-            if (transactionInfo.IsSuccessfull)
-            {
-                _transactionService.CompleteTransactions(transactionInfo);
-            }
+            _transactionService.CompleteTransactions(transactionInfo);
 
             return Ok();
         }

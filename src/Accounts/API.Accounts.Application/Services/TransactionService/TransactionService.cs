@@ -17,16 +17,22 @@ namespace API.Accounts.Application.Services.TransactionService
         {
             using (var context = _accountsData.CreateDbContext())
             {
-                foreach (var stockTransactionInfo in finalizeTransactionDTO.Stocks)
+                foreach (var stockTransactionInfo in finalizeTransactionDTO.StockInfoResponseDTOs)
                 {
-                    Transaction transaction = new Transaction()
+                    if (stockTransactionInfo.IsSuccessful)
                     {
-                        StockId = stockTransactionInfo.StockId,
-                        Quantity = stockTransactionInfo.Quantity,
-                        TotalAmount = CalculateTotalAmount(stockTransactionInfo, finalizeTransactionDTO.IsSale),
-                        Walletid = finalizeTransactionDTO.WalletId,
-                        Date = DateTime.UtcNow
-                    };
+                        Transaction transaction = new Transaction()
+                        {
+                            StockId = stockTransactionInfo.StockId,
+                            Quantity = stockTransactionInfo.Quantity,
+                            TotalAmount = CalculateTotalAmount(stockTransactionInfo, finalizeTransactionDTO.IsSale),
+                            Walletid = finalizeTransactionDTO.WalletId,
+                            Date = DateTime.UtcNow
+                        };
+
+                        context.Transactions.Insert(transaction);
+                    }
+                    
                 }
 
                 context.Commit();

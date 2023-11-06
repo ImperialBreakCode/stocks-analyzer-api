@@ -4,6 +4,6 @@
     {
         public string StockId { get; set; }
         public int Quantity { get; set; }
-        public decimal SinglePrice { get; set; }
+        public decimal SinglePriceExcludingCommission { get; set; }
     }
 }

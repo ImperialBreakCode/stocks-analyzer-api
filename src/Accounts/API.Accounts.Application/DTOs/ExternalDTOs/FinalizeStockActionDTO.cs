@@ -7,7 +7,7 @@ namespace API.Accounts.Application.DTOs.ExternaDTOs
         public string WalletId { get; set; }
         public string UserId { get; set; }
         public bool IsSale { get; set; }
-        public ICollection<StockActionInfo> Stocks { get; set; }
+        public ICollection<StockActionInfo> StockInfoRequestDTOs { get; set; }
     }
 }
 

@@ -18,7 +18,7 @@ namespace API.Accounts.Application.Services.StockService
 
         public async Task ExecutePurchase(FinalizeStockActionDTO finalizeDto, ICollection<Stock> stocks)
         {
-            finalizeDto.Stocks = stocks
+            finalizeDto.StockInfoRequestDTOs = stocks
                 .Select(s => CreateStockActionInfo(s.WaitingForPurchaseCount, s).Result)
                 .ToList();
 
@@ -27,7 +27,7 @@ namespace API.Accounts.Application.Services.StockService
 
         public async Task ExecuteSell(FinalizeStockActionDTO finalizeDto, ICollection<Stock> stocks)
         {
-            finalizeDto.Stocks = stocks
+            finalizeDto.StockInfoRequestDTOs = stocks
                 .Select(s => CreateStockActionInfo(s.WaitingForSaleCount, s).Result)
                 .ToList();
 
@@ -44,7 +44,7 @@ namespace API.Accounts.Application.Services.StockService
             return new StockActionInfo()
             {
                 Quantity = quantity,
-                SinglePrice = await GetStockPrice(stock.StockName),
+                SinglePriceExcludingCommission = await GetStockPrice(stock.StockName),
                 StockId = stock.Id
             };
         }
