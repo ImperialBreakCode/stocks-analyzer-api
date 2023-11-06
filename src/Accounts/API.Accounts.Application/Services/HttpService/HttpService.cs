@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace API.Accounts.Application.Services.HttpService
 {
@@ -23,7 +25,8 @@ namespace API.Accounts.Application.Services.HttpService
 
         public async Task PostAsync(string url, object data)
         {
-            StringContent content = new StringContent(JsonConvert.SerializeObject(data));
+            StringContent content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+
             var response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
         }
