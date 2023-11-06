@@ -6,6 +6,7 @@ namespace API.Accounts.Application.Services.StockService
     public interface IStockService
     {
         GetStockResponseDTO? GetStockById(string stockId);
+        ICollection<GetStockResponseDTO>? GetStocksByWalletId(string walletId);
         Task<string> AddForPurchase(StockActionDTO stockActionDTO);
         string AddForSale(StockActionDTO stockActionDTO);
         Task<string> ConfirmSales(string walletId);

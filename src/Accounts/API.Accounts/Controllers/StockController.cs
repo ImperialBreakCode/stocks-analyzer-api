@@ -30,7 +30,21 @@ namespace API.Accounts.Controllers
             return Ok(resposne);
         }
 
-        [HttpPost]
+        [HttpGet]
+        [Route("GetStocksInWallet/{walletId}")]
+        public IActionResult GetStocksInWallet(string walletId)
+        {
+            ICollection<GetStockResponseDTO>? resposne = _stockService.GetStocksByWalletId(walletId);
+
+            if (resposne is null)
+            {
+                return NotFound("Wallet not found");
+            }
+
+            return Ok(resposne);
+        }
+
+        [HttpPut]
         [Route("AddStockForPurchase")]
         public async Task<IActionResult> AddStockForPurchase(StockActionDTO stockAction)
         {
@@ -48,7 +62,7 @@ namespace API.Accounts.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("AddStockForSale")]
         public IActionResult AddStockForSale(StockActionDTO stockActionDTO)
         {

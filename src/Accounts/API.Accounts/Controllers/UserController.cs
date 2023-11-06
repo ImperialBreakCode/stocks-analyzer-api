@@ -42,9 +42,17 @@ namespace API.Accounts.Controllers
         }
 
         [HttpGet]
+        [Route("UserInformation/{username}")]
         public IActionResult UserInformation(string username)
         {
-            return Ok();
+            GetUserResponseDTO? userDto = _userService.GetUserByUserName(username);
+
+            if (userDto is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userDto);
         }
     }
 }

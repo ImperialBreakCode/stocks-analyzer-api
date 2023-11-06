@@ -25,7 +25,7 @@ namespace API.Accounts.Application.Services.WalletService
                     return string.Format(ResponseMessages.UserNotFound, username);
                 }
 
-                if (context.Wallets.GetManyByCondition(w => w.UserId == user.Id).Any())
+                if (context.Wallets.GetUserWallet(user.Id) is not null)
                 {
                     return ResponseMessages.WalletAlreadyExists;
                 }

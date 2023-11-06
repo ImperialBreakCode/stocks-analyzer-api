@@ -21,6 +21,12 @@ namespace API.Accounts.Controllers
             return Ok();
         }
 
+        [HttpDelete]
+        public IActionResult CloseWallet()
+        {
+            return Ok();
+        }
+
         [HttpPost]
         [Route("CreateWallet/{username}")]
         public IActionResult CreateWallet(string username)

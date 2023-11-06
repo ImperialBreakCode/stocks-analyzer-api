@@ -23,5 +23,10 @@ namespace API.Accounts.Infrastructure.Repositories
         {
             return new UserRepository(_sqlConnection, _sqlTransaction);
         }
+
+        public IWalletRepository CreateWalletRepo()
+        {
+            return new WalletRepository(_sqlConnection, _sqlTransaction);
+        }
     }
 }

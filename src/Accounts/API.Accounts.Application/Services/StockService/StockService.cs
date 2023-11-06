@@ -187,6 +187,36 @@ namespace API.Accounts.Application.Services.StockService
             return result;
         }
 
+        public ICollection<GetStockResponseDTO>? GetStocksByWalletId(string walletId)
+        {
+            ICollection<GetStockResponseDTO>? result = null;
+
+            using (var context = _accountsData.CreateDbContext())
+            {
+                if (context.Wallets.GetOneById(walletId) is not null)
+                {
+                    result = new List<GetStockResponseDTO>();
+
+                    var stocks = context.Stocks.GetManyByCondition(s => s.WalletId == walletId);
+
+                    foreach (var stock in stocks)
+                    {
+                        result.Add(new GetStockResponseDTO()
+                        {
+                            StockId = stock.Id,
+                            StockName = stock.StockName,
+                            Quantity = stock.Quantity,
+                            WalletId = stock.WalletId
+                        });
+                    }
+
+                }
+                
+            }
+
+            return result;
+        }
+
         private FinalizeStockActionDTO CreateFinalizeStockDto(bool forSale, string walletId, string userId)
         {
             FinalizeStockActionDTO finalizeDto = new FinalizeStockActionDTO();

@@ -15,7 +15,7 @@ namespace API.Accounts.Infrastructure.DbContext
 
         private IUserRepository _users;
         private IRepository<Stock> _stocks;
-        private IRepository<Wallet> _wallets;
+        private IWalletRepository _wallets;
         private IRepository<Transaction> _transactions;
 
         public AccountsDbContext(string connectionString)
@@ -33,8 +33,8 @@ namespace API.Accounts.Infrastructure.DbContext
         public IRepository<Stock> Stocks 
             => _stocks ??= _repositoryFactory.CreateGenericRepo<Stock>();
 
-        public IRepository<Wallet> Wallets
-            => _wallets ??= _repositoryFactory.CreateGenericRepo<Wallet>();
+        public IWalletRepository Wallets
+            => _wallets ??= _repositoryFactory.CreateWalletRepo();
 
         public IRepository<Transaction> Transactions 
             => _transactions ??= _repositoryFactory.CreateGenericRepo<Transaction>();
