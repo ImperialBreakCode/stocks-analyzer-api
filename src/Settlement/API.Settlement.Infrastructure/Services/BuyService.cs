@@ -22,12 +22,9 @@ namespace API.Settlement.Infrastructure.Services
 			_transactionMapperService = buyTransactionMapperService;
 		}
 
-		public async Task<IEnumerable<FinalizeTransactionResponseDTO>> BuyStocks(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
+		public async Task<FinalizeTransactionResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var finalizeTransactionResponseDTOs = new List<FinalizeTransactionResponseDTO>();
-			foreach (var finalizeTransactionRequestDTO in finalizeTransactionRequestDTOs)
-			{
-				decimal walletBalance = 1000.50M;//await GetWalletBalance(requestStockDTO.WalletId);
+				decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
 				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
 				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
 				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
@@ -51,10 +48,7 @@ namespace API.Settlement.Infrastructure.Services
 
 				finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
 
-				finalizeTransactionResponseDTOs.Add(finalizeTransactionResponseDTO);
-			}
-
-			return finalizeTransactionResponseDTOs;
+			return finalizeTransactionResponseDTO;
 		}
 
 		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)

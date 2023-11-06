@@ -15,9 +15,9 @@ namespace API.Settlement.Controllers
 		}
 		[HttpPost]
 		[Route("processTransactions")]
-		public IActionResult ProcessTransactions([FromBody] IEnumerable<FinalizeTransactionRequestDTO> requestStockDTOs)
+		public IActionResult ProcessTransactions([FromBody] FinalizeTransactionRequestDTO requestStockDTO)
 		{
-			_settlementService.ProcessTransactions(requestStockDTOs);
+			_settlementService.ProcessTransaction(requestStockDTO);
 
 			return NoContent();
 		}

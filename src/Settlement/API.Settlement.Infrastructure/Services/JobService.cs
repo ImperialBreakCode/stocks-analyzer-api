@@ -22,14 +22,14 @@ namespace API.Settlement.Infrastructure.Services
 			_transactionWrapper = transactionWrapper;
 		}
 
-		public async Task ProcessNextDayAccountTransactions(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
+		public async Task ProcessNextDayAccountTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var finalizeTransactionResponseDTOs = await _transactionWrapper.ProcessNextDayAccountTransactions(finalizeTransactionRequestDTOs);
-            using (var httpClient = _httpClientFactory.CreateClient())
+			var finalizeTransactionResponseDTO = await _transactionWrapper.ProcessNextDayAccountTransaction(finalizeTransactionRequestDTO);
+			using (var httpClient = _httpClientFactory.CreateClient())
 			{
-				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTOs);
+				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
-				var response = httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTOs), content);
+				var response = httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
 			}
 		}
 	}

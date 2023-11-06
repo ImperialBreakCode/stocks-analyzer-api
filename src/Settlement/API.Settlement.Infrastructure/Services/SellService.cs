@@ -23,17 +23,14 @@ namespace API.Settlement.Infrastructure.Services
 
 		}
 
-		public async Task<IEnumerable<FinalizeTransactionResponseDTO>> SellStocks(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
+		public async Task<FinalizeTransactionResponseDTO> SellStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var finalizeTransactionResponseDTOs = new List<FinalizeTransactionResponseDTO>();
-			foreach (var finalizeTransactionRequestDTO in finalizeTransactionRequestDTOs)
-			{
-				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
+			var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
 				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
 				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 				{
 					var stockInfoResponseDTO = new StockInfoResponseDTO();
-					var stockDTO = new StockDTO() { WalletId = "1", StockId = "1", Quantity = 1, StockName = "MC" };//await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
+					var stockDTO = await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
 					decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
 					if (stockDTO.Quantity < stockInfoRequestDTO.Quantity)
 					{
@@ -51,10 +48,7 @@ namespace API.Settlement.Infrastructure.Services
 
 				finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
 
-				finalizeTransactionResponseDTOs.Add(finalizeTransactionResponseDTO);
-			}
-
-			return finalizeTransactionResponseDTOs;
+			return finalizeTransactionResponseDTO;
 		}
 
 		private async Task<StockDTO> GetStockDTO(string uri)

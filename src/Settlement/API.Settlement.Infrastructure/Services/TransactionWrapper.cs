@@ -21,18 +21,14 @@ namespace API.Settlement.Infrastructure.Services
 			SellService = sellService;
 		}
 
-		public async Task<IEnumerable<FinalizeTransactionResponseDTO>> ProcessNextDayAccountTransactions(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
+		public async Task<FinalizeTransactionResponseDTO> ProcessNextDayAccountTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var finalizeTransactionBuyRequestDTOs = finalizeTransactionRequestDTOs.Where(x => !x.IsSale);
-			var finalizeTransactionSellRequestDTOs = finalizeTransactionRequestDTOs.Where(x => x.IsSale);
-
-
-			var finalizeTransactionBuyResponseDTOs = await BuyService.BuyStocks(finalizeTransactionBuyRequestDTOs);
-			var finalizeTransactionSellResponseDTOs = await SellService.SellStocks(finalizeTransactionSellRequestDTOs);
-
-			var finalizeTransactionResponseDTOs = finalizeTransactionBuyResponseDTOs.Concat(finalizeTransactionSellResponseDTOs);
-
-			return finalizeTransactionResponseDTOs;
+			if (finalizeTransactionRequestDTO.IsSale)
+			{
+				return await SellService.SellStocks(finalizeTransactionRequestDTO);
+			}
+			
+			return await BuyService.BuyStocks(finalizeTransactionRequestDTO);
 		}
 	}
 }

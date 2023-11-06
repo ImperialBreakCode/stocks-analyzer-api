@@ -9,7 +9,7 @@ namespace API.Settlement.Domain.Interfaces
 		string TransactionSuccessMessage { get; }
 		decimal Commission { get; }
 		string GETWalletBalanceRoute(string walletId);
-		string POSTCompleteTransactionRoute(IEnumerable<FinalizeTransactionResponseDTO> responseStockDTOs);
+		string POSTCompleteTransactionRoute(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
 		string GETStockRoute(string stockId);
 	}
 }

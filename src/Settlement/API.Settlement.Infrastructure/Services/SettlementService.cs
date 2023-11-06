@@ -12,9 +12,9 @@ namespace API.Settlement.Infrastructure.Services
 		{
 			_hangfireService = hangfireService;
 		}
-		public void ProcessTransactions(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
+		public void ProcessTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			_hangfireService.ScheduleStockProcessingJob(finalizeTransactionRequestDTOs);
+			_hangfireService.ScheduleStockProcessingJob(finalizeTransactionRequestDTO);
 		}
 
 	}

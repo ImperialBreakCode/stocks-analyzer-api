@@ -5,6 +5,6 @@ namespace API.Settlement.Domain.Interfaces
 {
     public interface ISettlementService
 	{
-		void ProcessTransactions(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs);
+		void ProcessTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

@@ -6,6 +6,6 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface IBuyService
 	{
-		Task<IEnumerable<FinalizeTransactionResponseDTO>> BuyStocks(IEnumerable<FinalizeTransactionRequestDTO> requestStockDTOs);
+		Task<FinalizeTransactionResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

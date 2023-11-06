@@ -5,6 +5,6 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface IJobService
 	{
-		Task ProcessNextDayAccountTransactions(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs);
+		Task ProcessNextDayAccountTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

@@ -5,6 +5,6 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface IHangfireService
 	{
-		void ScheduleStockProcessingJob(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs);
+		void ScheduleStockProcessingJob(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

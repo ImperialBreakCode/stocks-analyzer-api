@@ -16,9 +16,9 @@ namespace API.Settlement.Infrastructure.Services
 			_jobService = jobService;
 		}
 
-		public void ScheduleStockProcessingJob(IEnumerable<FinalizeTransactionRequestDTO> finalizeTransactionRequestDTOs)
+		public void ScheduleStockProcessingJob(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransactions(finalizeTransactionRequestDTOs), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
+			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(finalizeTransactionRequestDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
 		}
 	}
 }
