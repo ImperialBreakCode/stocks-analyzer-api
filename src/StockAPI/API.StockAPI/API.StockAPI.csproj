@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\API.StockAPI.Domain\API.StockAPI.Domain.csproj" />
+    <ProjectReference Include="..\API.StockAPI.Infrastructure\API.StockAPI.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
