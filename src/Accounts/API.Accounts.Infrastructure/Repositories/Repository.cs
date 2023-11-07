@@ -64,7 +64,6 @@ namespace API.Accounts.Infrastructure.Repositories
 
             EntityConverterHelper.ToQuery(entity, command);
 
-            command.Parameters.AddWithValue("@id", entity.Id);
             command.ExecuteNonQuery();
         }
 

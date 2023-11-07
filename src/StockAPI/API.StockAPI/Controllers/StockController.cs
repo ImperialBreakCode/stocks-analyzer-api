@@ -21,7 +21,7 @@ namespace API.StockAPI.Controllers
         [Route("Current/{symbol}")]
         public async Task<IActionResult> GetCurrentStock(string symbol)
         {
-            if (symbol == null)
+            if (symbol == null) 
             {
                 return BadRequest();
             }
