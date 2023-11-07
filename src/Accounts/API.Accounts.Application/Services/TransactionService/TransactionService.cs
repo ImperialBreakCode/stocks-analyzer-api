@@ -1,6 +1,7 @@
 ﻿using API.Accounts.Application.Data;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Domain.Entities;
+using API.Accounts.Domain.Interfaces.RepositoryBase;
 
 namespace API.Accounts.Application.Services.TransactionService
 {
@@ -17,6 +18,13 @@ namespace API.Accounts.Application.Services.TransactionService
         {
             using (var context = _accountsData.CreateDbContext())
             {
+                Wallet? wallet = context.Wallets.GetOneById(finalizeTransactionDTO.WalletId);
+
+                if (wallet is null)
+                {
+                    return;
+                }
+
                 foreach (var stockTransactionInfo in finalizeTransactionDTO.StockInfoResponseDTOs)
                 {
                     if (stockTransactionInfo.IsSuccessful)
@@ -30,11 +38,14 @@ namespace API.Accounts.Application.Services.TransactionService
                             Date = DateTime.UtcNow
                         };
 
+                        wallet.Balance += CalculateTotalAmount(stockTransactionInfo, finalizeTransactionDTO.IsSale);
+
                         context.Transactions.Insert(transaction);
                     }
                     
                 }
 
+                context.Wallets.Update(wallet);
                 context.Commit();
             }
         }
