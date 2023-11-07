@@ -1,5 +1,6 @@
 ﻿using API.Analyzer.Domain.DTOs;
-using API.Analyzer.Domain.Interface;
+using API.Accounts.Domain.Entities;
+using API.Analyzer.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,37 +10,55 @@ namespace API.Analyzer.Controllers
     [ApiController]
     public class AnalyzerController : ControllerBase
     {
-        private readonly IService service;
-        public AnalyzerController(IService service)
+        private readonly IApiService service;
+        public AnalyzerController(IApiService service)
         {
             this.service = service;
         }
 
         [HttpGet("get-action/{userId}")]
-        public IActionResult GetAction(int userId)
+        public IActionResult GetAction(string userId)
         {
             return Ok();
         }
-        [HttpGet("get-user/{amount}")]
-        public bool CheckProfitability(int id, decimal amount)
+
+        [HttpGet("check-profitability/{userId}/{balance}")]
+        public async Task<IActionResult> CheckProfitability(string userId, decimal balance)
         {
-            return service.ProfitablenessAccountCheck(id, amount);
+            decimal? result = await service.ProfitablenessAccountCheck(userId, balance);
+            if (result.HasValue && result.Value >= balance)
+            {
+                return Ok(true);
+            }
+            return BadRequest(false);
         }
 
-        [HttpGet("get-info/{id}")]
-        public async Task<IActionResult> GetInfo(int id)
+        [HttpGet("get-info/{userId}")]
+        public async Task<IActionResult> GetInfo(string userId)
         {
-            User jsonContent = await service.UserProfilInfo(id);
+            Wallet jsonContent = await service.UserProfilInfo(userId);
             if (jsonContent != null)
             {
                 return Ok(jsonContent);
             }
-            return StatusCode(500, "Ami greshkaaa");
+            return StatusCode(500, "User profile not found");
         }
 
-        //public void Action(string userId)
+        //[HttpGet("profit-change-per-day/{id}")]
+        //public async Task<IActionResult> CalculateProfitChangePerDay(string userId)
         //{
-        //    _service.UserPortfolioProfit(userId);
+        //    decimal? todayProfitability = await service.GetProfitabilityForDate(id, DateTime.Today);
+        //    decimal? yesterdayProfitability = await service.GetProfitabilityForDate(id, DateTime.Today.AddDays(-1));
+        //    if (todayProfitability.HasValue && yesterdayProfitability.HasValue && yesterdayProfitability.Value != 0)
+        //    {
+        //        decimal percentageChange = ((todayProfitability.Value - yesterdayProfitability.Value) / yesterdayProfitability.Value) * 100;
+
+        //        return Ok(percentageChange);
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Unable to calculate percentage change");
+        //    }
         //}
-    }
+    } 
 }

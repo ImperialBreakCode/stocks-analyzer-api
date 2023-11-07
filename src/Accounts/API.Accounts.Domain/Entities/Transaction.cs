@@ -7,6 +7,5 @@
         public DateTime Date { get; set; }
         public string StockId { get; set; }
         public string Walletid { get; set; }
-        public bool IsSuccessful { get; set; }
     }
 }
