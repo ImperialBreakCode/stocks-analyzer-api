@@ -1,7 +1,6 @@
 ﻿using API.Accounts.Application.Data;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Domain.Entities;
-using API.Accounts.Domain.Interfaces.RepositoryBase;
 
 namespace API.Accounts.Application.Services.TransactionService
 {
@@ -25,21 +24,28 @@ namespace API.Accounts.Application.Services.TransactionService
                     return;
                 }
 
-                foreach (var stockTransactionInfo in finalizeTransactionDTO.StockInfoResponseDTOs)
+                foreach (var stockInfo in finalizeTransactionDTO.StockInfoResponseDTOs)
                 {
-                    if (stockTransactionInfo.IsSuccessful)
+                    if (stockInfo.IsSuccessful)
                     {
+                        Stock stock = context.Stocks.GetOneById(stockInfo.StockId)!;
+
+                        stock.Quantity = finalizeTransactionDTO.IsSale 
+                            ? stock.Quantity - stockInfo.Quantity 
+                            : stock.Quantity + stockInfo.Quantity;
+
                         Transaction transaction = new Transaction()
                         {
-                            StockId = stockTransactionInfo.StockId,
-                            Quantity = stockTransactionInfo.Quantity,
-                            TotalAmount = CalculateTotalAmount(stockTransactionInfo, finalizeTransactionDTO.IsSale),
+                            StockId = stockInfo.StockId,
+                            Quantity = stockInfo.Quantity,
+                            TotalAmount = CalculateTotalAmount(stockInfo, finalizeTransactionDTO.IsSale),
                             Walletid = finalizeTransactionDTO.WalletId,
                             Date = DateTime.UtcNow
                         };
 
-                        wallet.Balance += CalculateTotalAmount(stockTransactionInfo, finalizeTransactionDTO.IsSale);
+                        wallet.Balance += CalculateTotalAmount(stockInfo, finalizeTransactionDTO.IsSale);
 
+                        context.Stocks.Update(stock);
                         context.Transactions.Insert(transaction);
                     }
                     
