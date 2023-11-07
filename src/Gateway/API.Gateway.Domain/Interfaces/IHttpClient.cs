@@ -12,5 +12,7 @@ namespace API.Gateway.Domain.Interfaces
 		Task<string> PostAsync(string url, string message);
 		Task<IActionResult> PostAsJsonAsync(string url, object obj);
 		Task<string> PostAsJsonAsyncReturnString(string url, object obj);
+		Task<string> GetStringAsync(string url);
+		Task<IActionResult> GetActionResult(string url);
 	}
 }

@@ -1,16 +1,21 @@
-﻿namespace API.Analyzer.Domain.DTOs
-{
-    public class User
+﻿    namespace API.Analyzer.Domain.DTOs
     {
-        public int Id { get; set; }
-        public string Username { get; set; }
-        public decimal Amount { get; set; }
-
-        //  public ICollection<StockDTO>StockDTOs { get; set; }
-        public User(string Name, decimal amount)
+        public class User
         {
-            Username = Name;
-            Amount = amount;
+            public string UserId { get; set; }
+            public string Username { get; set; }
+            public decimal Balance { get; set; }
+
+        public User()
+        {
+
+        }
+        public User(string userId, string name, decimal balance)
+        {
+                this.UserId = userId;
+                this.Username = name;
+                this.Balance = balance;
+        }
+
         }
     }
-}
