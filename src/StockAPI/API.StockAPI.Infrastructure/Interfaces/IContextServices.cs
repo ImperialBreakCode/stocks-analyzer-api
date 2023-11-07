@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.StockAPI.Infrastructure.Databases
+namespace API.StockAPI.Infrastructure.Interfaces
 {
-    internal class Class1
+    public interface IContextServices
     {
     }
 }

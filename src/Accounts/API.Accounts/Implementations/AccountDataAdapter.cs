@@ -1,7 +1,7 @@
 ﻿using API.Accounts.Application.Data;
 using API.Accounts.Domain.Interfaces.DbContext;
 
-namespace API.Accounts.Data
+namespace API.Accounts.Implementations
 {
     public class AccountDataAdapter : IAccountsData
     {

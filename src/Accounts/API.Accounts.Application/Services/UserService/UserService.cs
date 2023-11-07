@@ -20,11 +20,6 @@ namespace API.Accounts.Application.Services.UserService
             _tokenManager = tokenManager;
         }
 
-        public string GetUserByUserName(string username)
-        {
-            throw new NotImplementedException();
-        }
-
         public LoginResponseDTO LoginUser(LoginUserDTO loginDTO, string secretKey)
         {
             LoginResponseDTO responseDTO = new LoginResponseDTO();
@@ -67,6 +62,30 @@ namespace API.Accounts.Application.Services.UserService
                 context.Users.Insert(user);
                 context.Commit();
             }
+        }
+
+        public GetUserResponseDTO? GetUserByUserName(string username)
+        {
+            GetUserResponseDTO? responseDTO = null;
+
+            using (var context = _data.CreateDbContext())
+            {
+                User? user = context.Users.GetOneByUserName(username);
+
+                if (user is not null)
+                {
+                    responseDTO = new GetUserResponseDTO()
+                    {
+                        UserId = user.Id,
+                        UserName = username,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        WalletId = context.Wallets.GetUserWallet(user.Id)?.Id
+                    };
+                }
+            }
+
+            return responseDTO;
         }
     }
 }

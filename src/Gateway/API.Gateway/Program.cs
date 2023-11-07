@@ -28,6 +28,8 @@ public static class Program
 		builder.Services.AddControllers();
 		builder.Services.AddScoped<IHttpClient, GwHttpClient>();
 		builder.Services.AddScoped<IAccountService, AccountService>();
+		builder.Services.AddScoped<IStocksService, StocksService>();
+
 		builder.Services.AddScoped<TokenVerifier>();
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 		builder.Services.AddEndpointsApiExplorer();
@@ -53,10 +55,6 @@ public static class Program
 		builder.Services.AddAuthorization();
 
 		builder.Services.AddHttpClient();
-		//builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-		//.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
-		//.AddEnvironmentVariables();
-		//builder.Services.AddOcelot(builder.Configuration);
 
 		var app = builder.Build();
 

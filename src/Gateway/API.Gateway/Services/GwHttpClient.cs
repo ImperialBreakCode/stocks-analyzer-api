@@ -10,8 +10,8 @@ namespace API.Gateway.Services
 		public GwHttpClient(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
+			_httpClient.DefaultRequestHeaders.Add("Gateway", "");
 		}
-
 
 		public async Task<string> PostAsJsonAsyncReturnString(string url, object obj)
 		{
@@ -31,7 +31,15 @@ namespace API.Gateway.Services
 		{
 			var response = await _httpClient.PostAsJsonAsync(url, obj);
 
-			return (IActionResult)response;
+			if (response.IsSuccessStatusCode)
+			{
+				var content = await response.Content.ReadAsStringAsync();
+				return new OkObjectResult(content);
+			}
+			else
+			{
+				return new StatusCodeResult((int)response.StatusCode);
+			}
 		}
 
 		public async Task<string> PostAsync(string url, string message)
@@ -50,6 +58,34 @@ namespace API.Gateway.Services
 			}
 			return await response.Content.ReadAsStringAsync();
 
+		}
+		public async Task<string> GetStringAsync(string url)
+		{
+			var response = await _httpClient.GetAsync(url);
+			try
+			{
+				response.EnsureSuccessStatusCode();
+			}
+			catch (Exception)
+			{
+
+				return string.Empty;
+			}
+			return await response.Content.ReadAsStringAsync();
+		}
+		public async Task<IActionResult> GetActionResult(string url)
+		{
+			var response = await _httpClient.GetAsync(url);
+
+			if (response.IsSuccessStatusCode)
+			{
+				var content = await response.Content.ReadAsStringAsync();
+				return new OkObjectResult(content);
+			}
+			else
+			{
+				return new StatusCodeResult((int)response.StatusCode);
+			}
 		}
 	}
 }
