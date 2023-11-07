@@ -3,8 +3,8 @@ using API.Settlement.Domain.DTOs.Response;
 
 namespace API.Settlement.Domain.Interfaces
 {
-    public interface ISettlementService
+	public interface IJobService
 	{
-		void ProcessTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
+		Task ProcessNextDayAccountTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

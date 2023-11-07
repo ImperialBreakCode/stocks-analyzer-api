@@ -3,8 +3,8 @@ using API.Settlement.Domain.DTOs.Response;
 
 namespace API.Settlement.Domain.Interfaces
 {
-    public interface ISettlementService
+	public interface IHangfireService
 	{
-		void ProcessTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
+		void ScheduleStockProcessingJob(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }
