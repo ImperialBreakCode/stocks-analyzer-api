@@ -12,7 +12,8 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IMapper _mapper;
 		private readonly IInfrastructureConstants _InfrastructureConstants;
 
-		public TransactionMapperService(IMapper mapper, IInfrastructureConstants constants)
+		public TransactionMapperService(IMapper mapper,
+									IInfrastructureConstants constants)
 		{
 			_mapper = mapper;
 			_InfrastructureConstants = constants;
@@ -20,7 +21,7 @@ namespace API.Settlement.Infrastructure.Services
 		public StockInfoResponseDTO MapToStockResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
 		{
 			var stockInfoResponseDTO = _mapper.Map<StockInfoResponseDTO>(stockInfoRequestDTO);
-			stockInfoResponseDTO.IsSuccessful = status == Status.Success;
+			stockInfoResponseDTO.IsSuccessful = status == Status.Scheduled;
 			stockInfoResponseDTO.Message = GetMessageBasedOnStatus(status);
 			stockInfoResponseDTO.SinglePriceIncludingCommission = GetSinglePriceWithCommission(totalPriceIncludingCommission, stockInfoResponseDTO.Quantity);
 
@@ -34,6 +35,21 @@ namespace API.Settlement.Infrastructure.Services
 
 			return finalizeTransactionResponseDTO;
 		}
+
+		public FinalizeTransactionResponseDTO FilterTransactionSuccessfulStocks(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+		{
+			var successfulStocks = finalizeTransactionResponseDTO.StockInfoResponseDTOs.Where(x => x.IsSuccessful);
+			foreach (var stockInfoResponseDTO in successfulStocks)
+			{
+				stockInfoResponseDTO.Message = _InfrastructureConstants.TransactionSuccessMessage;
+			}
+
+			var filteredfinalizeTransactionResponseDTO = _mapper.Map<FinalizeTransactionResponseDTO>(finalizeTransactionResponseDTO);
+			filteredfinalizeTransactionResponseDTO.StockInfoResponseDTOs = successfulStocks;
+
+			return filteredfinalizeTransactionResponseDTO;
+		}
+
 		private decimal GetSinglePriceWithCommission(decimal totalPriceIncludingCommission, decimal quantity)
 		{
 			return totalPriceIncludingCommission / quantity;
@@ -51,6 +67,6 @@ namespace API.Settlement.Infrastructure.Services
 			}
 		}
 
-		
+
 	}
 }

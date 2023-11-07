@@ -11,26 +11,25 @@ namespace API.Settlement.Infrastructure.Services
 	public class JobService : IJobService
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
-		private readonly IInfrastructureConstants _InfrastructureConstants;
-		private readonly ITransactionWrapper _transactionWrapper;
+		private readonly ITransactionMapperService _transactionMapperService;
 
-
-		public JobService(IHttpClientFactory httpClientFactory, IInfrastructureConstants infrastructureConstants, ITransactionWrapper transactionWrapper)
+		public JobService(IHttpClientFactory httpClientFactory, 
+						ITransactionMapperService transactionMapperService)
 		{
 			_httpClientFactory = httpClientFactory;
-			_InfrastructureConstants = infrastructureConstants;
-			_transactionWrapper = transactionWrapper;
+			_transactionMapperService = transactionMapperService;
 		}
 
-		public async Task ProcessNextDayAccountTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public async Task ProcessNextDayAccountTransaction(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
 		{
-			var finalizeTransactionResponseDTO = await _transactionWrapper.ProcessNextDayAccountTransaction(finalizeTransactionRequestDTO);
+			var transactionSuccessfulStocks = _transactionMapperService.FilterTransactionSuccessfulStocks(finalizeTransactionResponseDTO);
 			using (var httpClient = _httpClientFactory.CreateClient())
 			{
-				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
+				var json = JsonConvert.SerializeObject(transactionSuccessfulStocks);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
-				await httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
-			}
+                //await httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(filteredfinalizeTransactionResponseDTO), content);
+                await Console.Out.WriteLineAsync(json);
+            }
 		}
 
 	}

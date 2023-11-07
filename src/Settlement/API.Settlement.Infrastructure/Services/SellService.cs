@@ -25,12 +25,11 @@ namespace API.Settlement.Infrastructure.Services
 
 		public async Task<FinalizeTransactionResponseDTO> SellStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
 				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
 				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 				{
 					var stockInfoResponseDTO = new StockInfoResponseDTO();
-					var stockDTO = await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
+				var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" };//await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
 					decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
 					if (stockDTO.Quantity < stockInfoRequestDTO.Quantity)
 					{
@@ -38,7 +37,7 @@ namespace API.Settlement.Infrastructure.Services
 					}
 					else
 					{
-						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Success);
+						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
 						//var stock = _transactionMapperService.CreateStockDTO();
 						//TODO: _userDictionaryService.RemoveStock(stockDTO.StockId);
 					}
@@ -46,9 +45,7 @@ namespace API.Settlement.Infrastructure.Services
 					stockInfoResponseDTOs.Add(stockInfoResponseDTO);
 				}
 
-				finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
-
-			return finalizeTransactionResponseDTO;
+			return _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
 		}
 
 		private async Task<StockDTO> GetStockDTO(string uri)

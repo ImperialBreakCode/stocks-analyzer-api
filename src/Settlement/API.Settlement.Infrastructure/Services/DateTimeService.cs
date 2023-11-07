@@ -5,7 +5,7 @@ namespace API.Settlement.Infrastructure.Services
 	public class DateTimeService : IDateTimeService
 	{
 
-		public DateTime UtcNow { get {  return DateTime.Now; } }
+		public DateTime UtcNow => DateTime.UtcNow;
 
 		public string GetCronExpressionForEveryFiveMinutes()
 		{

@@ -10,15 +10,17 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IDateTimeService _dateTimeService;
 		private readonly IJobService _jobService;
 
-		public HangfireService(IDateTimeService dateTimeService, IJobService jobService)
+		public HangfireService(IDateTimeService dateTimeService, 
+							IJobService jobService)
 		{
 			_dateTimeService = dateTimeService;
 			_jobService = jobService;
 		}
 
-		public void ScheduleStockProcessingJob(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public void ScheduleStockProcessingJob(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
 		{
-			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(finalizeTransactionRequestDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
+			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(finalizeTransactionResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
 		}
+
 	}
 }

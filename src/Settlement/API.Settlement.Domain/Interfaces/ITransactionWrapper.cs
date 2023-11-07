@@ -12,6 +12,6 @@ namespace API.Settlement.Domain.Interfaces
 	{
 		IBuyService BuyService { get; }
 		ISellService SellService { get; }
-		Task<FinalizeTransactionResponseDTO> ProcessNextDayAccountTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
+		Task<FinalizeTransactionResponseDTO> CheckAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

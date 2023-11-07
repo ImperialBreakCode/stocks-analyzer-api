@@ -1,9 +1,11 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
+using API.Settlement.Infrastructure.Helpers.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Text.Json;
+using System.Net.Http;
+using System.Text;
 
 namespace API.Settlement.Controllers
 {
@@ -18,12 +20,13 @@ namespace API.Settlement.Controllers
 		}
 		[HttpPost]
 		[Route("processTransactions")]
-		public IActionResult ProcessTransactions([FromBody] FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public async Task<IActionResult> ProcessTransactions([FromBody] FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			_settlementService.ProcessTransaction(finalizeTransactionRequestDTO);
-            return NoContent();
+			var finalizeTransactionResponseDTO = await _settlementService.CheckAvailability(finalizeTransactionRequestDTO);
+			_settlementService.ProcessTransaction(finalizeTransactionResponseDTO);
+			return Ok(finalizeTransactionResponseDTO);
 		}
 
-		
+
 	}
 }

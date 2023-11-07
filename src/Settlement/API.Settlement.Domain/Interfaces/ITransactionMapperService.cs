@@ -9,5 +9,6 @@ namespace API.Settlement.Domain.Interfaces
 	{
 		StockInfoResponseDTO MapToStockResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status);
 		FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<StockInfoResponseDTO> stockInfoResponseDTOs);
+		FinalizeTransactionResponseDTO FilterTransactionSuccessfulStocks(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
 	}
 }

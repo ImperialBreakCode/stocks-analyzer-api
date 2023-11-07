@@ -24,31 +24,28 @@ namespace API.Settlement.Infrastructure.Services
 
 		public async Task<FinalizeTransactionResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
-				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
-				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
-				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
+			decimal walletBalance = 1000.5M;//await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
+			var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
+			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
+			{
+				var stockInfoResponseDTO = new StockInfoResponseDTO();
+				decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
+				if (walletBalance < totalPriceIncludingCommission)
 				{
-					var stockInfoResponseDTO = new StockInfoResponseDTO();
-					decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
-					if (walletBalance < totalPriceIncludingCommission)
-					{
-						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
-					}
-					else
-					{
-						walletBalance -= totalPriceIncludingCommission;
-						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Success);
-						//var stock = _transactionMapperService.CreateStockDTO();
-						//TODO: _userDictionaryService.CreateOrUpdateWallet(stock);
-					}
-
-					stockInfoResponseDTOs.Add(stockInfoResponseDTO);
+					stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
+				}
+				else
+				{
+					walletBalance -= totalPriceIncludingCommission;
+					stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
+					//var stock = _transactionMapperService.CreateStockDTO();
+					//TODO: _userDictionaryService.CreateOrUpdateWallet(stock);
 				}
 
-				finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
+				stockInfoResponseDTOs.Add(stockInfoResponseDTO);
+			}
 
-			return finalizeTransactionResponseDTO;
+			return _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
 		}
 
 		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
@@ -62,7 +59,7 @@ namespace API.Settlement.Infrastructure.Services
 			using (var _httpClient = _httpClientFactory.CreateClient())
 			{
 				var response = await _httpClient.GetAsync(_infrastructureConstants.GETWalletBalanceRoute(walletId));
-				if(response.IsSuccessStatusCode)
+				if (response.IsSuccessStatusCode)
 				{
 					var json = await response.Content.ReadAsStringAsync();
 					balance = JsonConvert.DeserializeObject<decimal>(json);

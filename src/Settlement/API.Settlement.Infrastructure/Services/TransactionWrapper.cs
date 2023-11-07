@@ -15,13 +15,14 @@ namespace API.Settlement.Infrastructure.Services
 
 		public ISellService SellService { get; }
 
-		public TransactionWrapper(IBuyService buyService, ISellService sellService)
+		public TransactionWrapper(IBuyService buyService, 
+								ISellService sellService)
 		{
 			BuyService = buyService;
 			SellService = sellService;
 		}
 
-		public async Task<FinalizeTransactionResponseDTO> ProcessNextDayAccountTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public async Task<FinalizeTransactionResponseDTO> CheckAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
 			if (finalizeTransactionRequestDTO.IsSale)
 			{
