@@ -1,7 +1,9 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
+using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
-using API.Settlement.DTOs.Request;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace API.Settlement.Controllers
 {
@@ -9,33 +11,19 @@ namespace API.Settlement.Controllers
 	[ApiController]
 	public class SettlementController : ControllerBase
 	{
-		public readonly ISettlementService _settlementService;
-
+		private readonly ISettlementService _settlementService;
 		public SettlementController(ISettlementService settlementService)
 		{
 			_settlementService = settlementService;
 		}
-
 		[HttpPost]
-		[Route("buyStock")]
-		public async Task<IActionResult> BuyStock([FromBody] BuyStockDTO buyStockDTO)
+		[Route("processTransactions")]
+		public IActionResult ProcessTransactions([FromBody] FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var responseDTO = await _settlementService.BuyStock(buyStockDTO);
-
-			if (!responseDTO.IsSuccessful) { return BadRequest(responseDTO); }
-
-			return Ok(responseDTO);
+			_settlementService.ProcessTransaction(finalizeTransactionRequestDTO);
+            return NoContent();
 		}
 
-		[HttpPost]
-		[Route("sellStock")]
-		public async Task<IActionResult> SellStock([FromBody] SellStockDTO sellStockDTO)
-		{
-			var responseDTO = await _settlementService.SellStock(sellStockDTO);
-			if (!responseDTO.IsSuccessful) { return BadRequest(responseDTO); }
-
-			return Ok(responseDTO);
-		}
-
+		
 	}
 }
