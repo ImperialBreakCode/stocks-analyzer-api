@@ -4,5 +4,6 @@
     {
         IRepository<T> CreateGenericRepo<T>() where T : IEntity;
         IUserRepository CreateUserRepo();
+        IWalletRepository CreateWalletRepo();
     }
 }

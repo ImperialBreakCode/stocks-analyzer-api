@@ -13,14 +13,14 @@ namespace API.Accounts.Infrastructure.Repositories
 
         public void DeleteByUserName(string userName)
         {
-            var command = CreateCommand($"DELETE FROM [{typeof(User).Name}] WHERE UserName = @userName");
+            var command = CreateCommand($"DELETE FROM [User] WHERE UserName = @userName");
             command.Parameters.AddWithValue("@userName", userName);
             command.ExecuteNonQuery();
         }
 
         public User? GetOneByUserName(string username)
         {
-            var command = CreateCommand($"SELECT * FROM [{typeof(User).Name}] WHERE UserName = @userName");
+            var command = CreateCommand($"SELECT * FROM [User] WHERE UserName = @userName");
             command.Parameters.AddWithValue("@userName", username);
             return EntityConverterHelper.ToEntityCollection<User>(command).FirstOrDefault();
         }
