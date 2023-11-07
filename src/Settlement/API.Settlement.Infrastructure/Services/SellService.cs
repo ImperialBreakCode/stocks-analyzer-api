@@ -29,7 +29,7 @@ namespace API.Settlement.Infrastructure.Services
 				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 				{
 					var stockInfoResponseDTO = new StockInfoResponseDTO();
-				var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" };//await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
+				var stockDTO = await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
 					decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
 					if (stockDTO.Quantity < stockInfoRequestDTO.Quantity)
 					{
