@@ -2,6 +2,7 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
+using Newtonsoft.Json;
 
 namespace API.Settlement.Infrastructure.Services
 {
@@ -14,8 +15,7 @@ namespace API.Settlement.Infrastructure.Services
 
 		public BuyService(IHttpClientFactory httpClientFactory,
 						IInfrastructureConstants constants,
-						ITransactionMapperService buyTransactionMapperService
-			)
+						ITransactionMapperService buyTransactionMapperService)
 		{
 			_httpClientFactory = httpClientFactory;
 			_infrastructureConstants = constants;
@@ -61,7 +61,12 @@ namespace API.Settlement.Infrastructure.Services
 			decimal balance = 0;
 			using (var _httpClient = _httpClientFactory.CreateClient())
 			{
-				balance = decimal.Parse(await _httpClient.GetStringAsync(_infrastructureConstants.GETWalletBalanceRoute(walletId)));
+				var response = await _httpClient.GetAsync(_infrastructureConstants.GETWalletBalanceRoute(walletId));
+				if(response.IsSuccessStatusCode)
+				{
+					var json = await response.Content.ReadAsStringAsync();
+					balance = JsonConvert.DeserializeObject<decimal>(json);
+				}
 			}
 			return balance;
 		}
