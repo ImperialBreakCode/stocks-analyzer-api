@@ -8,7 +8,6 @@ namespace API.Settlement.Domain.DTOs.Response
 {
 	public class StockInfoResponseDTO
 	{
-		public bool IsSuccessful { get; set; }
 		public string Message { get; set; }
 		public string StockId { get; set; }
 		public string StockName { get; set; }
