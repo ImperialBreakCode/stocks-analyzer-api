@@ -36,7 +36,6 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.IsSale, opt => opt.MapFrom(src => src.IsSale));
 
 			CreateMap<AvailabilityStockInfoResponseDTO, StockInfoResponseDTO>()
-				.ForMember(dest => dest.IsSuccessful, opt => opt.MapFrom(src => src.IsSuccessful))
 				.ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))
 				.ForMember(dest => dest.StockId, opt => opt.MapFrom(src => src.StockId))
 				.ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.StockName))
