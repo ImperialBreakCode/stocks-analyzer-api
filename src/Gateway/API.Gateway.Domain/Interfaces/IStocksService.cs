@@ -9,6 +9,9 @@ namespace API.Gateway.Domain.Interfaces
 {
 	public interface IStocksService
 	{
-		Task<IActionResult> GetStockData(string dataType, string companyName);
+		Task<IActionResult> GetCurrentData(string companyName);
+		Task<IActionResult> GetDailyData(string companyName);
+		Task<IActionResult> GetWeeklyData(string companyName);
+		Task<IActionResult> GetMonthlyData(string companyName);
 	}	
 }

@@ -2,7 +2,6 @@
 using API.Gateway.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 
 namespace API.Gateway.Controllers
 {
@@ -13,10 +12,10 @@ namespace API.Gateway.Controllers
 
 		private readonly IAccountService _accountService;
 
-        public AccountController(IAccountService service)
-        {
-            _accountService = service;
-        }
+		public AccountController(IAccountService service)
+		{
+			_accountService = service;
+		}
 
 
 		[HttpPost]

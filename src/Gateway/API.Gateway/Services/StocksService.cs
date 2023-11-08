@@ -1,20 +1,38 @@
 ﻿using API.Gateway.Domain.DTOs;
 using API.Gateway.Domain.Interfaces;
+using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Gateway.Services
 {
 	public class StocksService : IStocksService
 	{
-		private IHttpClient _httpClient;
-		public StocksService(IHttpClient httpClient)
+		private readonly IHttpClient _httpClient;
+		private readonly MicroserviceHostsConfiguration _microserviceHosts;
+		public StocksService(IHttpClient httpClient, MicroserviceHostsConfiguration microserviceHosts)
 		{
 			_httpClient = httpClient;
+			_microserviceHosts = microserviceHosts;
 		}
 
-		public async Task<IActionResult> GetStockData(string dataType, string companyName)
+		public async Task<IActionResult> GetCurrentData(string companyName)
 		{
-			var res = await _httpClient.GetActionResult($"https://localhost:7160/api/Stock/{dataType}/{companyName}");
+			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Current/{companyName}");
+			return res;
+		}
+		public async Task<IActionResult> GetDailyData(string companyName)
+		{
+			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Daily/{companyName}");
+			return res;
+		}
+		public async Task<IActionResult> GetWeeklyData(string companyName)
+		{
+			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Weekly/{companyName}");
+			return res;
+		}
+		public async Task<IActionResult> GetMonthlyData(string companyName)
+		{
+			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Monthly/{companyName}");
 			return res;
 		}
 	}

@@ -6,11 +6,11 @@ namespace API.Gateway.Services
 {
 	public class GwHttpClient : IHttpClient
 	{
-		private HttpClient _httpClient;
+		private readonly HttpClient _httpClient;
 		public GwHttpClient(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
-			_httpClient.DefaultRequestHeaders.Add("Gateway", "");
+			_httpClient.DefaultRequestHeaders.Add("ApiSender", "API.Gateway");
 		}
 
 		public async Task<string> PostAsJsonAsyncReturnString(string url, object obj)
