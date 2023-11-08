@@ -1,8 +1,9 @@
-﻿using API.Settlement.Domain.DTOs.Response;
+﻿
+using API.Settlement.Domain.DTOs.Response;
 
 namespace API.Settlement.Domain.Interfaces
 {
-	public interface IInfrastructureConstants
+    public interface IInfrastructureConstants
 	{
 		string TransactionDeclinedMessage { get; }
 		string TransactionScheduledMessage { get; }

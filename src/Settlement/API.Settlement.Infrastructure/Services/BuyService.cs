@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using Newtonsoft.Json;
@@ -22,30 +23,30 @@ namespace API.Settlement.Infrastructure.Services
 			_transactionMapperService = buyTransactionMapperService;
 		}
 
-		public async Task<FinalizeTransactionResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public async Task<AvailabilityResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
 			decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
-			var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
+			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
 			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 			{
-				var stockInfoResponseDTO = new StockInfoResponseDTO();
-				decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
-				if (walletBalance < totalPriceIncludingCommission)
-				{
-					stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
-				}
-				else
-				{
-					walletBalance -= totalPriceIncludingCommission;
-					stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
-					//var stock = _transactionMapperService.CreateStockDTO();
-					//TODO: _userDictionaryService.CreateOrUpdateWallet(stock);
-				}
+				var availabilityStockInfoResponseDTO = GenerateAvailabilityStockInfoResponse(stockInfoRequestDTO, ref walletBalance);
+				availabilityStockInfoResponseDTOs.Add(availabilityStockInfoResponseDTO);
 
-				stockInfoResponseDTOs.Add(stockInfoResponseDTO);
 			}
 
-			return _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
+			return _transactionMapperService.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
+		}
+
+		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO, ref decimal walletBalance)
+		{
+			decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
+			if (walletBalance < totalPriceIncludingCommission)
+			{
+				return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
+			}
+
+			walletBalance -= totalPriceIncludingCommission;
+			return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
 		}
 
 		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)

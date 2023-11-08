@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
@@ -18,36 +19,39 @@ namespace API.Settlement.Infrastructure.Services
 			_mapper = mapper;
 			_InfrastructureConstants = constants;
 		}
-		public StockInfoResponseDTO MapToStockResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
+		public AvailabilityStockInfoResponseDTO MapToAvailabilityStockInfoResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
 		{
-			var stockInfoResponseDTO = _mapper.Map<StockInfoResponseDTO>(stockInfoRequestDTO);
-			stockInfoResponseDTO.IsSuccessful = status == Status.Scheduled;
-			stockInfoResponseDTO.Message = GetMessageBasedOnStatus(status);
-			stockInfoResponseDTO.SinglePriceIncludingCommission = GetSinglePriceWithCommission(totalPriceIncludingCommission, stockInfoResponseDTO.Quantity);
+			var availabilityStockResponseDTO = _mapper.Map<AvailabilityStockInfoResponseDTO>(stockInfoRequestDTO);
+			availabilityStockResponseDTO.IsSuccessful = status == Status.Scheduled;
+			availabilityStockResponseDTO.Message = GetMessageBasedOnStatus(status);
+			availabilityStockResponseDTO.SinglePriceIncludingCommission = GetSinglePriceWithCommission(totalPriceIncludingCommission, availabilityStockResponseDTO.Quantity);
 
-			return stockInfoResponseDTO;
+			return availabilityStockResponseDTO;
+		}
+		public AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO,IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)
+		{
+			var availabilityResponseDTO = _mapper.Map<AvailabilityResponseDTO>(finalizeTransactionRequestDTO);
+			availabilityResponseDTO.AvailabilityStockInfoResponseDTOs = availabilityStockInfoResponseDTOs;
+
+			return availabilityResponseDTO;
 		}
 
-		public FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<StockInfoResponseDTO> stockInfoResponseDTOs)
+		public FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
 		{
-			var finalizeTransactionResponseDTO = _mapper.Map<FinalizeTransactionResponseDTO>(finalizeTransactionRequestDTO);
+			var finalizeTransactionResponseDTO = _mapper.Map<FinalizeTransactionResponseDTO>(availabilityResponseDTO);
+			var stockInfoResponseDTOs = _mapper.Map<IEnumerable<StockInfoResponseDTO>>(availabilityResponseDTO.AvailabilityStockInfoResponseDTOs);
 			finalizeTransactionResponseDTO.StockInfoResponseDTOs = stockInfoResponseDTOs;
 
 			return finalizeTransactionResponseDTO;
 		}
 
-		public FinalizeTransactionResponseDTO FilterTransactionSuccessfulStocks(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+		public AvailabilityResponseDTO FilterSuccessfulAvailabilityStockInfoDTOs(AvailabilityResponseDTO availabilityResponseDTO)
 		{
-			var successfulStocks = finalizeTransactionResponseDTO.StockInfoResponseDTOs.Where(x => x.IsSuccessful);
-			foreach (var stockInfoResponseDTO in successfulStocks)
-			{
-				stockInfoResponseDTO.Message = _InfrastructureConstants.TransactionSuccessMessage;
-			}
+			var successfulAvailabilityStockInfoDTOs = availabilityResponseDTO.AvailabilityStockInfoResponseDTOs.Where(x => x.IsSuccessful);
 
-			var filteredfinalizeTransactionResponseDTO = _mapper.Map<FinalizeTransactionResponseDTO>(finalizeTransactionResponseDTO);
-			filteredfinalizeTransactionResponseDTO.StockInfoResponseDTOs = successfulStocks;
+			availabilityResponseDTO.AvailabilityStockInfoResponseDTOs = successfulAvailabilityStockInfoDTOs;
 
-			return filteredfinalizeTransactionResponseDTO;
+			return availabilityResponseDTO;
 		}
 
 		private decimal GetSinglePriceWithCommission(decimal totalPriceIncludingCommission, decimal quantity)
@@ -67,6 +71,14 @@ namespace API.Settlement.Infrastructure.Services
 			}
 		}
 
+		public AvailabilityResponseDTO FilterAvailabilitySuccessfulResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
+		{
+			throw new NotImplementedException();
+		}
 
+		public FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<StockInfoResponseDTO> stockInfoResponseDTOs)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

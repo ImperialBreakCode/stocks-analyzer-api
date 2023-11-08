@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Constants;
 using Newtonsoft.Json;
@@ -23,14 +24,14 @@ namespace API.Settlement.Infrastructure.Services
 			_InfrastructureConstants = infrastructureConstants;
 		}
 
-		public async Task ProcessNextDayAccountTransaction(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO)
 		{
-			var transactionSuccessfulStocks = _transactionMapperService.FilterTransactionSuccessfulStocks(finalizeTransactionResponseDTO);
+			var finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(availabilityResponseDTO);
 			using (var httpClient = _httpClientFactory.CreateClient())
 			{
-				var json = JsonConvert.SerializeObject(transactionSuccessfulStocks);
+				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
-                await httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(transactionSuccessfulStocks), content);
+                await httpClient.PostAsync(_InfrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
             }
 		}
 

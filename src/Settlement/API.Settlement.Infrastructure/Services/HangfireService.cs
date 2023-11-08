@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Interfaces;
 using Hangfire;
 
@@ -17,9 +18,9 @@ namespace API.Settlement.Infrastructure.Services
 			_jobService = jobService;
 		}
 
-		public void ScheduleStockProcessingJob(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+		public void ScheduleStockProcessingJob(AvailabilityResponseDTO availabilityResponseDTO)
 		{
-			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(finalizeTransactionResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
+			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(availabilityResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
 		}
 
 	}
