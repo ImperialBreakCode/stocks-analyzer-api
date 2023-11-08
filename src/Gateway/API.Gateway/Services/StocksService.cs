@@ -17,22 +17,22 @@ namespace API.Gateway.Services
 
 		public async Task<IActionResult> GetCurrentData(string companyName)
 		{
-			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Current/{companyName}");
+			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/Current/{companyName}");
 			return res;
 		}
 		public async Task<IActionResult> GetDailyData(string companyName)
 		{
-			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Daily/{companyName}");
+			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/Daily/{companyName}");
 			return res;
 		}
 		public async Task<IActionResult> GetWeeklyData(string companyName)
 		{
-			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Weekly/{companyName}");
+			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/Weekly/{companyName}");
 			return res;
 		}
 		public async Task<IActionResult> GetMonthlyData(string companyName)
 		{
-			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Monthly/{companyName}");
+			var res = await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/Monthly/{companyName}");
 			return res;
 		}
 	}
