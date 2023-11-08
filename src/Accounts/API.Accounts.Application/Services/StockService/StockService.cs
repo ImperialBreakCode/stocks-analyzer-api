@@ -1,10 +1,11 @@
 ﻿using API.Accounts.Application.Data;
-using API.Accounts.Application.DTOs.ExternaDTOs;
-using API.Accounts.Application.DTOs.ExternalDTOs;
+using API.Accounts.Application.DTOs.ExternalRequestDTOs;
+using API.Accounts.Application.DTOs.ExternalResponseDTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.HttpService;
 using API.Accounts.Domain.Entities;
+using API.Accounts.Domain.Interfaces.DbContext;
 
 namespace API.Accounts.Application.Services.StockService
 {
@@ -120,15 +121,19 @@ namespace API.Accounts.Application.Services.StockService
 
                 var finalizeDto = CreateFinalizeStockDto(false, wallet.Id, wallet.UserId);
 
-                await _stockActionManager.ExecutePurchase(finalizeDto, stocksForPurchase);
-
-                foreach (var stock in stocksForPurchase)
+                try
                 {
-                    stock.WaitingForPurchaseCount = 0;
-                    context.Stocks.Update(stock);
-                }
+                    var res = await _stockActionManager.ExecutePurchase(finalizeDto, stocksForPurchase);
+                    ReflectConfirmationChanges(res, stocksForPurchase, context);
 
-                context.Commit();
+                    wallet.Balance -= res.TotalSuccessfulPrice;
+                    context.Wallets.Update(wallet);
+                    context.Commit();
+                }
+                catch (HttpRequestException ex)
+                {
+                    return "Failed";
+                }
             }
 
             return ResponseMessages.TransactionSendForProccessing;
@@ -150,15 +155,18 @@ namespace API.Accounts.Application.Services.StockService
 
                 var finalizeDto = CreateFinalizeStockDto(true, wallet.Id, wallet.UserId);
 
-                await _stockActionManager.ExecuteSell(finalizeDto, stocksForSale);
-
-                foreach (var stock in stocksForSale)
+                try
                 {
-                    stock.WaitingForSaleCount = 0;
-                    context.Stocks.Update(stock);
+                    var res = await _stockActionManager.ExecuteSell(finalizeDto, stocksForSale);
+                    
+                    ReflectConfirmationChanges(res, stocksForSale, context);
+                    
+                    context.Commit();
                 }
-
-                context.Commit();
+                catch (HttpRequestException ex)
+                {
+                    return "Failed";
+                }
             }
 
             return ResponseMessages.TransactionSendForProccessing;
@@ -225,6 +233,29 @@ namespace API.Accounts.Application.Services.StockService
             finalizeDto.UserId = userId;
 
             return finalizeDto;
+        }
+
+        private void ReflectConfirmationChanges(FinalizeStockResponseDTO res, ICollection<Stock> currentStocks, IAccountsDbContext context)
+        {
+            foreach (var responseStock in res.StockInfoResponseDTOs)
+            {
+                if (responseStock.IsSuccessful)
+                {
+                    Stock stock = currentStocks.Where(s => s.Id == responseStock.StockId).First();
+
+                    if (res.IsSale)
+                    {
+                        stock.Quantity -= stock.WaitingForSaleCount;
+                        stock.WaitingForSaleCount = 0;
+                    }
+                    else
+                    {
+                        stock.WaitingForPurchaseCount = 0;
+                    }
+
+                    context.Stocks.Update(stock);
+                }
+            }
         }
     }
 }

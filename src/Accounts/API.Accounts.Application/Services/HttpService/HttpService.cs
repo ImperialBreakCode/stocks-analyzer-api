@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace API.Accounts.Application.Services.HttpService
@@ -23,12 +22,16 @@ namespace API.Accounts.Application.Services.HttpService
             return JsonConvert.DeserializeObject<T>(jsonData);
         }
 
-        public async Task PostAsync(string url, object data)
+        public async Task<T?> PostAsync<T>(string url, object data)
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
+
+            string json = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         public void Dispose()

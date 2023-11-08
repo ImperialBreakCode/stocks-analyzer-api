@@ -26,32 +26,31 @@ namespace API.Accounts.Application.Services.TransactionService
 
                 foreach (var stockInfo in finalizeTransactionDTO.StockInfoResponseDTOs)
                 {
-                    if (stockInfo.IsSuccessful)
+                    Stock stock = context.Stocks.GetOneById(stockInfo.StockId)!;
+
+                    stock.Quantity = !finalizeTransactionDTO.IsSale
+                        ? stock.Quantity + stockInfo.Quantity
+                        : stock.Quantity;
+
+                    Transaction transaction = new Transaction()
                     {
-                        Stock stock = context.Stocks.GetOneById(stockInfo.StockId)!;
+                        StockId = stockInfo.StockId,
+                        Quantity = stockInfo.Quantity,
+                        TotalAmount = CalculateTotalAmount(stockInfo, finalizeTransactionDTO.IsSale),
+                        Walletid = finalizeTransactionDTO.WalletId,
+                        Date = DateTime.UtcNow
+                    };
 
-                        stock.Quantity = finalizeTransactionDTO.IsSale 
-                            ? stock.Quantity - stockInfo.Quantity 
-                            : stock.Quantity + stockInfo.Quantity;
-
-                        Transaction transaction = new Transaction()
-                        {
-                            StockId = stockInfo.StockId,
-                            Quantity = stockInfo.Quantity,
-                            TotalAmount = CalculateTotalAmount(stockInfo, finalizeTransactionDTO.IsSale),
-                            Walletid = finalizeTransactionDTO.WalletId,
-                            Date = DateTime.UtcNow
-                        };
-
-                        wallet.Balance += CalculateTotalAmount(stockInfo, finalizeTransactionDTO.IsSale);
-
-                        context.Stocks.Update(stock);
-                        context.Transactions.Insert(transaction);
-                    }
-                    
+                    context.Stocks.Update(stock);
+                    context.Transactions.Insert(transaction);
                 }
 
-                context.Wallets.Update(wallet);
+                if (finalizeTransactionDTO.IsSale)
+                {
+                    wallet.Balance += finalizeTransactionDTO.StockInfoResponseDTOs
+                        .Sum(s => s.SinglePriceIncludingCommission * s.Quantity);
+                }
+
                 context.Commit();
             }
         }

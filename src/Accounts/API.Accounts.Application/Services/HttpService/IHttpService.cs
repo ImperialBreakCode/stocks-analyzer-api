@@ -3,6 +3,6 @@
     public interface IHttpService : IDisposable
     {
         public Task<T?> GetAsync<T>(string url);
-        public Task PostAsync(string url, object data);
+        public Task<T?> PostAsync<T>(string url, object data);
     }
 }
