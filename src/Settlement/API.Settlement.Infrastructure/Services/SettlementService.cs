@@ -1,5 +1,4 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
-using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Interfaces;
 
@@ -7,24 +6,28 @@ namespace API.Settlement.Infrastructure.Services
 {
 	public class SettlementService : ISettlementService
 	{
-		private readonly IHangfireService _hangfireService;
 		private readonly ITransactionWrapper _transactionWrapper;
+		private readonly ITransactionMapperService _transactionMapperService;
+		private readonly IHangfireService _hangfireService;
 
-		public SettlementService(IHangfireService hangfireService,
-								ITransactionWrapper transactionWrapper)
+		public SettlementService(ITransactionWrapper transactionWrapper,
+								ITransactionMapperService transactionMapperService,
+								IHangfireService hangfireService)
 		{
-			_hangfireService = hangfireService;
 			_transactionWrapper = transactionWrapper;
+			_hangfireService = hangfireService;
+			_transactionMapperService = transactionMapperService;
 		}
-
-
-		public async Task<AvailabilityResponseDTO> CheckAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public async Task<AvailabilityResponseDTO> ProcessTransactions(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			return await _transactionWrapper.CheckAvailability(finalizeTransactionRequestDTO);
-		}
-		public void ProcessTransaction(AvailabilityResponseDTO availabilityResponseDTO)
-		{
-			_hangfireService.ScheduleStockProcessingJob(availabilityResponseDTO);
+			var availabilityResponseDTO = await _transactionWrapper.CheckAvailability(finalizeTransactionRequestDTO);
+
+			var clonedAvailabilityResponseDTO = _transactionMapperService.CloneAvailabilityResponseDTO(availabilityResponseDTO);
+			var filteredAvailabilityResponseDTO = _transactionMapperService.FilterSuccessfulAvailabilityStockInfoDTOs(clonedAvailabilityResponseDTO);
+
+			_hangfireService.ScheduleStockProcessingJob(filteredAvailabilityResponseDTO);
+
+			return availabilityResponseDTO;
 		}
 
 	}

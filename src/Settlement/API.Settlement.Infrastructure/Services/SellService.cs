@@ -1,5 +1,4 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
-using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
@@ -29,7 +28,7 @@ namespace API.Settlement.Infrastructure.Services
 			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
 			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 			{
-				var stockDTO = await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
+				var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" };//await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
 				decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
 
 				var availabilityStockInfoResponseDTO = GenerateAvailabilityStockInfoResponse(stockInfoRequestDTO, stockDTO.Quantity, totalPriceIncludingCommission);
@@ -48,7 +47,8 @@ namespace API.Settlement.Infrastructure.Services
 
 			return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
 		}
-
+		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
+			=> totalPriceExcludingCommission - (totalPriceExcludingCommission * _infrastructureConstants.Commission);
 		private async Task<StockDTO> GetStockDTO(string uri)
 		{
 			using (var _httpClient = _httpClientFactory.CreateClient())
@@ -63,11 +63,6 @@ namespace API.Settlement.Infrastructure.Services
 				}
 			}
 			return null;
-		}
-
-		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
-		{
-			return totalPriceExcludingCommission - (totalPriceExcludingCommission * _infrastructureConstants.Commission);
 		}
 
 	}

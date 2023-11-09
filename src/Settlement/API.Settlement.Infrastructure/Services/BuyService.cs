@@ -25,7 +25,7 @@ namespace API.Settlement.Infrastructure.Services
 
 		public async Task<AvailabilityResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
+			decimal walletBalance = 1000.5M;//await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
 			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
 			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 			{
@@ -37,6 +37,10 @@ namespace API.Settlement.Infrastructure.Services
 			return _transactionMapperService.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
 		}
 
+		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
+		{
+			return totalPriceExcludingCommission + (totalPriceExcludingCommission * _infrastructureConstants.Commission);
+		}
 		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO, ref decimal walletBalance)
 		{
 			decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
@@ -48,12 +52,6 @@ namespace API.Settlement.Infrastructure.Services
 			walletBalance -= totalPriceIncludingCommission;
 			return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
 		}
-
-		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
-		{
-			return totalPriceExcludingCommission + (totalPriceExcludingCommission * _infrastructureConstants.Commission);
-		}
-
 		private async Task<decimal> GetWalletBalance(string walletId)
 		{
 			decimal balance = 0;
@@ -68,6 +66,5 @@ namespace API.Settlement.Infrastructure.Services
 			}
 			return balance;
 		}
-
 	}
 }

@@ -1,6 +1,4 @@
-﻿using API.Settlement.Domain.DTOs.Request;
-using API.Settlement.Domain.DTOs.Response;
-using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+﻿using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Interfaces;
 using Hangfire;
 
@@ -11,7 +9,7 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IDateTimeService _dateTimeService;
 		private readonly IJobService _jobService;
 
-		public HangfireService(IDateTimeService dateTimeService, 
+		public HangfireService(IDateTimeService dateTimeService,
 							IJobService jobService)
 		{
 			_dateTimeService = dateTimeService;
@@ -19,9 +17,7 @@ namespace API.Settlement.Infrastructure.Services
 		}
 
 		public void ScheduleStockProcessingJob(AvailabilityResponseDTO availabilityResponseDTO)
-		{
-			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(availabilityResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
-		}
+			=> BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(availabilityResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
 
 	}
 }

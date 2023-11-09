@@ -1,5 +1,4 @@
-﻿using API.Settlement.Domain.Entities;
-using API.Settlement.Domain.Interfaces;
+﻿using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Constants;
 using API.Settlement.Infrastructure.Services;
 using Hangfire;
@@ -12,17 +11,12 @@ namespace API.Settlement.Extensions
 		{
 			services.AddHttpClient();
 			services.AddAutoMapper(typeof(Infrastructure.Mappings.MappingProfile).Assembly);
-
 			services.AddSingleton<IInfrastructureConstants, InfrastructureConstants>();
 			services.AddTransient<ITransactionMapperService, TransactionMapperService>();
 			services.AddTransient<IDateTimeService, DateTimeService>();
-			services.AddSingleton<IDictionary<string, ICollection<Wallet>>>(new Dictionary<string, ICollection<Wallet>>());
-			services.AddSingleton<IUserWalletDictionaryService, UserWalletDictionaryService>();
-
 			services.AddTransient<IBuyService, BuyService>();
 			services.AddTransient<ISellService, SellService>();
 			services.AddTransient<ITransactionWrapper, TransactionWrapper>();
-
 			services.AddTransient<IJobService, JobService>();
 			services.AddSingleton<IHangfireService, HangfireService>();
 			services.AddScoped<ISettlementService, SettlementService>();

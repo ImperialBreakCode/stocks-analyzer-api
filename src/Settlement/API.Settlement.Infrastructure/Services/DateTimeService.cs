@@ -7,10 +7,7 @@ namespace API.Settlement.Infrastructure.Services
 
 		public DateTime UtcNow => DateTime.UtcNow;
 
-		public string GetCronExpressionForEveryFiveMinutes()
-		{
-			return "*/5 * * * *";
-		}
+		public string GetCronExpressionForEveryFiveMinutes() => "*/5 * * * *";
 
 		public TimeSpan GetTimeSpanUntilNextDayAtMinutePastMidnight()
 		{
@@ -20,5 +17,6 @@ namespace API.Settlement.Infrastructure.Services
 
 			return timeUntilDesiredTime;
 		}
+
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
-using API.Settlement.Domain.Entities;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using AutoMapper;
@@ -14,11 +13,12 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IInfrastructureConstants _InfrastructureConstants;
 
 		public TransactionMapperService(IMapper mapper,
-									IInfrastructureConstants constants)
+									IInfrastructureConstants infrastructureConstants)
 		{
 			_mapper = mapper;
-			_InfrastructureConstants = constants;
+			_InfrastructureConstants = infrastructureConstants;
 		}
+
 		public AvailabilityStockInfoResponseDTO MapToAvailabilityStockInfoResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
 		{
 			var availabilityStockResponseDTO = _mapper.Map<AvailabilityStockInfoResponseDTO>(stockInfoRequestDTO);
@@ -28,7 +28,8 @@ namespace API.Settlement.Infrastructure.Services
 
 			return availabilityStockResponseDTO;
 		}
-		public AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO,IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)
+
+		public AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)
 		{
 			var availabilityResponseDTO = _mapper.Map<AvailabilityResponseDTO>(finalizeTransactionRequestDTO);
 			availabilityResponseDTO.AvailabilityStockInfoResponseDTOs = availabilityStockInfoResponseDTOs;
@@ -47,11 +48,16 @@ namespace API.Settlement.Infrastructure.Services
 
 		public AvailabilityResponseDTO FilterSuccessfulAvailabilityStockInfoDTOs(AvailabilityResponseDTO availabilityResponseDTO)
 		{
-			var successfulAvailabilityStockInfoDTOs = availabilityResponseDTO.AvailabilityStockInfoResponseDTOs.Where(x => x.IsSuccessful);
+			var successfulAvailabilityStockInfoDTOs = availabilityResponseDTO.AvailabilityStockInfoResponseDTOs.Where(x => x.IsSuccessful).ToList();
 
 			availabilityResponseDTO.AvailabilityStockInfoResponseDTOs = successfulAvailabilityStockInfoDTOs;
 
 			return availabilityResponseDTO;
+		}
+
+		public AvailabilityResponseDTO CloneAvailabilityResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
+		{
+			return _mapper.Map<AvailabilityResponseDTO>(availabilityResponseDTO);
 		}
 
 		private decimal GetSinglePriceWithCommission(decimal totalPriceIncludingCommission, decimal quantity)
@@ -69,16 +75,6 @@ namespace API.Settlement.Infrastructure.Services
 				default: return String.Empty;
 
 			}
-		}
-
-		public AvailabilityResponseDTO FilterAvailabilitySuccessfulResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
-		{
-			throw new NotImplementedException();
-		}
-
-		public FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<StockInfoResponseDTO> stockInfoResponseDTOs)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-namespace API.Settlement.Infrastructure.Helpers.Enums
+﻿namespace API.Settlement.Infrastructure.Helpers.Enums
 {
 	public enum Status
 	{
