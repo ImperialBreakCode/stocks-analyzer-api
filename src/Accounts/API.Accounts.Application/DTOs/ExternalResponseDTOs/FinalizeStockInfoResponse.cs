@@ -1,6 +1,6 @@
 ﻿namespace API.Accounts.Application.DTOs.ExternalResponseDTOs
 {
-    public class FinalizeStockInfo
+    public class FinalizeStockInfoResponse
     {
         public bool IsSuccessful { get; set; }
         public string Message { get; set; }

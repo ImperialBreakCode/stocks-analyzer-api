@@ -86,7 +86,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
         private void ReflectConfirmationChanges(FinalizeStockResponseDTO res, ICollection<Stock> currentStocks, IAccountsDbContext context)
         {
-            foreach (var responseStock in res.StockInfoResponseDTOs)
+            foreach (var responseStock in res.AvailabilityStockInfoResponseDTOs)
             {
                 if (responseStock.IsSuccessful)
                 {
