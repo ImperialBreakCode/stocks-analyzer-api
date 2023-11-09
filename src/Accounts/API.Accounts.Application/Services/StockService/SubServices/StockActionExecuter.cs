@@ -1,16 +1,17 @@
 ﻿using API.Accounts.Application.DTOs.ExternalRequestDTOs;
 using API.Accounts.Application.DTOs.ExternalResponseDTOs;
-using API.Accounts.Application.Services.HttpService;
+using API.Accounts.Application.HttpClientService;
+using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
 using API.Accounts.Domain.Entities;
 
-namespace API.Accounts.Application.Services.StockService
+namespace API.Accounts.Application.Services.StockService.SubServices
 {
-    public class StockActionManager : IStockActionManager
+    public class StockActionExecuter : IStockActionExecuter
     {
         private readonly IHttpService _httpService;
         private readonly IHttpClientRoutes _httpRoutes;
 
-        public StockActionManager(IHttpService httpService, IHttpClientRoutes httpRoutes)
+        public StockActionExecuter(IHttpService httpService, IHttpClientRoutes httpRoutes)
         {
             _httpService = httpService;
             _httpRoutes = httpRoutes;
@@ -34,11 +35,6 @@ namespace API.Accounts.Application.Services.StockService
             return await FinishAction(finalizeDto);
         }
 
-        private async Task<FinalizeStockResponseDTO> FinishAction(FinalizeStockActionDTO finalizeDto)
-        {
-            return await _httpService.PostAsync<FinalizeStockResponseDTO>(_httpRoutes.FinalizeStockActionRoute, finalizeDto);
-        }
-
         private async Task<StockActionInfo> CreateStockActionInfo(int quantity, Stock stock)
         {
             return new StockActionInfo()
@@ -56,6 +52,12 @@ namespace API.Accounts.Application.Services.StockService
                 .GetAsync<StockApiResponseDTO>(_httpRoutes.GetCurrentStockInfoRoute(name));
 
             return (decimal)stockApiResponse.Close;
+        }
+
+        private async Task<FinalizeStockResponseDTO> FinishAction(FinalizeStockActionDTO finalizeDto)
+        {
+            return await _httpService
+                .PostAsync<FinalizeStockResponseDTO>(_httpRoutes.FinalizeStockActionRoute, finalizeDto);
         }
     }
 }

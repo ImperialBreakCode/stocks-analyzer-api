@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 
-namespace API.Accounts.Application.Services.HttpService
+namespace API.Accounts.Application.HttpClientService
 {
     public class HttpService : IHttpService
     {

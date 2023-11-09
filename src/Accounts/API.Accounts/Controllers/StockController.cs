@@ -48,7 +48,7 @@ namespace API.Accounts.Controllers
         [Route("AddStockForPurchase")]
         public async Task<IActionResult> AddStockForPurchase(StockActionDTO stockAction)
         {
-            string response = await _stockService.AddForPurchase(stockAction);
+            string response = await _stockService.ActionManager.AddForPurchase(stockAction);
 
             if (response == ResponseMessages.WalletNotFound)
             {
@@ -66,7 +66,7 @@ namespace API.Accounts.Controllers
         [Route("AddStockForSale")]
         public IActionResult AddStockForSale(StockActionDTO stockActionDTO)
         {
-            string response = _stockService.AddForSale(stockActionDTO);
+            string response = _stockService.ActionManager.AddForSale(stockActionDTO);
 
             if (response == String.Format(ResponseMessages.StockActionSuccessfull, "sale"))
             {
@@ -84,7 +84,7 @@ namespace API.Accounts.Controllers
         [Route("ConfirmPurchase/{walletId}")]
         public async Task<IActionResult> ConfirmPurchase(string walletId)
         {
-            string response = await _stockService.ConfirmPurchase(walletId);
+            string response = await _stockService.ActionFinalizer.ConfirmPurchase(walletId);
 
             if (response == ResponseMessages.WalletNotFound)
             {
@@ -98,7 +98,7 @@ namespace API.Accounts.Controllers
         [Route("ConfirmSale/{walletId}")]
         public async Task<IActionResult> ConfirmSale(string walletId)
         {
-            string response = await _stockService.ConfirmSales(walletId);
+            string response = await _stockService.ActionFinalizer.ConfirmSales(walletId);
 
             if (response == ResponseMessages.WalletNotFound)
             {

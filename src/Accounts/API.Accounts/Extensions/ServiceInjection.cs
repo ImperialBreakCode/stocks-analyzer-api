@@ -1,8 +1,10 @@
 ﻿using API.Accounts.Application.Auth.PasswordManager;
 using API.Accounts.Application.Auth.TokenManager;
 using API.Accounts.Application.Data;
-using API.Accounts.Application.Services.HttpService;
+using API.Accounts.Application.HttpClientService;
 using API.Accounts.Application.Services.StockService;
+using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
+using API.Accounts.Application.Services.StockService.SubServices;
 using API.Accounts.Application.Services.TransactionService;
 using API.Accounts.Application.Services.UserService;
 using API.Accounts.Application.Services.WalletService;
@@ -30,8 +32,12 @@ namespace API.Accounts.Extensions
             services.AddHttpClient();
 
             services.AddTransient<IUserService, UserService>();
+
             services.AddTransient<IStockService, StockService>();
+            services.AddTransient<IStockActionExecuter, StockActionExecuter>();
+            services.AddTransient<IStockActionFinalizer, StockActionFinalizer>();
             services.AddTransient<IStockActionManager, StockActionManager>();
+
             services.AddTransient<IWalletService, WalletService>();
             services.AddTransient<ITransactionService, TransactionService>();
 

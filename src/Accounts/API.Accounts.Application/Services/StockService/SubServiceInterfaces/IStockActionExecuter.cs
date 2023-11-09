@@ -2,9 +2,9 @@
 using API.Accounts.Application.DTOs.ExternalResponseDTOs;
 using API.Accounts.Domain.Entities;
 
-namespace API.Accounts.Application.Services.StockService
+namespace API.Accounts.Application.Services.StockService.SubServiceInterfaces
 {
-    public interface IStockActionManager
+    public interface IStockActionExecuter
     {
         Task<FinalizeStockResponseDTO> ExecutePurchase(FinalizeStockActionDTO finalizeDto, ICollection<Stock> stocks);
         Task<FinalizeStockResponseDTO> ExecuteSell(FinalizeStockActionDTO finalizeDto, ICollection<Stock> stocks);

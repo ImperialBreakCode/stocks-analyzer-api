@@ -1,4 +1,4 @@
-﻿using API.Accounts.Application.Services.HttpService;
+﻿using API.Accounts.Application.HttpClientService;
 
 namespace API.Accounts.Implementations
 {
