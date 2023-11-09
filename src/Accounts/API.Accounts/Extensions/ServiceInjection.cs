@@ -26,18 +26,11 @@ namespace API.Accounts.Extensions
         public static IServiceCollection InjectServices(this IServiceCollection services)
         {
             services.AddSingleton<IAccountsSettingsManager, AccountSettingsAdapter>();
-            
-            services.AddSingleton<IHttpClientRoutes, HttpClientRoutes>();
-            services.AddScoped<IHttpService, HttpServiceDecorator>();
-            services.AddHttpClient();
+
+            AddHttpClient(services);
+            AddStockService(services);
 
             services.AddTransient<IUserService, UserService>();
-
-            services.AddTransient<IStockService, StockService>();
-            services.AddTransient<IStockActionExecuter, StockActionExecuter>();
-            services.AddTransient<IStockActionFinalizer, StockActionFinalizer>();
-            services.AddTransient<IStockActionManager, StockActionManager>();
-
             services.AddTransient<IWalletService, WalletService>();
             services.AddTransient<ITransactionService, TransactionService>();
 
@@ -50,6 +43,21 @@ namespace API.Accounts.Extensions
             services.AddSingleton<ITokenManager, TokenManager>();
 
             return services;
+        }
+
+        private static void AddHttpClient(IServiceCollection services)
+        {
+            services.AddSingleton<IHttpClientRoutes, HttpClientRoutes>();
+            services.AddScoped<IHttpService, HttpServiceDecorator>();
+            services.AddHttpClient();
+        }
+
+        private static void AddStockService(IServiceCollection services)
+        {
+            services.AddTransient<IStockService, StockService>();
+            services.AddTransient<IStockActionExecuter, StockActionExecuter>();
+            services.AddTransient<IStockActionFinalizer, StockActionFinalizer>();
+            services.AddTransient<IStockActionManager, StockActionManager>();
         }
     }
 }
