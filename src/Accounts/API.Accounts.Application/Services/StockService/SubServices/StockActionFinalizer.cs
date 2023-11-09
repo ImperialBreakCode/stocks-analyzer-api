@@ -37,7 +37,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
                 var res = await _actionExecuter.ExecutePurchase(finalizeDto, stocksForPurchase);
 
-                ReflectConfirmationChanges(res, stocksForPurchase, context);
+                ReflectStockQuantityChanges(res, stocksForPurchase, context);
 
                 wallet.Balance -= res.TotalSuccessfulPrice;
                 context.Wallets.Update(wallet);
@@ -66,7 +66,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
                 var res = await _actionExecuter.ExecuteSell(finalizeDto, stocksForSale);
 
-                ReflectConfirmationChanges(res, stocksForSale, context);
+                ReflectStockQuantityChanges(res, stocksForSale, context);
 
                 context.Commit();
             }
@@ -84,26 +84,27 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             return finalizeDto;
         }
 
-        private void ReflectConfirmationChanges(FinalizeStockResponseDTO res, ICollection<Stock> currentStocks, IAccountsDbContext context)
+        private void ReflectStockQuantityChanges(FinalizeStockResponseDTO res, ICollection<Stock> currentStocks, IAccountsDbContext context)
         {
             foreach (var responseStock in res.AvailabilityStockInfoResponseDTOs)
             {
-                if (responseStock.IsSuccessful)
-                {
-                    Stock stock = currentStocks.Where(s => s.Id == responseStock.StockId).First();
+                Stock stock = currentStocks.Where(s => s.Id == responseStock.StockId).First();
 
-                    if (res.IsSale)
+                if (res.IsSale)
+                {
+                    if (responseStock.IsSuccessful)
                     {
                         stock.Quantity -= stock.WaitingForSaleCount;
-                        stock.WaitingForSaleCount = 0;
-                    }
-                    else
-                    {
-                        stock.WaitingForPurchaseCount = 0;
                     }
 
-                    context.Stocks.Update(stock);
+                    stock.WaitingForSaleCount = 0;
                 }
+                else
+                {
+                    stock.WaitingForPurchaseCount = 0;
+                }
+
+                context.Stocks.Update(stock);
             }
         }
     }

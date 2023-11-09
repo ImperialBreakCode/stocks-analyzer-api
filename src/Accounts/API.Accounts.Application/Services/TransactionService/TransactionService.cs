@@ -51,6 +51,8 @@ namespace API.Accounts.Application.Services.TransactionService
                         .Sum(s => s.SinglePriceIncludingCommission * s.Quantity);
                 }
 
+                context.Wallets.Update(wallet);
+
                 context.Commit();
             }
         }
