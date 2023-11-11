@@ -1,6 +1,7 @@
 ﻿using API.Gateway.Domain.Interfaces;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Net.Http;
 
 namespace API.Gateway.Services
@@ -9,10 +10,10 @@ namespace API.Gateway.Services
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
-		public AnalyzerService(IHttpClient httpClient, MicroserviceHostsConfiguration microserviceHosts)
+		public AnalyzerService(IHttpClient httpClient, IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts)
         {
 			_httpClient = httpClient;
-			_microserviceHosts = microserviceHosts;
+			_microserviceHosts = microserviceHosts.CurrentValue;
 		}
 
 		public async Task<IActionResult> PortfolioSummary()
