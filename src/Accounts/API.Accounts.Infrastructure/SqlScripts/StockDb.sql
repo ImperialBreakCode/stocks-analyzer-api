@@ -4,6 +4,7 @@ USE StockAccounts;
 CREATE TABLE [User] (
 	Id varchar(36) NOT NULL PRIMARY KEY,
 	UserName varchar(50) NOT NULL UNIQUE,
+	Email varchar(50) NOT NULL,
 	PasswordHash text NOT NULL,
 	Salt text NOT NULL,
 	FirstName varchar(50),

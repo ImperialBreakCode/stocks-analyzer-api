@@ -56,6 +56,7 @@ namespace API.Accounts.Application.Services.UserService
                     FirstName = registerDTO.FirstName,
                     LastName = registerDTO.LastName,
                     UserName = registerDTO.Username,
+                    Email = registerDTO.Email,
                     PasswordHash = _passwordManager.HashPassword(registerDTO.Password, out string salt),
                     Salt = salt
                 };
