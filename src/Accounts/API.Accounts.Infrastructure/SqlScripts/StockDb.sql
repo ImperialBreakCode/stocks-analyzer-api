@@ -12,6 +12,8 @@ CREATE TABLE [User] (
 
 CREATE TABLE Wallet (
 	Id varchar(36) NOT NULL PRIMARY KEY,
+	IsDemo bit NOT NULL,
+	CreatedAt datetime NOT NULL,
 	Balance decimal(10, 2) NOT NULL,
 	UserId varchar(36) UNIQUE FOREIGN KEY REFERENCES [User](Id) ON DELETE SET NULL
 );

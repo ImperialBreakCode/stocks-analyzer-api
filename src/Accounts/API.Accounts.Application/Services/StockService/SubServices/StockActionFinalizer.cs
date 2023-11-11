@@ -1,7 +1,7 @@
 ﻿using API.Accounts.Application.Data;
+using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.ExternalRequestDTOs;
 using API.Accounts.Application.DTOs.ExternalResponseDTOs;
-using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.DbContext;
@@ -33,6 +33,11 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                 var stocksForPurchase = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForPurchaseCount != 0);
 
+                if (!stocksForPurchase.Any())
+                {
+                    return string.Format(ResponseMessages.NoStocksAddedForPurchaseSale, "purchase");
+                }
+
                 var finalizeDto = CreateFinalizeStockDto(false, wallet.Id, wallet.UserId);
 
                 var res = await _actionExecuter.ExecutePurchase(finalizeDto, stocksForPurchase);
@@ -61,6 +66,11 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
                 var stocksForSale = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForSaleCount != 0);
+
+                if (!stocksForSale.Any())
+                {
+                    return string.Format(ResponseMessages.NoStocksAddedForPurchaseSale, "sale");
+                }
 
                 var finalizeDto = CreateFinalizeStockDto(true, wallet.Id, wallet.UserId);
 

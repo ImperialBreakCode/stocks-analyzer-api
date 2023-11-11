@@ -1,4 +1,5 @@
-﻿using API.Accounts.Application.DTOs.ExternalRequestDTOs;
+﻿using API.Accounts.Application.Data.StocksData;
+using API.Accounts.Application.DTOs.ExternalRequestDTOs;
 using API.Accounts.Application.DTOs.ExternalResponseDTOs;
 using API.Accounts.Application.HttpClientService;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
@@ -10,11 +11,13 @@ namespace API.Accounts.Application.Services.StockService.SubServices
     {
         private readonly IHttpService _httpService;
         private readonly IHttpClientRoutes _httpRoutes;
+        private readonly IStocksData _stockData;
 
-        public StockActionExecuter(IHttpService httpService, IHttpClientRoutes httpRoutes)
+        public StockActionExecuter(IHttpService httpService, IHttpClientRoutes httpRoutes, IStocksData stocksData)
         {
             _httpService = httpService;
             _httpRoutes = httpRoutes;
+            _stockData = stocksData;
         }
 
         public async Task<FinalizeStockResponseDTO> ExecutePurchase(FinalizeStockActionDTO finalizeDto, ICollection<Stock> stocks)
@@ -40,18 +43,10 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             return new StockActionInfo()
             {
                 Quantity = quantity,
-                SinglePriceExcludingCommission = await GetStockPrice(stock.StockName),
+                SinglePriceExcludingCommission = await _stockData.GetCurrentStockPrice(stock.StockName),
                 StockId = stock.Id,
                 StockName = stock.StockName
             };
-        }
-
-        private async Task<decimal> GetStockPrice(string name)
-        {
-            var stockApiResponse = await _httpService
-                .GetAsync<StockApiResponseDTO>(_httpRoutes.GetCurrentStockInfoRoute(name));
-
-            return (decimal)stockApiResponse.Close;
         }
 
         private async Task<FinalizeStockResponseDTO> FinishAction(FinalizeStockActionDTO finalizeDto)

@@ -1,8 +1,7 @@
 ﻿using API.Accounts.Application.Data;
-using API.Accounts.Application.DTOs.ExternalResponseDTOs;
+using API.Accounts.Application.Data.StocksData;
+using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
-using API.Accounts.Application.DTOs.Response;
-using API.Accounts.Application.HttpClientService;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
 using API.Accounts.Domain.Entities;
 
@@ -10,34 +9,27 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 {
     public class StockActionManager : IStockActionManager
     {
-        private readonly IHttpService _httpService;
-        private readonly IHttpClientRoutes _httpClientRoutes;
         private readonly IAccountsData _accountsData;
+        private readonly IStocksData _stocksData;
 
-        public StockActionManager(IHttpService httpService, IHttpClientRoutes httpClientRoutes, IAccountsData accountsData)
+        public StockActionManager(IAccountsData accountsData, IStocksData stocksData)
         {
-            _httpService = httpService;
-            _httpClientRoutes = httpClientRoutes;
             _accountsData = accountsData;
+            _stocksData = stocksData;
         }
 
         public async Task<string> AddForPurchase(StockActionDTO stockActionDTO)
         {
-            var stockApiResponse = await _httpService
-                .GetAsync<StockApiResponseDTO>(_httpClientRoutes.GetCurrentStockInfoRoute(stockActionDTO.StockName));
+            decimal stockPrice = await _stocksData.GetCurrentStockPrice(stockActionDTO.StockName);
 
             using (var context = _accountsData.CreateDbContext())
             {
                 Wallet? wallet = context.Wallets.GetOneById(stockActionDTO.WalletId);
+                string? errorMessage = await CheckWallet(wallet, false, stockActionDTO);
 
-                if (wallet is null)
+                if (errorMessage is not null)
                 {
-                    return ResponseMessages.WalletNotFound;
-                }
-
-                if (wallet.Balance < (decimal)stockApiResponse!.Close * stockActionDTO.Quantity)
-                {
-                    return ResponseMessages.NotEnoughBalance;
+                    return errorMessage;
                 }
 
                 var stock = context.Stocks
@@ -64,15 +56,16 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             return String.Format(ResponseMessages.StockActionSuccessfull, "purchase");
         }
 
-        public string AddForSale(StockActionDTO stockActionDTO)
+        public async Task<string> AddForSale(StockActionDTO stockActionDTO)
         {
             using (var context = _accountsData.CreateDbContext())
             {
                 Wallet? wallet = context.Wallets.GetOneById(stockActionDTO.WalletId);
+                string? errorMessage = await CheckWallet(wallet, true, stockActionDTO);
 
-                if (wallet is null)
+                if (errorMessage is not null)
                 {
-                    return ResponseMessages.WalletNotFound;
+                    return errorMessage;
                 }
 
                 Stock? stock = context.Stocks
@@ -83,8 +76,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                 {
                     return ResponseMessages.StockNotFoundInWallet;
                 }
-
-                if (stock.Quantity < stockActionDTO.Quantity)
+                else if (stock.Quantity < stockActionDTO.Quantity)
                 {
                     return ResponseMessages.StockNotEnoughStocksToSale;
                 }
@@ -96,6 +88,30 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             }
 
             return String.Format(ResponseMessages.StockActionSuccessfull, "sale");
+        }
+
+        private async Task<string?> CheckWallet(Wallet? wallet, bool isSale, StockActionDTO stockActionDTO)
+        {
+            if (wallet is null)
+            {
+                return ResponseMessages.WalletNotFound;
+            }
+            else if ((DateTime.UtcNow - wallet.CreatedAt).Days > 30)
+            {
+                return ResponseMessages.WalletRestricted;
+            }
+
+            if (!isSale)
+            {
+                decimal stockPrice = await _stocksData.GetCurrentStockPrice(stockActionDTO.StockName);
+
+                if (wallet.Balance < stockPrice * stockActionDTO.Quantity)
+                {
+                    return ResponseMessages.NotEnoughBalance;
+                }
+            }
+
+            return null;
         }
     }
 }

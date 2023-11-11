@@ -1,6 +1,7 @@
 ﻿using API.Accounts.Application.Auth.PasswordManager;
 using API.Accounts.Application.Auth.TokenManager;
 using API.Accounts.Application.Data;
+using API.Accounts.Application.Data.StocksData;
 using API.Accounts.Application.HttpClientService;
 using API.Accounts.Application.Services.StockService;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
@@ -19,6 +20,7 @@ namespace API.Accounts.Extensions
         {
             services.AddTransient<ISqlContextCreator, SqlContextCreator>();
             services.AddTransient<IAccountsData, AccountDataAdapter>();
+            services.AddTransient<IStocksData, StocksData>();
 
             return services;
         }
@@ -27,7 +29,6 @@ namespace API.Accounts.Extensions
         {
             services.AddSingleton<IAccountsSettingsManager, AccountSettingsAdapter>();
 
-            AddHttpClient(services);
             AddStockService(services);
 
             services.AddTransient<IUserService, UserService>();
@@ -45,11 +46,13 @@ namespace API.Accounts.Extensions
             return services;
         }
 
-        private static void AddHttpClient(IServiceCollection services)
+        public static IServiceCollection AddHttpClientServices(this IServiceCollection services)
         {
             services.AddSingleton<IHttpClientRoutes, HttpClientRoutes>();
             services.AddScoped<IHttpService, HttpServiceDecorator>();
             services.AddHttpClient();
+
+            return services;
         }
 
         private static void AddStockService(IServiceCollection services)

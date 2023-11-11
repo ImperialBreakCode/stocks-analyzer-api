@@ -1,4 +1,5 @@
-﻿using API.Accounts.Application.DTOs.Request;
+﻿using API.Accounts.Application.DTOs;
+using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.StockService;
 using Microsoft.AspNetCore.Mvc;
@@ -64,9 +65,9 @@ namespace API.Accounts.Controllers
 
         [HttpPut]
         [Route("AddStockForSale")]
-        public IActionResult AddStockForSale(StockActionDTO stockActionDTO)
+        public async Task<IActionResult> AddStockForSale(StockActionDTO stockActionDTO)
         {
-            string response = _stockService.ActionManager.AddForSale(stockActionDTO);
+            string response = await _stockService.ActionManager.AddForSale(stockActionDTO);
 
             if (response == String.Format(ResponseMessages.StockActionSuccessfull, "sale"))
             {

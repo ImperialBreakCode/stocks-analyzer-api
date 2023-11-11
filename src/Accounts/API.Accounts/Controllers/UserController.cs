@@ -1,4 +1,5 @@
-﻿using API.Accounts.Application.DTOs.Request;
+﻿using API.Accounts.Application.DTOs;
+using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.UserService;
 using API.Accounts.Application.Settings;

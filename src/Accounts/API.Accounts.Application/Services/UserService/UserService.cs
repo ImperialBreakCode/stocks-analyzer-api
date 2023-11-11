@@ -1,6 +1,7 @@
 ﻿using API.Accounts.Application.Auth.PasswordManager;
 using API.Accounts.Application.Auth.TokenManager;
 using API.Accounts.Application.Data;
+using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Domain.Entities;
@@ -50,7 +51,7 @@ namespace API.Accounts.Application.Services.UserService
         {
             using(var context = _data.CreateDbContext())
             {
-                User user = new User()
+                User user = new()
                 {
                     FirstName = registerDTO.FirstName,
                     LastName = registerDTO.LastName,
@@ -59,7 +60,16 @@ namespace API.Accounts.Application.Services.UserService
                     Salt = salt
                 };
 
+                Wallet wallet = new()
+                {
+                    Balance = 10000,
+                    IsDemo = true,
+                    UserId = user.Id
+                };
+
                 context.Users.Insert(user);
+                context.Wallets.Insert(wallet);
+
                 context.Commit();
             }
         }

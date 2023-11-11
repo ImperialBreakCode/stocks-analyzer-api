@@ -1,4 +1,5 @@
 ﻿using API.Accounts.Application.Data;
+using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.RepositoryBase;

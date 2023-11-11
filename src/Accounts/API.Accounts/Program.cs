@@ -13,7 +13,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<AccountSettings>(
     builder.Configuration.GetSection("AccountSettings"));
 
-builder.Services.InjectData().InjectAuthentication().InjectServices();
+builder.Services
+    .AddHttpClientServices()
+    .InjectData()
+    .InjectAuthentication()
+    .InjectServices();
 
 
 var app = builder.Build();

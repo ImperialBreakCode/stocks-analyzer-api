@@ -1,4 +1,4 @@
-﻿using API.Accounts.Application.DTOs.Response;
+﻿using API.Accounts.Application.DTOs;
 using API.Accounts.Application.Services.WalletService;
 using Microsoft.AspNetCore.Mvc;
 
