@@ -7,11 +7,11 @@ namespace API.Gateway.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 
-	public class StockInfoController : Controller
+	public class StocksController : Controller
 	{
-		private readonly IStockInfoService _stocksService;
+		private readonly IStocksService _stocksService;
 
-		public StockInfoController(IStockInfoService service)
+		public StocksController(IStocksService service)
 		{
 			_stocksService = service;
 		}
@@ -20,31 +20,36 @@ namespace API.Gateway.Controllers
 		[Route("current/{companyName}")]
 		public async Task<IActionResult> GetCurrentData(string companyName)
 		{
-			return await _stocksService.GetCurrentData(companyName);
-		}
+			var res = await _stocksService.GetCurrentData(companyName);
 
+			return res;
+		}
 		[Authorize]
 		[HttpGet]
 		[Route("daily/{companyName}")]
 		public async Task<IActionResult> GetDailyData(string companyName)
 		{
-			return await _stocksService.GetDailyData(companyName);
-		}
+			var res = await _stocksService.GetDailyData(companyName);
 
+			return res;
+		}
 		[Authorize]
 		[HttpGet]
 		[Route("weekly/{companyName}")]
 		public async Task<IActionResult> GetWeeklyData(string companyName)
 		{
-			return await _stocksService.GetWeeklyData(companyName);
-		}
+			var res = await _stocksService.GetWeeklyData(companyName);
 
+			return res;
+		}
 		[Authorize]
 		[HttpGet]
 		[Route("monthly/{companyName}")]
 		public async Task<IActionResult> GetMonthlyData(string companyName)
 		{
-			return await _stocksService.GetMonthlyData(companyName);
+			var res = await _stocksService.GetMonthlyData(companyName);
+
+			return res;
 		}
 	}
 }

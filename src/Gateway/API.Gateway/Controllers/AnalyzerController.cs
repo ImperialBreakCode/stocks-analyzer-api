@@ -21,39 +21,45 @@ namespace API.Gateway.Controllers
 		[Route("PortfolioSummary")]
 		public async Task<IActionResult> PortfolioSummary()
 		{
-			return await _analyzerService.PortfolioRisk();
-		}
+			var res = await _analyzerService.PortfolioRisk();
 
+			return res;
+		}
 		[Authorize]
 		[HttpGet]
 		[Route("CurrentProfitability")]
 		public async Task<IActionResult> CurrentProfitability()
 		{
-			return await _analyzerService.CurrentProfitability();
-		}
+			var res = await _analyzerService.CurrentProfitability();
 
+			return res;
+		}
 		[Authorize]
 		[HttpGet]
 		[Route("PercentageChange")]
 		public async Task<IActionResult> PercentageChange()
 		{
-			return await _analyzerService.PercentageChange();
-		}
+			var res = await _analyzerService.PercentageChange();
 
+			return res;
+		}
 		[Authorize]
 		[HttpGet]
 		[Route("PortfolioRisk")]
 		public async Task<IActionResult> PortfolioRisk()
 		{
-			return await _analyzerService.PortfolioRisk();
-		}
+			var res = await _analyzerService.PortfolioRisk();
 
+			return res;
+		}
 		[Authorize]
 		[HttpGet]
 		[Route("DailyProfitabilityChanges")]
 		public async Task<IActionResult> DailyProfitabilityChanges()
 		{
-			return await _analyzerService.DailyProfitabilityChanges();
+			var res = await _analyzerService.DailyProfitabilityChanges();
+
+			return res;
 		}
 
 	}

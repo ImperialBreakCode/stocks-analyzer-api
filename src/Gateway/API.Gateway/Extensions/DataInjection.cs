@@ -10,11 +10,10 @@ namespace API.Gateway.Extensions
 	{
 		public static IServiceCollection AddServices(this IServiceCollection services)
 		{
-			services.AddTransient<IHttpClient, GwHttpClient>();
-			services.AddTransient<IAccountService, AccountService>();
-			services.AddTransient<IStockInfoService, StockInfoService>();
-			services.AddTransient<IAnalyzerService, AnalyzerService>();
-			services.AddTransient<IWalletService, WalletService>();
+			services.AddScoped<IHttpClient, GwHttpClient>();
+			services.AddScoped<IAccountService, AccountService>();
+			services.AddScoped<IStocksService, StocksService>();
+			services.AddScoped<IAnalyzerService, AnalyzerService>();
 
 
 			return services;
