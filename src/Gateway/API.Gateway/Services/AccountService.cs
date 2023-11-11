@@ -1,10 +1,8 @@
 ﻿using API.Gateway.Domain.DTOs;
 using API.Gateway.Domain.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Text;
-using Newtonsoft.Json;
 using API.Gateway.Settings;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace API.Gateway.Services
 {
@@ -12,47 +10,24 @@ namespace API.Gateway.Services
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
-		public AccountService(IHttpClient httpClient, MicroserviceHostsConfiguration microserviceHosts)
+		public AccountService(IHttpClient httpClient, IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts)
 		{
 			_httpClient = httpClient;
-			_microserviceHosts = microserviceHosts;
+			_microserviceHosts = microserviceHosts.CurrentValue;
 		}
 
 		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
 		{
-
-			 var res = await _httpClient.PostAsJsonAsync($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Register", regUserDTO);
-
-			return res;
-
+			return await _httpClient.PostAsJsonAsync($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Register", regUserDTO);
 		}
-	   
-		public async Task<LoginResponse> Login(UserDTO userDTO)
+
+		public async Task<IActionResult> Login(UserDTO userDTO)
 		{
-
-			string response = await _httpClient.PostAsJsonAsyncReturnString($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Login", userDTO);
-
-			LoginResponse loginResponse = JsonConvert.DeserializeObject<LoginResponse>(response);
-
-			return loginResponse;
-
+			return await _httpClient.PostAsJsonAsync($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Login", userDTO);
 		}
-
-		public async Task<IActionResult> Deposit()
+		public async Task<IActionResult> UserInformation(string username)
 		{
-			return new OkResult();
+			return await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UserInformation/{username}");
 		}
-
-		public async Task<IActionResult> CreateWallet()
-		{
-			return new OkResult();
-		}
-
-		public async Task<IActionResult> UserInformation()
-		{
-			return new OkResult();
-		}
-
-
 	}
 }

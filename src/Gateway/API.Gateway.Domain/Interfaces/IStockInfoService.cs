@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace API.Gateway.Domain.Interfaces
 {
-	public interface IStocksService
+	public interface IStockInfoService
 	{
 		Task<IActionResult> GetCurrentData(string companyName);
 		Task<IActionResult> GetDailyData(string companyName);
