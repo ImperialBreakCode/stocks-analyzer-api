@@ -25,9 +25,11 @@ namespace API.Gateway.Services
 		{
 			return await _httpClient.PostAsJsonAsync($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Login", userDTO);
 		}
+
 		public async Task<IActionResult> UserInformation(string username)
 		{
 			return await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UserInformation/{username}");
 		}
+
 	}
 }

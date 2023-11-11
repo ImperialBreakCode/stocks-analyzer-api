@@ -19,17 +19,21 @@ namespace API.Gateway.Services
 		{
 			return await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/Current/{companyName}");
 		}
+
 		public async Task<IActionResult> GetDailyData(string companyName)
 		{
 			return await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/Daily/{companyName}");
 		}
+
 		public async Task<IActionResult> GetWeeklyData(string companyName)
 		{
 			return await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/Weekly/{companyName}");
 		}
+
 		public async Task<IActionResult> GetMonthlyData(string companyName)
 		{
 			return await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/Monthly/{companyName}");
 		}
+
 	}
 }

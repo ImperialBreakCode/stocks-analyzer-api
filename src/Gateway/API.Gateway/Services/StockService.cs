@@ -30,6 +30,7 @@ namespace API.Gateway.Services
 		{
 			return await _httpClient.PutActionResult($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/AddStockForPurchase", dto);
 		}
+
 		public async Task<IActionResult> AddStockForSale(StockDTO dto)
 		{
 			return await _httpClient.PutActionResult($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/AddStockForPurchase", dto);
@@ -39,11 +40,11 @@ namespace API.Gateway.Services
 		{
 			return await _httpClient.PostActionResult($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/AddStockForPurchase", walletId);
 		}
+
 		public async Task<IActionResult> ConfirmSale(string walletId)
 		{
 			return await _httpClient.PostActionResult($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/AddStockForPurchase", walletId);
 		}
-
 
 	}
 }

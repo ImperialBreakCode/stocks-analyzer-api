@@ -23,5 +23,6 @@ namespace API.Gateway.Services
 		{
 			return await _httpClient.GetActionResult($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/GetWallet/{walletId}");
 		}
+
 	}
 }
