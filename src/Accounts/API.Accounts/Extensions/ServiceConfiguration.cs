@@ -3,7 +3,6 @@ using API.Accounts.Application.Auth.TokenManager;
 using API.Accounts.Application.Data;
 using API.Accounts.Application.Data.ExchangeRates;
 using API.Accounts.Application.Data.StocksData;
-using API.Accounts.Application.DTOs.Enums;
 using API.Accounts.Application.EventClocks;
 using API.Accounts.Application.HttpClientService;
 using API.Accounts.Application.Services.StockService;

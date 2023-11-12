@@ -1,22 +1,25 @@
-﻿using API.Accounts.Application.DTOs.Enums;
-
-namespace API.Accounts.Application.Data.ExchangeRates
+﻿namespace API.Accounts.Application.Data.ExchangeRates
 {
     public class ExchangeRateDataMockup : IExchangeRatesData
     {
-        private readonly Dictionary<CurrencyType, double> _exchangeRates;
+        private readonly Dictionary<string, double> _exchangeRates;
 
         public ExchangeRateDataMockup()
         {
-            _exchangeRates = new Dictionary<CurrencyType, double>();
-            _exchangeRates.Add(CurrencyType.USD, 1);
-            _exchangeRates.Add(CurrencyType.BGN, 0.55);
-            _exchangeRates.Add(CurrencyType.GBP, 1.22);
-            _exchangeRates.Add(CurrencyType.EUR, 1.07);
+            _exchangeRates = new Dictionary<string, double>();
+            _exchangeRates.Add("USD", 1);
+            _exchangeRates.Add("BGN", 0.55);
+            _exchangeRates.Add("GBP", 1.22);
+            _exchangeRates.Add("EUR", 1.07);
         }
 
-        public decimal GetRateToDollar(CurrencyType fromCurrencyType)
+        public decimal GetRateToDollar(string fromCurrencyType)
         {
+            if (!_exchangeRates.ContainsKey(fromCurrencyType))
+            {
+                throw new ArgumentException();
+            }
+
             return (decimal)_exchangeRates[fromCurrencyType];
         }
     }

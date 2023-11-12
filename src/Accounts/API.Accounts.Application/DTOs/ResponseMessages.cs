@@ -5,10 +5,11 @@
         public const string AuthSuccess = "Authentication is successful";
         public const string AuthUserNotFound = "User is not found.";
         public const string AuthPassIncorrect = "Incorrect password.";
-        public const string UserAlreadyExists = "User with such username already exists.";
 
+        public const string UserAlreadyExists = "User with such username already exists.";
         public const string UserNotFound = "User {0} not found";
 
+        public const string CannotDepositWithCurrencyType = "Cannot deposit with the given currency type";
         public const string WalletNotFound = "Wallet does not exist.";
         public const string WalletRestricted = "Wallet restricted for actions such as purchasing or saling stocks";
         public const string WalletCreated = "Wallet created.";

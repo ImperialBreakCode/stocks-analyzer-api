@@ -49,6 +49,16 @@ namespace API.Accounts.Application.Services.WalletService
 
         public string Deposit(DepositWalletDTO depositDTO)
         {
+            decimal exchangeRate;
+            try
+            {
+                exchangeRate = _exchangeRatesData.GetRateToDollar(depositDTO.CurrencyType);
+            }
+            catch (ArgumentException)
+            {
+                return ResponseMessages.CannotDepositWithCurrencyType;
+            }
+
             using (var context = _accountData.CreateDbContext())
             {
                 Wallet? wallet = context.Wallets.GetOneById(depositDTO.WalletId);
@@ -68,7 +78,7 @@ namespace API.Accounts.Application.Services.WalletService
                     context.Wallets.Insert(wallet);
                 }
 
-                wallet.Balance += depositDTO.Value * _exchangeRatesData.GetRateToDollar(depositDTO.CurrencyType);
+                wallet.Balance += depositDTO.Value * exchangeRate;
 
                 context.Wallets.Update(wallet);
                 context.Commit();

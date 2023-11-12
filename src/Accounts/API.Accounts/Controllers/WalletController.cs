@@ -1,5 +1,4 @@
 ﻿using API.Accounts.Application.DTOs;
-using API.Accounts.Application.DTOs.Enums;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.Services.WalletService;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +25,10 @@ namespace API.Accounts.Controllers
             if (response == ResponseMessages.WalletNotFound)
             {
                 return NotFound(response);
+            }
+            else if (response == ResponseMessages.CannotDepositWithCurrencyType)
+            {
+                return BadRequest(response);
             }
 
             return Ok();
