@@ -47,10 +47,17 @@ namespace API.Accounts.Application.Services.UserService
             return responseDTO;
         }
 
-        public void RegisterUser(RegisterUserDTO registerDTO)
+        public string? RegisterUser(RegisterUserDTO registerDTO)
         {
+            string result = null;
+
             using(var context = _data.CreateDbContext())
             {
+                if (context.Users.GetOneByUserName(registerDTO.Username) is not null)
+                {
+                    return ResponseMessages.UserAlreadyExists;
+                }
+
                 User user = new()
                 {
                     FirstName = registerDTO.FirstName,
@@ -73,6 +80,8 @@ namespace API.Accounts.Application.Services.UserService
 
                 context.Commit();
             }
+
+            return result;
         }
 
         public GetUserResponseDTO? GetUserByUserName(string username)

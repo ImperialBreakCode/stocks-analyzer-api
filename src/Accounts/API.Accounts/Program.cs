@@ -1,3 +1,4 @@
+using API.Accounts;
 using API.Accounts.Application.Settings;
 using API.Accounts.Extensions;
 
@@ -13,7 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<AccountSettings>(
     builder.Configuration.GetSection("AccountSettings"));
 
-builder.Services.AddAccountApiServices();
+builder.Services.AddAccountServicesConfiguration();
 
 
 var app = builder.Build();

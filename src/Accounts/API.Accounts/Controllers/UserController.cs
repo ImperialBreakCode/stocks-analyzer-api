@@ -24,7 +24,13 @@ namespace API.Accounts.Controllers
         [Route("Register")]
         public IActionResult Register(RegisterUserDTO userDTO)
         {
-            _userService.RegisterUser(userDTO);
+            var errorMessage = _userService.RegisterUser(userDTO);
+
+            if (errorMessage is not null)
+            {
+                return BadRequest(errorMessage);
+            }
+
             return Created($"/api/User/{userDTO.Username}", userDTO);
         }
 

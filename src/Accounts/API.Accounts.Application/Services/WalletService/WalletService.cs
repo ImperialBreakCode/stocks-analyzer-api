@@ -1,5 +1,7 @@
 ﻿using API.Accounts.Application.Data;
+using API.Accounts.Application.Data.ExchangeRates;
 using API.Accounts.Application.DTOs;
+using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.RepositoryBase;
@@ -9,10 +11,12 @@ namespace API.Accounts.Application.Services.WalletService
     public class WalletService : IWalletService
     {
         private readonly IAccountsData _accountData;
+        private readonly IExchangeRatesData _exchangeRatesData;
 
-        public WalletService(IAccountsData accountData)
+        public WalletService(IAccountsData accountData, IExchangeRatesData exchangeRatesData)
         {
             _accountData = accountData;
+            _exchangeRatesData = exchangeRatesData;
         }
 
         public string CreateWallet(string username)
@@ -41,6 +45,36 @@ namespace API.Accounts.Application.Services.WalletService
             }
 
             return ResponseMessages.WalletCreated;
+        }
+
+        public string Deposit(DepositWalletDTO depositDTO)
+        {
+            using (var context = _accountData.CreateDbContext())
+            {
+                Wallet? wallet = context.Wallets.GetOneById(depositDTO.WalletId);
+
+                if (wallet is null)
+                {
+                    return ResponseMessages.WalletNotFound;
+                }
+                else if (wallet.IsDemo)
+                {
+                    context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
+                    
+                    wallet.IsDemo = false;
+                    wallet.Balance = 0;
+                    wallet.Id = Guid.NewGuid().ToString();
+
+                    context.Wallets.Insert(wallet);
+                }
+
+                wallet.Balance += depositDTO.Value * _exchangeRatesData.GetRateToDollar(depositDTO.CurrencyType);
+
+                context.Wallets.Update(wallet);
+                context.Commit();
+            }
+
+            return string.Empty;
         }
 
         public GetWalletResponseDTO? GetWallet(string walletId)

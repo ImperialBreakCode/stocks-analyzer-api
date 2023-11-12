@@ -1,4 +1,6 @@
 ﻿using API.Accounts.Application.DTOs;
+using API.Accounts.Application.DTOs.Enums;
+using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.Services.WalletService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +18,16 @@ namespace API.Accounts.Controllers
         }
 
         [HttpPut]
-        public IActionResult Deposit()
+        [Route("Deposit")]
+        public IActionResult Deposit(DepositWalletDTO depositDTO)
         {
+            string response = _walletService.Deposit(depositDTO);
+
+            if (response == ResponseMessages.WalletNotFound)
+            {
+                return NotFound(response);
+            }
+
             return Ok();
         }
 
