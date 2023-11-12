@@ -90,6 +90,7 @@ namespace API.Accounts.Application.Services.UserService
                         UserId = user.Id,
                         UserName = username,
                         FirstName = user.FirstName,
+                        UserEmail = user.Email,
                         LastName = user.LastName,
                         WalletId = context.Wallets.GetUserWallet(user.Id)?.Id
                     };
