@@ -3,11 +3,10 @@ using API.Accounts.Application.Services.WalletService;
 
 namespace API.Accounts.BackgroundServices
 {
-    public class EventClockService : IHostedService
+    public class EventClockService : BackgroundService
     {
         private readonly IEventClock _eventClock;
         private readonly IDemoWalletDeleteHandler _deleteDemoWalletHandler;
-        private Task _clockTask;
 
         public EventClockService(IEventClock eventClock, IDemoWalletDeleteHandler deleteDemoWalletHandler)
         {
@@ -17,27 +16,9 @@ namespace API.Accounts.BackgroundServices
             RegisterHandlers();
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _clockTask = Task.Run(() => _eventClock.RunClock(), cancellationToken);
-
-            return Task.CompletedTask;
-        }
-
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            if (_clockTask != null && !_clockTask.IsCompleted)
-            {
-                try
-                {
-                    _eventClock.Dispose();
-                    await Task.WhenAny(_clockTask, Task.Delay(Timeout.Infinite, cancellationToken));
-                }
-                catch (OperationCanceledException)
-                {
-                    Console.WriteLine("clock stopped");
-                }
-            }
+            await _eventClock.RunClock(stoppingToken);
         }
 
         private void RegisterHandlers()

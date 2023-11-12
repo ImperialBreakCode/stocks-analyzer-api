@@ -15,12 +15,14 @@
             _timeChangedEvent += handler;
         }
 
-        public async Task RunClock()
+        public async Task RunClock(CancellationToken cancellationToken)
         {
-            while (await _periodicTimer.WaitForNextTickAsync())
+            do
             {
                 _timeChangedEvent?.Invoke();
             }
+            while (await _periodicTimer.WaitForNextTickAsync() && !cancellationToken.IsCancellationRequested);
+            
         }
 
         public void Dispose()

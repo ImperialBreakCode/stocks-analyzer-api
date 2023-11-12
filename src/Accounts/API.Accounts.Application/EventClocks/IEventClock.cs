@@ -3,6 +3,6 @@
     public interface IEventClock : IDisposable
     {
         void RegisterClockHandler(Action handler);
-        Task RunClock();
+        Task RunClock(CancellationToken cancellationToken);
     }
 }
