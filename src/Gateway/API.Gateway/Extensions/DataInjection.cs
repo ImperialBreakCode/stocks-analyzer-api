@@ -15,6 +15,7 @@ namespace API.Gateway.Extensions
 			services.AddTransient<IStockInfoService, StockInfoService>();
 			services.AddTransient<IAnalyzerService, AnalyzerService>();
 			services.AddTransient<IWalletService, WalletService>();
+			services.AddTransient<IStockService, StockService>();
 
 
 			return services;
