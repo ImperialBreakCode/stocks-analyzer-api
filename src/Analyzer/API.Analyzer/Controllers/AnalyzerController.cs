@@ -16,27 +16,22 @@ namespace API.Analyzer.Controllers
             this.service = service;
         }
 
-        [HttpGet("get-action/{userId}")]
-        public IActionResult GetAction(string userId)
-        {
-            return Ok();
-        }
 
-        [HttpGet("check-profitability/{userId}/{balance}")]
-        public async Task<IActionResult> CheckProfitability(string userId, decimal balance)
-        {
-            decimal? result = await service.ProfitablenessAccountCheck(userId, balance);
-            if (result.HasValue && result.Value >= balance)
-            {
-                return Ok(true);
-            }
-            return BadRequest(false);
-        }
+        //[HttpGet("check-profitability/{username")]
+        //public async Task<IActionResult> CheckProfitability(string userName,decimal balance)
+        //{
+        //    decimal? result = await service.ProfitablenessAccountCheck(userName);
+        //    if (result.HasValue && result.Value >= balance)
+        //    {
+        //        return Ok(true);
+        //    }
+        //    return BadRequest(false);
+        //}
 
-        [HttpGet("get-info/{userId}")]
-        public async Task<IActionResult> GetInfo(string userId)
+        [HttpGet("get-info/{userName}")]
+        public async Task<IActionResult> GetInfo(string userName)
         {
-            Wallet jsonContent = await service.UserProfilInfo(userId);
+            GetWalletResponseDTO jsonContent = await service.UserProfilInfo(userName);
             if (jsonContent != null)
             {
                 return Ok(jsonContent);
@@ -45,19 +40,19 @@ namespace API.Analyzer.Controllers
         }
 
         //[HttpGet("profit-change-per-day/{id}")]
-        //public async Task<IActionResult> CalculateProfitChangePerDay(string userId)
+        //public async Task<IActionResult> CalculateProfitChangePerDay(string userName)
         //{
-        //    decimal? todayProfitability = await service.GetProfitabilityForDate(id, DateTime.Today);
-        //    decimal? yesterdayProfitability = await service.GetProfitabilityForDate(id, DateTime.Today.AddDays(-1));
-        //    if (todayProfitability.HasValue && yesterdayProfitability.HasValue && yesterdayProfitability.Value != 0)
+        //    decimal? todayprofitability = await service.GetProfitabilityForDate(userName, DateTime.Today);
+        //    decimal? yesterdayprofitability = await service.GetProfitabilityForDate(userName, DateTime.Today.AddDays(-1));
+        //    if (todayprofitability.HasValue && yesterdayprofitability.HasValue && yesterdayprofitability.Value != 0)
         //    {
-        //        decimal percentageChange = ((todayProfitability.Value - yesterdayProfitability.Value) / yesterdayProfitability.Value) * 100;
+        //        decimal percentagechange = ((todayprofitability.Value - yesterdayprofitability.Value) / yesterdayprofitability.Value) * 100;
 
-        //        return Ok(percentageChange);
+        //        return Ok(percentagechange);
         //    }
         //    else
         //    {
-        //        return BadRequest("Unable to calculate percentage change");
+        //        return BadRequest("unable to calculate percentage change");
         //    }
         //}
     } 
