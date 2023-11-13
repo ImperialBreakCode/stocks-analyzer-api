@@ -14,10 +14,4 @@
     <ProjectReference Include="..\API.Accounts.Application\API.Accounts.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>
