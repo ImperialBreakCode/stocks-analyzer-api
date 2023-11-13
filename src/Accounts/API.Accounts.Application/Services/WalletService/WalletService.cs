@@ -1,4 +1,7 @@
 ﻿using API.Accounts.Application.Data;
+using API.Accounts.Application.Data.ExchangeRates;
+using API.Accounts.Application.DTOs;
+using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.RepositoryBase;
@@ -8,10 +11,12 @@ namespace API.Accounts.Application.Services.WalletService
     public class WalletService : IWalletService
     {
         private readonly IAccountsData _accountData;
+        private readonly IExchangeRatesData _exchangeRatesData;
 
-        public WalletService(IAccountsData accountData)
+        public WalletService(IAccountsData accountData, IExchangeRatesData exchangeRatesData)
         {
             _accountData = accountData;
+            _exchangeRatesData = exchangeRatesData;
         }
 
         public string CreateWallet(string username)
@@ -22,7 +27,7 @@ namespace API.Accounts.Application.Services.WalletService
 
                 if (user is null)
                 {
-                    return string.Format(ResponseMessages.UserNotFound, username);
+                    return ResponseMessages.UserNotFound;
                 }
 
                 if (context.Wallets.GetUserWallet(user.Id) is not null)
@@ -42,6 +47,71 @@ namespace API.Accounts.Application.Services.WalletService
             return ResponseMessages.WalletCreated;
         }
 
+        public string? DeleteWallet(string username)
+        {
+            using (var context = _accountData.CreateDbContext())
+            {
+                string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
+                if (error is not null)
+                {
+                    return error;
+                }
+                else if (wallet is null)
+                {
+                    return ResponseMessages.WalletNotFound;
+                }
+
+                context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
+                context.Commit();
+            }
+
+            return null;
+        }
+
+        public string Deposit(DepositWalletDTO depositDTO, string username)
+        {
+            decimal exchangeRate;
+            try
+            {
+                exchangeRate = _exchangeRatesData.GetRateToDollar(depositDTO.CurrencyType);
+            }
+            catch (ArgumentException)
+            {
+                return ResponseMessages.CannotDepositWithCurrencyType;
+            }
+
+            using (var context = _accountData.CreateDbContext())
+            {
+                string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
+
+                if (error is not null)
+                {
+                    return error;
+                }
+                else if (wallet is null)
+                {
+                    return ResponseMessages.WalletNotFound;
+                }
+                else if (wallet.IsDemo)
+                {
+                    context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
+                    
+                    wallet.IsDemo = false;
+                    wallet.Balance = 0;
+                    wallet.Id = Guid.NewGuid().ToString();
+
+                    context.Wallets.Insert(wallet);
+                }
+
+                wallet.Balance += depositDTO.Value * exchangeRate;
+
+                context.Wallets.Update(wallet);
+                context.Commit();
+            }
+
+            return string.Empty;
+        }
+
         public GetWalletResponseDTO? GetWallet(string walletId)
         {
             GetWalletResponseDTO? response = null;
@@ -57,6 +127,7 @@ namespace API.Accounts.Application.Services.WalletService
                     {
                         Id = wallet.Id,
                         Balance = wallet.Balance,
+                        IsDemo = wallet.IsDemo,
                         UserName = userRepo.GetOneById(wallet.UserId)!.UserName,
                     };
                 }
