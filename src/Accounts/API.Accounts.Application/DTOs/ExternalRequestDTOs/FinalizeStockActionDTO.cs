@@ -1,6 +1,4 @@
-﻿using API.Accounts.Application.DTOs.ExternalDTOs;
-
-namespace API.Accounts.Application.DTOs.ExternaDTOs
+﻿namespace API.Accounts.Application.DTOs.ExternalRequestDTOs
 {
     public class FinalizeStockActionDTO
     {

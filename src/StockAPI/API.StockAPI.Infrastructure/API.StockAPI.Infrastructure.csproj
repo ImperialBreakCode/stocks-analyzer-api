@@ -22,4 +22,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\API.StockAPI.Domain\API.StockAPI.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

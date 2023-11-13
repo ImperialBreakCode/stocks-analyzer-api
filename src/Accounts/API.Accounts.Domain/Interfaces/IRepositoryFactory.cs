@@ -2,7 +2,7 @@
 {
     public interface IRepositoryFactory
     {
-        IRepository<T> CreateGenericRepo<T>() where T : IEntity;
+        IRepository<T> CreateGenericRepo<T>() where T : class, IEntity;
         IUserRepository CreateUserRepo();
         IWalletRepository CreateWalletRepo();
     }

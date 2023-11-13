@@ -14,7 +14,7 @@ namespace API.Accounts.Infrastructure.Repositories
             _sqlTransaction = sqlTransaction;
         }
 
-        public IRepository<T> CreateGenericRepo<T>() where T : IEntity
+        public IRepository<T> CreateGenericRepo<T>() where T : class, IEntity
         {
             return new Repository<T>(_sqlConnection, _sqlTransaction);
         }

@@ -1,3 +1,4 @@
+using API.Accounts;
 using API.Accounts.Application.Settings;
 using API.Accounts.Extensions;
 
@@ -11,9 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<AccountSettings>(
-    builder.Configuration.GetSection("AccountSetting"));
+    builder.Configuration.GetSection("AccountSettings"));
 
-builder.Services.InjectData().InjectAuthentication().InjectServices();
+builder.Services.AddAccountServicesConfiguration();
 
 
 var app = builder.Build();

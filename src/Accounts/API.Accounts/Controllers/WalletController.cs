@@ -1,4 +1,5 @@
-﻿using API.Accounts.Application.DTOs.Response;
+﻿using API.Accounts.Application.DTOs;
+using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.Services.WalletService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,14 +17,33 @@ namespace API.Accounts.Controllers
         }
 
         [HttpPut]
-        public IActionResult Deposit()
+        [Route("Deposit/{username}")]
+        public IActionResult Deposit([FromBody] DepositWalletDTO depositDTO, [FromRoute] string username)
         {
-            return Ok();
+            string response = _walletService.Deposit(depositDTO, username);
+            ResponseType responseType = ResponseParser.ParseResponseMessage(response);
+
+            switch (responseType)
+            {
+                case ResponseType.NotFound:
+                    return NotFound(response);
+                case ResponseType.BadRequest:
+                    return BadRequest(response);
+                default:
+                    return Ok();
+            }
         }
 
         [HttpDelete]
-        public IActionResult CloseWallet()
+        [Route("DeleteWallet/{username}")]
+        public IActionResult DeleteWallet(string username)
         {
+            string? error = _walletService.DeleteWallet(username);
+            if (error is not null)
+            {
+                NotFound(error);
+            }
+
             return Ok();
         }
 

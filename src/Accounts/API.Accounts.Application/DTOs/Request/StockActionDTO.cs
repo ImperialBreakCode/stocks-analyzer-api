@@ -9,9 +9,6 @@ namespace API.Accounts.Application.DTOs.Request
 
         [Required]
         public int Quantity { get; set; }
-
-        [Required]
-        public string WalletId { get; set; }
         
     }
 }
