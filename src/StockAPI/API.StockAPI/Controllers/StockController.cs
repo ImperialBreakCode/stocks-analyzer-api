@@ -1,4 +1,5 @@
-﻿using API.StockAPI.Services;
+﻿using API.StockAPI.Domain.InterFaces;
+using API.StockAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,71 +9,40 @@ namespace API.StockAPI.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        private readonly ExternalRequestService _externalRequestServices;
-        private readonly StockService _stockServices;
+        private readonly IExternalRequestService _externalRequestServices;
+        private readonly IStockService _stockServices;
 
-        public StockController(StockService services, ExternalRequestService externalServices)
+        public StockController(IStockService services, IExternalRequestService externalServices)
         {
             _stockServices = services;
             _externalRequestServices = externalServices;
         }
 
         [HttpGet]
-        [Route("Current/{symbol}")]
-        public async Task<IActionResult> GetCurrentStock(string symbol)
+        [Route("{type}/{symbol}")]
+        public async Task<IActionResult> GetStock(string symbol, string type)
         {
-            if (symbol == null) 
+            if(symbol == "" || type == "")
             {
                 return BadRequest();
             }
 
-            string function = "TIME_SERIES_INTRADAY&interval=60min";
-            var query = _externalRequestServices.QueryStringGenerator(symbol, function);
-            var response = await _externalRequestServices.JsonDataGenerator(query);
-
-            if (query == null)
+            try
             {
-                return NotFound();
+                var data = await _externalRequestServices.GetData(symbol, type);
+                var result = await _stockServices.GetStockFromRequest(symbol, data, type);
+
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
             }
-
-            var result = await _stockServices.GetCurrentStock(response, symbol);
-            return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("Daily/{symbol}")]
-        public async Task<IActionResult> GetDailyStock(string symbol)
-        {
-            if (symbol == null)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return StatusCode(500, ex.Message);
             }
-
-            string function = "TIME_SERIES_DAILY";
-            var query = _externalRequestServices.QueryStringGenerator(symbol, function);
-            var response = await _externalRequestServices.JsonDataGenerator(query);
-
-            if (query == null)
-            {
-                return NotFound();
-            }
-
-            var result = await _stockServices.GetDailyStock(response, symbol);
-            return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("Weekly/{symbol}")]
-        public async Task<IActionResult> GetWeeklyStock(string symbol)
-        {
-            return Ok(symbol);
-        }
-
-        [HttpGet]
-        [Route("Monthly/{symbol}")]
-        public async Task<IActionResult> GetMonthlyStock(string symbol)
-        {
-            return Ok(symbol);
         }
     }
 }
