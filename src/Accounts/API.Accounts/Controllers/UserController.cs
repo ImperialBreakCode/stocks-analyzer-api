@@ -28,7 +28,7 @@ namespace API.Accounts.Controllers
 
             if (errorMessage is not null)
             {
-                return BadRequest(errorMessage);
+                return Conflict(errorMessage);
             }
 
             return Created($"/api/User/{userDTO.Username}", userDTO);

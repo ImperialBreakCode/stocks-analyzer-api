@@ -2,7 +2,7 @@
 {
     public interface IStockActionFinalizer
     {
-        Task<string> ConfirmSales(string walletId);
-        Task<string> ConfirmPurchase(string walletId);
+        Task<string> ConfirmSales(string username);
+        Task<string> ConfirmPurchase(string username);
     }
 }

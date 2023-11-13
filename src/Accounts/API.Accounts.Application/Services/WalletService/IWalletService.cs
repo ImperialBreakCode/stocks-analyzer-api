@@ -5,7 +5,7 @@ namespace API.Accounts.Application.Services.WalletService
 {
     public interface IWalletService
     {
-        string Deposit(DepositWalletDTO depositDTO);
+        string Deposit(DepositWalletDTO depositDTO, string username);
         string CreateWallet(string username);
         GetWalletResponseDTO? GetWallet(string walletId);
     }

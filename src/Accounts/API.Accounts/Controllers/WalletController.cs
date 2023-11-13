@@ -17,21 +17,21 @@ namespace API.Accounts.Controllers
         }
 
         [HttpPut]
-        [Route("Deposit")]
-        public IActionResult Deposit(DepositWalletDTO depositDTO)
+        [Route("Deposit/{username}")]
+        public IActionResult Deposit([FromBody] DepositWalletDTO depositDTO, [FromRoute] string username)
         {
-            string response = _walletService.Deposit(depositDTO);
+            string response = _walletService.Deposit(depositDTO, username);
+            ResponseType responseType = ResponseParser.ParseResponseMessage(response);
 
-            if (response == ResponseMessages.WalletNotFound)
+            switch (responseType)
             {
-                return NotFound(response);
+                case ResponseType.NotFound:
+                    return NotFound(response);
+                case ResponseType.BadRequest:
+                    return BadRequest(response);
+                default:
+                    return Ok();
             }
-            else if (response == ResponseMessages.CannotDepositWithCurrencyType)
-            {
-                return BadRequest(response);
-            }
-
-            return Ok();
         }
 
         [HttpDelete]

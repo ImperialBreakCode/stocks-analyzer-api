@@ -19,13 +19,17 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             _actionExecuter = actionExecuter;
         }
 
-        public async Task<string> ConfirmPurchase(string walletId)
+        public async Task<string> ConfirmPurchase(string username)
         {
             using (var context = _accountsData.CreateDbContext())
             {
-                Wallet? wallet = context.Wallets.GetOneById(walletId);
+                string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
 
-                if (wallet is null)
+                if (error is not null)
+                {
+                    return error;
+                }
+                else if (wallet is null)
                 {
                     return ResponseMessages.WalletNotFound;
                 }
@@ -35,7 +39,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
                 if (!stocksForPurchase.Any())
                 {
-                    return string.Format(ResponseMessages.NoStocksAddedForPurchaseSale, "purchase");
+                    return ResponseMessages.NoStocksAddedForPurchaseSale;
                 }
 
                 var finalizeDto = CreateFinalizeStockDto(false, wallet.Id, wallet.UserId);
@@ -53,13 +57,17 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             return ResponseMessages.TransactionSendForProccessing;
         }
 
-        public async Task<string> ConfirmSales(string walletId)
+        public async Task<string> ConfirmSales(string username)
         {
             using (var context = _accountsData.CreateDbContext())
             {
-                Wallet? wallet = context.Wallets.GetOneById(walletId);
+                string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
 
-                if (wallet is null)
+                if (error is not null)
+                {
+                    return error;
+                }
+                else if (wallet is null)
                 {
                     return ResponseMessages.WalletNotFound;
                 }
@@ -69,7 +77,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
                 if (!stocksForSale.Any())
                 {
-                    return string.Format(ResponseMessages.NoStocksAddedForPurchaseSale, "sale");
+                    return ResponseMessages.NoStocksAddedForPurchaseSale;
                 }
 
                 var finalizeDto = CreateFinalizeStockDto(true, wallet.Id, wallet.UserId);
@@ -94,7 +102,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             return finalizeDto;
         }
 
-        private void ReflectStockQuantityChanges(FinalizeStockResponseDTO res, ICollection<Stock> currentStocks, IAccountsDbContext context)
+        private static void ReflectStockQuantityChanges(FinalizeStockResponseDTO res, ICollection<Stock> currentStocks, IAccountsDbContext context)
         {
             foreach (var responseStock in res.AvailabilityStockInfoResponseDTOs)
             {

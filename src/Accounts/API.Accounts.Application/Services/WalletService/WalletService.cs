@@ -27,7 +27,7 @@ namespace API.Accounts.Application.Services.WalletService
 
                 if (user is null)
                 {
-                    return string.Format(ResponseMessages.UserNotFound, username);
+                    return ResponseMessages.UserNotFound;
                 }
 
                 if (context.Wallets.GetUserWallet(user.Id) is not null)
@@ -47,7 +47,7 @@ namespace API.Accounts.Application.Services.WalletService
             return ResponseMessages.WalletCreated;
         }
 
-        public string Deposit(DepositWalletDTO depositDTO)
+        public string Deposit(DepositWalletDTO depositDTO, string username)
         {
             decimal exchangeRate;
             try
@@ -61,9 +61,13 @@ namespace API.Accounts.Application.Services.WalletService
 
             using (var context = _accountData.CreateDbContext())
             {
-                Wallet? wallet = context.Wallets.GetOneById(depositDTO.WalletId);
+                string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
 
-                if (wallet is null)
+                if (error is not null)
+                {
+                    return error;
+                }
+                else if (wallet is null)
                 {
                     return ResponseMessages.WalletNotFound;
                 }

@@ -31,7 +31,7 @@ namespace API.Accounts.Application.Services.UserService
 
                 if (user is null)
                 {
-                    responseDTO.Message = ResponseMessages.AuthUserNotFound;
+                    responseDTO.Message = ResponseMessages.UserNotFound;
                 }
                 else if (!_passwordManager.VerifyPassword(loginDTO.Password, user.PasswordHash, user.Salt))
                 {

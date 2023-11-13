@@ -4,6 +4,7 @@ using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
 using API.Accounts.Domain.Entities;
+using API.Accounts.Domain.Interfaces.DbContext;
 
 namespace API.Accounts.Application.Services.StockService.SubServices
 {
@@ -18,22 +19,24 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             _stocksData = stocksData;
         }
 
-        public async Task<string> AddForPurchase(StockActionDTO stockActionDTO)
+        public async Task<string> AddForPurchase(StockActionDTO stockActionDTO, string username)
         {
-            decimal stockPrice = await _stocksData.GetCurrentStockPrice(stockActionDTO.StockName);
-
             using (var context = _accountsData.CreateDbContext())
             {
-                Wallet? wallet = context.Wallets.GetOneById(stockActionDTO.WalletId);
-                string? errorMessage = await CheckWallet(wallet, false, stockActionDTO);
+                string? errorMessage = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
+                if (errorMessage is not null)
+                {
+                    return errorMessage;
+                }
 
+                errorMessage = await CheckWallet(wallet, false, stockActionDTO);
                 if (errorMessage is not null)
                 {
                     return errorMessage;
                 }
 
                 var stock = context.Stocks
-                    .GetManyByCondition(s => s.WalletId == wallet.Id && s.StockName == stockActionDTO.StockName)
+                    .GetManyByCondition(s => s.WalletId == wallet!.Id && s.StockName == stockActionDTO.StockName)
                     .FirstOrDefault();
 
                 if (stock is null)
@@ -41,7 +44,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     stock = new Stock()
                     {
                         StockName = stockActionDTO.StockName,
-                        WalletId = wallet.Id,
+                        WalletId = wallet!.Id,
                     };
 
                     context.Stocks.Insert(stock);
@@ -53,16 +56,20 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                 context.Commit();
             }
 
-            return String.Format(ResponseMessages.StockActionSuccessfull, "purchase");
+            return ResponseMessages.StockActionSuccessfull;
         }
 
-        public async Task<string> AddForSale(StockActionDTO stockActionDTO)
+        public async Task<string> AddForSale(StockActionDTO stockActionDTO, string username)
         {
             using (var context = _accountsData.CreateDbContext())
             {
-                Wallet? wallet = context.Wallets.GetOneById(stockActionDTO.WalletId);
-                string? errorMessage = await CheckWallet(wallet, true, stockActionDTO);
+                string? errorMessage = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
+                if (errorMessage is not null)
+                {
+                    return errorMessage;
+                }
 
+                errorMessage = await CheckWallet(wallet, true, stockActionDTO);
                 if (errorMessage is not null)
                 {
                     return errorMessage;
@@ -87,7 +94,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                 context.Commit();
             }
 
-            return String.Format(ResponseMessages.StockActionSuccessfull, "sale");
+            return ResponseMessages.StockActionSuccessfull;
         }
 
         private async Task<string?> CheckWallet(Wallet? wallet, bool isSale, StockActionDTO stockActionDTO)
