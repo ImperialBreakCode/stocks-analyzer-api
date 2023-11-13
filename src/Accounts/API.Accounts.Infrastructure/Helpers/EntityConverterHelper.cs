@@ -1,10 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using API.Accounts.Domain.Interfaces;
+using Microsoft.Data.SqlClient;
 
 namespace API.Accounts.Infrastructure.Helpers
 {
     public static class EntityConverterHelper
     {
-        public static ICollection<T> ToEntityCollection<T>(SqlCommand command)
+        public static ICollection<T> ToEntityCollection<T>(SqlCommand command) where T : class, IEntity
         {
             var collection = new List<T>();
 
@@ -21,7 +22,7 @@ namespace API.Accounts.Infrastructure.Helpers
             return collection;
         }
 
-        public static T ToEntity<T>(T entity, SqlDataReader reader)
+        public static T ToEntity<T>(T entity, SqlDataReader reader) where T : class, IEntity
         {
             var properties = entity.GetType().GetProperties();
 
@@ -33,7 +34,7 @@ namespace API.Accounts.Infrastructure.Helpers
             return entity;
         }
 
-        public static void ToQuery<T>(T entity, SqlCommand command)
+        public static void ToQuery<T>(T entity, SqlCommand command) where T : class, IEntity
         {
             var properties = typeof(T).GetProperties();
             foreach (var property in properties)

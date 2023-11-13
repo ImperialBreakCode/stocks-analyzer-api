@@ -1,6 +1,6 @@
 ﻿using API.Accounts.Application.Settings;
 
-namespace API.Accounts.Application.Services.HttpService
+namespace API.Accounts.Application.HttpClientService
 {
     public class HttpClientRoutes : IHttpClientRoutes
     {

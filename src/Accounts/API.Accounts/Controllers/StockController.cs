@@ -1,4 +1,5 @@
-﻿using API.Accounts.Application.DTOs.Request;
+﻿using API.Accounts.Application.DTOs;
+using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.StockService;
 using Microsoft.AspNetCore.Mvc;
@@ -45,67 +46,75 @@ namespace API.Accounts.Controllers
         }
 
         [HttpPut]
-        [Route("AddStockForPurchase")]
-        public async Task<IActionResult> AddStockForPurchase(StockActionDTO stockAction)
+        [Route("AddStockForPurchase/{username}")]
+        public async Task<IActionResult> AddStockForPurchase([FromBody] StockActionDTO stockAction, [FromRoute] string username)
         {
-            string response = await _stockService.AddForPurchase(stockAction);
+            string response = await _stockService.ActionManager.AddForPurchase(stockAction, username);
+            ResponseType responseType = ResponseParser.ParseResponseMessage(response);
 
-            if (response == ResponseMessages.WalletNotFound)
+            switch (responseType)
             {
-                return NotFound(response);
+                case ResponseType.NotFound:
+                    return NotFound(response);
+                case ResponseType.BadRequest:
+                    return BadRequest(response);
+                default:
+                    return Ok(response);
             }
-            else if (response == String.Format(ResponseMessages.StockActionSuccessfull, "purchase"))
-            {
-                return Ok(response);
-            }
-
-            return BadRequest(response);
         }
 
         [HttpPut]
-        [Route("AddStockForSale")]
-        public IActionResult AddStockForSale(StockActionDTO stockActionDTO)
+        [Route("AddStockForSale/{username}")]
+        public async Task<IActionResult> AddStockForSale([FromBody] StockActionDTO stockActionDTO, [FromRoute] string username)
         {
-            string response = _stockService.AddForSale(stockActionDTO);
+            string response = await _stockService.ActionManager.AddForSale(stockActionDTO, username);
+            ResponseType responseType = ResponseParser.ParseResponseMessage(response);
 
-            if (response == String.Format(ResponseMessages.StockActionSuccessfull, "sale"))
+            switch (responseType)
             {
-                return Ok(response);
+                case ResponseType.NotFound:
+                    return NotFound(response);
+                case ResponseType.BadRequest:
+                    return BadRequest(response);
+                default:
+                    return Ok(response);
             }
-            else if (response == ResponseMessages.StockNotEnoughStocksToSale)
-            {
-                return BadRequest(response);
-            }
-
-            return NotFound(response);
         }
 
         [HttpPost]
-        [Route("ConfirmPurchase/{walletId}")]
-        public async Task<IActionResult> ConfirmPurchase(string walletId)
+        [Route("ConfirmPurchase/{username}")]
+        public async Task<IActionResult> ConfirmPurchase(string username)
         {
-            string response = await _stockService.ConfirmPurchase(walletId);
+            string response = await _stockService.ActionFinalizer.ConfirmPurchase(username);
+            ResponseType responseType = ResponseParser.ParseResponseMessage(response);
 
-            if (response == ResponseMessages.WalletNotFound)
+            switch (responseType)
             {
-                return NotFound(response);
+                case ResponseType.NotFound:
+                    return NotFound(response);
+                case ResponseType.BadRequest:
+                    return BadRequest(response);
+                default:
+                    return Ok(response);
             }
-
-            return Ok(response);
         }
 
         [HttpPost]
-        [Route("ConfirmSale/{walletId}")]
-        public async Task<IActionResult> ConfirmSale(string walletId)
+        [Route("ConfirmSale/{username}")]
+        public async Task<IActionResult> ConfirmSale(string username)
         {
-            string response = await _stockService.ConfirmSales(walletId);
+            string response = await _stockService.ActionFinalizer.ConfirmSales(username);
+            ResponseType responseType = ResponseParser.ParseResponseMessage(response);
 
-            if (response == ResponseMessages.WalletNotFound)
+            switch (responseType)
             {
-                return NotFound(response);
+                case ResponseType.NotFound:
+                    return NotFound(response);
+                case ResponseType.BadRequest:
+                    return BadRequest(response);
+                default:
+                    return Ok(response);
             }
-
-            return Ok(response);
         }
     }
 }

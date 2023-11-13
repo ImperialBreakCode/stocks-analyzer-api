@@ -1,4 +1,4 @@
-﻿namespace API.Accounts.Application.DTOs.ExternalDTOs
+﻿namespace API.Accounts.Application.DTOs.ExternalResponseDTOs
 {
     public class StockApiResponseDTO
     {

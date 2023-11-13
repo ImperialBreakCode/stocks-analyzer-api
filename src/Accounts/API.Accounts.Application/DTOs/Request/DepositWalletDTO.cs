@@ -2,13 +2,12 @@
 
 namespace API.Accounts.Application.DTOs.Request
 {
-    public class StockActionDTO
+    public class DepositWalletDTO
     {
         [Required]
-        public string StockName { get; set; }
+        public decimal Value { get; set; }
 
         [Required]
-        public int Quantity { get; set; }
-        
+        public string CurrencyType { get; set; }
     }
 }

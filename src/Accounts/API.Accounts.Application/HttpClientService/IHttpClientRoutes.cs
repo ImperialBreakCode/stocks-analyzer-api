@@ -1,4 +1,4 @@
-﻿namespace API.Accounts.Application.Services.HttpService
+﻿namespace API.Accounts.Application.HttpClientService
 {
     public interface IHttpClientRoutes
     {
