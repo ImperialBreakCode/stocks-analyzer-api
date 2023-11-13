@@ -6,8 +6,9 @@ namespace API.Analyzer.Domain.Interfaces
 
     public interface IApiService
     {
-        public Task<Wallet> UserProfilInfo(string userId);
-        public bool GetAction(string userId);
-        public Task<decimal?> ProfitablenessAccountCheck(string userId, decimal balance);
+        public Task<GetWalletResponseDTO> UserProfilInfo(string userName);
+        
+       // public Task GetProfitabilityForDate(); //нужна е имплементация в сървъра
+        public Task<decimal?> ProfitablenessAccountCheck(string userName, decimal? balance);
     }
 }
