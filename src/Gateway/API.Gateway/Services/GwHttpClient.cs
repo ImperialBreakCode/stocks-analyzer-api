@@ -6,86 +6,53 @@ namespace API.Gateway.Services
 {
 	public class GwHttpClient : IHttpClient
 	{
-		private HttpClient _httpClient;
+		private readonly HttpClient _httpClient;
 		public GwHttpClient(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
-			_httpClient.DefaultRequestHeaders.Add("Gateway", "");
+			_httpClient.DefaultRequestHeaders.Add("ApiSender", "API.Gateway");
 		}
 
-		public async Task<string> PostAsJsonAsyncReturnString(string url, object obj)
-		{
-			var response = await _httpClient.PostAsJsonAsync(url, obj);
-			try
-			{
-				response.EnsureSuccessStatusCode();
-			}
-			catch (Exception)
-			{
-
-				return string.Empty;
-			}
-			return await response.Content.ReadAsStringAsync();
-		}
 		public async Task<IActionResult> PostAsJsonAsync(string url, object obj)
 		{
 			var response = await _httpClient.PostAsJsonAsync(url, obj);
 
-			if (response.IsSuccessStatusCode)
+			return new ObjectResult(await response.Content.ReadAsStringAsync())
 			{
-				var content = await response.Content.ReadAsStringAsync();
-				return new OkObjectResult(content);
-			}
-			else
-			{
-				return new StatusCodeResult((int)response.StatusCode);
-			}
+				StatusCode = (int)response.StatusCode
+			};
 		}
 
-		public async Task<string> PostAsync(string url, string message)
+		public async Task<IActionResult> PostActionResult(string url, string message)
 		{
 			var content = new StringContent(message, Encoding.UTF8, "application/json");
 			var response = await _httpClient.PostAsync(url, content);
 
-			try
+			return new ObjectResult(await response.Content.ReadAsStringAsync())
 			{
-				response.EnsureSuccessStatusCode();
-			}
-			catch (Exception)
-			{
-
-				return string.Empty;
-			}
-			return await response.Content.ReadAsStringAsync();
-
+				StatusCode = (int)response.StatusCode
+			};
 		}
-		public async Task<string> GetStringAsync(string url)
-		{
-			var response = await _httpClient.GetAsync(url);
-			try
-			{
-				response.EnsureSuccessStatusCode();
-			}
-			catch (Exception)
-			{
 
-				return string.Empty;
-			}
-			return await response.Content.ReadAsStringAsync();
-		}
 		public async Task<IActionResult> GetActionResult(string url)
 		{
 			var response = await _httpClient.GetAsync(url);
 
-			if (response.IsSuccessStatusCode)
+			return new ObjectResult(await response.Content.ReadAsStringAsync())
 			{
-				var content = await response.Content.ReadAsStringAsync();
-				return new OkObjectResult(content);
-			}
-			else
-			{
-				return new StatusCodeResult((int)response.StatusCode);
-			}
+				StatusCode = (int)response.StatusCode
+			};
 		}
+
+		public async Task<IActionResult> PutActionResult(string url, object obj)
+		{
+			var response = await _httpClient.PutAsJsonAsync(url, obj);
+
+			return new ObjectResult(await response.Content.ReadAsStringAsync())
+			{
+				StatusCode = (int)response.StatusCode
+			};
+		}
+
 	}
 }

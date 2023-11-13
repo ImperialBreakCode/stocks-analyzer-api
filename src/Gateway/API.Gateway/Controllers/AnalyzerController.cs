@@ -1,26 +1,59 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API.Gateway.Domain.Interfaces;
+using API.Gateway.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Gateway.Controllers
 {
+	[Route("api/[controller]")]
+	[ApiController]
 	public class AnalyzerController : Controller
 	{
-		
-		public async Task<ActionResult> CurrentProfitability()
+		private readonly IAnalyzerService _analyzerService;
+        public AnalyzerController(IAnalyzerService service)
+        {
+            _analyzerService = service;
+        }
+
+		[Authorize]
+		[HttpGet]
+		[Route("PortfolioSummary")]
+		public async Task<IActionResult> PortfolioSummary()
 		{
-			return Ok();
+			return await _analyzerService.PortfolioRisk();
 		}
-		public async Task<ActionResult> PercentageChange()
+
+		[Authorize]
+		[HttpGet]
+		[Route("CurrentProfitability")]
+		public async Task<IActionResult> CurrentProfitability()
 		{
-			return Ok();
+			return await _analyzerService.CurrentProfitability();
 		}
-		public async Task<ActionResult> PortfolioRisk()
+
+		[Authorize]
+		[HttpGet]
+		[Route("PercentageChange")]
+		public async Task<IActionResult> PercentageChange()
 		{
-			return Ok();
+			return await _analyzerService.PercentageChange();
 		}
-		public async Task<ActionResult> DailyProfitabilityChanges()
+
+		[Authorize]
+		[HttpGet]
+		[Route("PortfolioRisk")]
+		public async Task<IActionResult> PortfolioRisk()
 		{
-			return Ok();
+			return await _analyzerService.PortfolioRisk();
+		}
+
+		[Authorize]
+		[HttpGet]
+		[Route("DailyProfitabilityChanges")]
+		public async Task<IActionResult> DailyProfitabilityChanges()
+		{
+			return await _analyzerService.DailyProfitabilityChanges();
 		}
 
 	}
