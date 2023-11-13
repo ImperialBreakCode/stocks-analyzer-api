@@ -21,7 +21,7 @@ CREATE TABLE Wallet (
 
 CREATE TABLE Stock (
 	Id varchar(36) NOT NULL PRIMARY KEY,
-	StockName varchar(20) UNIQUE,
+	StockName varchar(20),
 	Quantity int NOT NULL,
 	WaitingForPurchaseCount int NOT NULL,
 	WaitingForSaleCount int NOT NULL,

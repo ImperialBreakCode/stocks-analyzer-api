@@ -33,7 +33,7 @@ namespace API.Accounts.Extensions
         {
             services.AddTransient<ISqlContextCreator, SqlContextCreator>();
             services.AddTransient<IAccountsData, AccountDataAdapter>();
-            services.AddTransient<IStocksData, StocksData>();
+            services.AddTransient<IStocksData, StocksDataMockup>();
             services.AddTransient<IExchangeRatesData, ExchangeRateDataMockup>();
 
             return services;

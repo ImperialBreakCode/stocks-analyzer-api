@@ -35,8 +35,15 @@ namespace API.Accounts.Controllers
         }
 
         [HttpDelete]
-        public IActionResult CloseWallet()
+        [Route("DeleteWallet/{username}")]
+        public IActionResult DeleteWallet(string username)
         {
+            string? error = _walletService.DeleteWallet(username);
+            if (error is not null)
+            {
+                NotFound(error);
+            }
+
             return Ok();
         }
 

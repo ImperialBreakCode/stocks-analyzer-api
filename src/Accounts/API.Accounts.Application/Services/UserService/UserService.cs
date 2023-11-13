@@ -108,5 +108,52 @@ namespace API.Accounts.Application.Services.UserService
 
             return responseDTO;
         }
+
+        public string? UpdateUser(UpdateUserDTO updateDTO, string username)
+        {
+            using (var context = _data.CreateDbContext())
+            {
+                User? user = context.Users.GetOneByUserName(username);
+                if (user is null)
+                {
+                    return ResponseMessages.UserNotFound;
+                }
+
+                bool newUserNameExists = updateDTO.UserName != null
+                    && user.UserName != updateDTO.UserName
+                    && context.Users.GetOneByUserName(updateDTO.UserName) is not null;
+
+                if (newUserNameExists)
+                {
+                    return ResponseMessages.UserAlreadyExists;
+                }
+
+                user.UserName = updateDTO.UserName ?? user.UserName;
+                user.FirstName = updateDTO.FirstName ?? user.FirstName;
+                user.LastName = updateDTO.LastName ?? user.LastName;
+                user.Email = updateDTO.Email ?? user.Email;
+
+                context.Users.Update(user);
+                context.Commit();
+            }
+
+            return null;
+        }
+
+        public void DeleteUser(string username)
+        {
+            using (var context = _data.CreateDbContext())
+            {
+                ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
+
+                if (wallet is not null)
+                {
+                    context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
+                }
+
+                context.Users.DeleteByUserName(username);
+                context.Commit();
+            }
+        }
     }
 }

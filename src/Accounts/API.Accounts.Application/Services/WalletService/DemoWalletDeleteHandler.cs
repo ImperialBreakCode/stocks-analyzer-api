@@ -17,7 +17,7 @@ namespace API.Accounts.Application.Services.WalletService
             {
                 ICollection<string> expiredDemoWalletsIds = context.Wallets
                     .GetDemoWallets()
-                    .Where(w => (DateTime.UtcNow - w.CreatedAt).Days > 60)
+                    .Where(w => (w.CreatedAt - DateTime.UtcNow).Days > 60)
                     .Select(w => w.Id)
                     .ToList();
 

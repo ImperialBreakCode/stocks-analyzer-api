@@ -92,6 +92,8 @@ namespace API.Accounts.Controllers
             {
                 case ResponseType.NotFound:
                     return NotFound(response);
+                case ResponseType.BadRequest:
+                    return BadRequest(response);
                 default:
                     return Ok(response);
             }
@@ -108,6 +110,8 @@ namespace API.Accounts.Controllers
             {
                 case ResponseType.NotFound:
                     return NotFound(response);
+                case ResponseType.BadRequest:
+                    return BadRequest(response);
                 default:
                     return Ok(response);
             }

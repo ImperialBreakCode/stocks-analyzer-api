@@ -61,5 +61,35 @@ namespace API.Accounts.Controllers
 
             return Ok(userDto);
         }
+
+        [HttpPut]
+        [Route("UpdateUser/{username}")]
+        public IActionResult UpdateUser([FromBody] UpdateUserDTO updateUserDTO, [FromRoute] string username)
+        {
+            string? errorMessage = _userService.UpdateUser(updateUserDTO, username);
+            if (errorMessage is not null)
+            {
+                ResponseType responseType = ResponseParser.ParseResponseMessage(errorMessage);
+
+                switch (responseType)
+                {
+                    case ResponseType.NotFound:
+                        return NotFound(errorMessage);
+                    case ResponseType.Conflict:
+                        return Conflict(errorMessage);
+                    default:
+                        break;
+                }
+            }
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("DeleteUser/{username}")]
+        public IActionResult DeleteUser(string username)
+        {
+            _userService.DeleteUser(username);
+            return Ok();
+        }
     }
 }

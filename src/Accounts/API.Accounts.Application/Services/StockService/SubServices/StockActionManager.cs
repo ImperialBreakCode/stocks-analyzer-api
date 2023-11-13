@@ -103,7 +103,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             {
                 return ResponseMessages.WalletNotFound;
             }
-            else if ((DateTime.UtcNow - wallet.CreatedAt).Days > 30)
+            else if ((wallet.CreatedAt - DateTime.UtcNow).Days >= 30)
             {
                 return ResponseMessages.WalletRestricted;
             }

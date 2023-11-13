@@ -47,6 +47,27 @@ namespace API.Accounts.Application.Services.WalletService
             return ResponseMessages.WalletCreated;
         }
 
+        public string? DeleteWallet(string username)
+        {
+            using (var context = _accountData.CreateDbContext())
+            {
+                string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
+                if (error is not null)
+                {
+                    return error;
+                }
+                else if (wallet is null)
+                {
+                    return ResponseMessages.WalletNotFound;
+                }
+
+                context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
+                context.Commit();
+            }
+
+            return null;
+        }
+
         public string Deposit(DepositWalletDTO depositDTO, string username)
         {
             decimal exchangeRate;
@@ -106,6 +127,7 @@ namespace API.Accounts.Application.Services.WalletService
                     {
                         Id = wallet.Id,
                         Balance = wallet.Balance,
+                        IsDemo = wallet.IsDemo,
                         UserName = userRepo.GetOneById(wallet.UserId)!.UserName,
                     };
                 }
