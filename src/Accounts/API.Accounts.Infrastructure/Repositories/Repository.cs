@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace API.Accounts.Infrastructure.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : IEntity
+    public class Repository<T> : IRepository<T> where T : class, IEntity
     {
         private readonly SqlTransaction _transaction;
         private readonly SqlConnection _connection;

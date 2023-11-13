@@ -1,4 +1,5 @@
-﻿using API.Accounts.Application.DTOs.Request;
+﻿using API.Accounts.Application.DTOs;
+using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.UserService;
 using API.Accounts.Application.Settings;
@@ -23,7 +24,13 @@ namespace API.Accounts.Controllers
         [Route("Register")]
         public IActionResult Register(RegisterUserDTO userDTO)
         {
-            _userService.RegisterUser(userDTO);
+            var errorMessage = _userService.RegisterUser(userDTO);
+
+            if (errorMessage is not null)
+            {
+                return Conflict(errorMessage);
+            }
+
             return Created($"/api/User/{userDTO.Username}", userDTO);
         }
 
@@ -53,6 +60,36 @@ namespace API.Accounts.Controllers
             }
 
             return Ok(userDto);
+        }
+
+        [HttpPut]
+        [Route("UpdateUser/{username}")]
+        public IActionResult UpdateUser([FromBody] UpdateUserDTO updateUserDTO, [FromRoute] string username)
+        {
+            string? errorMessage = _userService.UpdateUser(updateUserDTO, username);
+            if (errorMessage is not null)
+            {
+                ResponseType responseType = ResponseParser.ParseResponseMessage(errorMessage);
+
+                switch (responseType)
+                {
+                    case ResponseType.NotFound:
+                        return NotFound(errorMessage);
+                    case ResponseType.Conflict:
+                        return Conflict(errorMessage);
+                    default:
+                        break;
+                }
+            }
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("DeleteUser/{username}")]
+        public IActionResult DeleteUser(string username)
+        {
+            _userService.DeleteUser(username);
+            return Ok();
         }
     }
 }

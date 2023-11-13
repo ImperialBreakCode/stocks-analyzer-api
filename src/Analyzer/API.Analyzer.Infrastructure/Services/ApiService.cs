@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using API.Analyzer.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using API.Accounts.Domain.Entities;
+using API.Accounts.Domain.Interfaces.DbContext;
 
 namespace API.Analyzer.Infrastructure.Services
 {
@@ -20,10 +21,10 @@ namespace API.Analyzer.Infrastructure.Services
         public ApiService()
         {
             httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://localhost:7291");
+            httpClient.BaseAddress = new Uri("http://localhost:5001");
         }
 
-        public async Task<Wallet> UserProfilInfo(string userId)
+        public async Task<GetWalletResponseDTO> UserProfilInfo(string userId)
         {
             string getUrl = $"/api/accounts/{userId}";
 
@@ -32,7 +33,7 @@ namespace API.Analyzer.Infrastructure.Services
             if (response.IsSuccessStatusCode)
             {
                 string jsonContent = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<Wallet>(jsonContent);
+                var result = JsonConvert.DeserializeObject<GetWalletResponseDTO>(jsonContent);
                 return result;
 
             }
@@ -43,7 +44,7 @@ namespace API.Analyzer.Infrastructure.Services
             }
             
         }
-        public async Task<decimal?> ProfitablenessAccountCheck(string userId, decimal balance)
+        public async Task<decimal?> ProfitablenessAccountCheck(string userId, decimal? balance)
         {
             var userProfile = await UserProfilInfo(userId);
             if (userProfile != null)
@@ -53,10 +54,37 @@ namespace API.Analyzer.Infrastructure.Services
             return null;
         }
 
-        public bool GetAction(string userId)
-        {
-            return true;
-        }
+        //    public decimal? GetProfitabilityForDate(string userName, DateTime date)
+        //    {
+        //        var result = 
+        //            .Where(data => data.UserName == userName && data.Date == date)
+        //            .SingleOrDefault();
+
+        //        return result?.Profitability;
+        //    }
+
+
+        //    public decimal? GetProfitabilityForToday(string userName)
+        //    {
+        //        DateTime today = DateTime.Today;
+        //        return GetProfitabilityForDate(userName, today);
+        //    }
+
+        //    public decimal? GetProfitabilityForYesterday(string userName)
+        //    {
+        //        DateTime yesterday = DateTime.Today.AddDays(-1);
+        //        return GetProfitabilityForDate(userName, yesterday);
+        //    }
+
+        //    private readonly IAccountsDbContext accountsDbContext;
+
+        //    public ApiService(IAccountsDbContext accountsDbContext)
+        //    {
+        //        this.accountsDbContext = accountsDbContext;
+        //    }
+
+       
+
 
     }
 }

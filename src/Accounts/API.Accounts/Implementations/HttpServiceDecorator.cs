@@ -1,4 +1,4 @@
-﻿using API.Accounts.Application.Services.HttpService;
+﻿using API.Accounts.Application.HttpClientService;
 
 namespace API.Accounts.Implementations
 {
@@ -19,9 +19,9 @@ namespace API.Accounts.Implementations
             return await _httpService.GetAsync<T>(url);
         }
 
-        public async Task PostAsync(string url, object data)
+        public async Task<T?> PostAsync<T>(string url, object data)
         {
-            await _httpService.PostAsync(url, data);
+            return await _httpService.PostAsync<T>(url, data);
         }
 
         public void Dispose()
