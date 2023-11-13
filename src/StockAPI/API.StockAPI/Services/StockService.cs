@@ -6,38 +6,51 @@ namespace API.StockAPI.Services
 {
     public class StockService : IStockService
     {
-        public async Task<TimeSeriesData> GetCurrentStock(string response, string symbol)
+        public async Task<StockData> GetStockFromRequest(string symbol, string? reponse, string type)
         {
-            CurrentData? data = JsonConvert.DeserializeObject<CurrentData>(response);
-
-            var timeSeriesData = data.TimeSeries;
-            timeSeriesData.First().Value.Symbol = symbol;
-            timeSeriesData.First().Value.Date = timeSeriesData.First().Key;
-
-            var result = timeSeriesData.First().Value;
+            var result = GetDataFromCsvResponse(symbol, reponse, type);
             return result;
         }
-
-        public async Task<TimeSeriesData> GetDailyStock(string response, string symbol)
-        {
-            DailyData? data = JsonConvert.DeserializeObject<DailyData>(response);
-
-            var timeSeriesData = data.TimeSeries;
-            timeSeriesData.First().Value.Symbol = symbol;
-            timeSeriesData.First().Value.Date = timeSeriesData.First().Key;
-
-            var result = timeSeriesData.First().Value;
-            return result;
-        }
-
-        public async Task<TimeSeriesData> GetWeeklyStock(string response, string symbol)
+        public async Task<StockData> GetStockFromDbData(string symbol, StockData? data, string type)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<TimeSeriesData> GetMonthlyStock(string response, string symbol)
+        public StockData? GetDataFromCsvResponse(string symbol, string response, string type)
         {
-            throw new NotImplementedException();
+            //int skipValue;
+            //if (type == "current")
+            //{
+            //    skipValue = 1;
+            //}
+            //else
+            //{
+            //    skipValue = 2;
+            //}
+
+            var csvLine = response.Split(Environment.NewLine).Skip(1).ToList().First();
+
+            var result = FromCsv(csvLine, symbol);
+
+            return result;
+        }
+
+        public StockData FromCsv(string csvLine, string symbol)
+        {
+            string[] values = csvLine.Split(',');
+
+            StockData data = new()
+            {
+                Symbol = symbol,
+                Date = Convert.ToString(values[0]),
+                Open = Convert.ToDouble(values[1]),
+                High = Convert.ToDouble(values[2]),
+                Low = Convert.ToDouble(values[3]),
+                Close = Convert.ToDouble(values[4]),
+                Volume = Convert.ToInt32(values[5])
+            };
+
+            return data;
         }
     }
 }

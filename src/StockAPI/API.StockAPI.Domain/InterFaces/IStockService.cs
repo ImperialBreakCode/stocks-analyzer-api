@@ -9,12 +9,7 @@ namespace API.StockAPI.Domain.InterFaces
 {
     public interface IStockService
     {
-        Task<TimeSeriesData> GetCurrentStock(string response, string symbol);
-
-        Task<TimeSeriesData> GetDailyStock(string response, string symbol);
-
-        Task<TimeSeriesData> GetWeeklyStock(string response, string symbol);
-
-        Task<TimeSeriesData> GetMonthlyStock(string response, string symbol);
+        public Task<StockData> GetStockFromRequest(string symbol, string? data, string type);
+        public Task<StockData> GetStockFromDbData(string symbol, StockData? data, string type);
     }
 }
