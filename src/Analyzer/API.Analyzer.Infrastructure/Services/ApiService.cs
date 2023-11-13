@@ -44,7 +44,7 @@ namespace API.Analyzer.Infrastructure.Services
             }
             
         }
-        public async Task<decimal?> ProfitablenessAccountCheck(string userId, decimal balance)
+        public async Task<decimal?> ProfitablenessAccountCheck(string userId, decimal? balance)
         {
             var userProfile = await UserProfilInfo(userId);
             if (userProfile != null)
