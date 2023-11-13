@@ -14,7 +14,6 @@ namespace API.Accounts.Middleware
 
         public async Task InvokeAsync(HttpContext httpContext, IAccountsSettingsManager settingsManager)
         {
-            Console.WriteLine(httpContext.Connection.RemoteIpAddress);
             //string ip = $"{httpContext.Connection.RemoteIpAddress}:{httpContext.Connection.RemotePort}";
             string ip = $"{httpContext.Connection.RemoteIpAddress}";
 
