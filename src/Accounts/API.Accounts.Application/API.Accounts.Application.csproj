@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\API.Accounts.Domain\API.Accounts.Domain.csproj" />
+    <ProjectReference Include="..\API.Accounts.Infrastructure.Mockup\API.Accounts.Infrastructure.Mockup.csproj" />
     <ProjectReference Include="..\API.Accounts.Infrastructure\API.Accounts.Infrastructure.csproj" />
   </ItemGroup>
 

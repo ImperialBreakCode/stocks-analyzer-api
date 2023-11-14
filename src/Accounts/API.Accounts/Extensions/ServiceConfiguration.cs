@@ -31,8 +31,13 @@ namespace API.Accounts.Extensions
 
         public static IServiceCollection InjectData(this IServiceCollection services)
         {
-            services.AddTransient<ISqlContextCreator, SqlContextCreator>();
-            services.AddTransient<IAccountsData, AccountDataAdapter>();
+            // Sql Db
+            //services.AddTransient<ISqlContextCreator, SqlContextCreator>();
+            //services.AddTransient<IAccountsData, AccountDataAdapter>();
+
+            // mocking memory db
+            services.AddSingleton<IAccountsData, AccountMockupData>();
+
             services.AddTransient<IStocksData, StocksDataMockup>();
             services.AddTransient<IExchangeRatesData, ExchangeRateDataMockup>();
 
