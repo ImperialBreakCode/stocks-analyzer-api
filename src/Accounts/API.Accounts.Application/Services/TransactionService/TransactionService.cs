@@ -32,8 +32,9 @@ namespace API.Accounts.Application.Services.TransactionService
                         ? stock.Quantity + stockInfo.Quantity
                         : stock.Quantity;
 
-                    Transaction transaction = new Transaction()
+                    Transaction transaction = new()
                     {
+                        Id = stockInfo.TransactionId,
                         StockId = stockInfo.StockId,
                         Quantity = stockInfo.Quantity,
                         TotalAmount = CalculateTotalAmount(stockInfo, finalizeTransactionDTO.IsSale),
