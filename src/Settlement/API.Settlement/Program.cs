@@ -9,6 +9,7 @@ var configuration = builder.Configuration;
 builder.Services.AddSQLiteConfiguration(configuration);
 builder.Services.AddCustomServices();
 builder.Services.AddHangfireConfiguration(configuration);
+builder.Services.AddWalletDatabaseConfiguration(configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

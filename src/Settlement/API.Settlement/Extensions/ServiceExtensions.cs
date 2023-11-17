@@ -1,14 +1,17 @@
 ﻿using API.Settlement.Domain.Interfaces;
+using API.Settlement.Domain.MongoDb.WalletDb;
 using API.Settlement.Infrastructure.Helpers.Constants;
 using API.Settlement.Infrastructure.Services;
 using API.Settlement.Infrastructure.Services.SQLiteServices;
+using API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbServices;
 using Hangfire;
-using System.Configuration;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using System.Data.SQLite;
 
 namespace API.Settlement.Extensions
 {
-    public static class ServiceExtensions
+	public static class ServiceExtensions
 	{
 		public static void AddSQLiteConfiguration(this IServiceCollection services, IConfiguration configuration)
 		{
@@ -55,5 +58,20 @@ namespace API.Settlement.Extensions
 				_databaseInitializer.Initialize();
 			}
 		}
+
+		public static void AddWalletDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
+		{
+			services.Configure<WalletDbSettings>(
+				configuration.GetSection(nameof(WalletDbSettings)));
+
+			services.AddSingleton<IWalletDbSettings>(w =>
+				w.GetRequiredService<IOptions<WalletDbSettings>>().Value);
+
+			services.AddSingleton<IMongoClient>(m =>
+				new MongoClient(configuration.GetValue<string>("WalletDatabaseSettings:ConnectionString")));
+
+			services.AddScoped<IWalletRepository, WalletRepository>();
+		}
+
 	}
 }
