@@ -2,6 +2,7 @@
 {
 	public class StockInfoResponseDTO
 	{
+		public string TransactionId { get; set; }
 		public string Message { get; set; }
 		public string StockId { get; set; }
 		public string StockName { get; set; }

@@ -7,9 +7,11 @@ namespace API.Settlement.Domain.Interfaces
 		string TransactionDeclinedMessage { get; }
 		string TransactionScheduledMessage { get; }
 		string TransactionSuccessMessage { get; }
+		string TransactionConnectionIssueMessage { get; }
 		decimal Commission { get; }
 		string GETWalletBalanceRoute(string walletId);
 		string POSTCompleteTransactionRoute(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
 		string GETStockRoute(string stockId);
+		bool IsInitializedRecurringFailedTransactionsJob { get; set; }
 	}
 }

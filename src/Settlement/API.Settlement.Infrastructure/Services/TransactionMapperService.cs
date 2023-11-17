@@ -1,6 +1,7 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+using API.Settlement.Domain.Entities;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using AutoMapper;
@@ -60,6 +61,7 @@ namespace API.Settlement.Infrastructure.Services
 			return _mapper.Map<AvailabilityResponseDTO>(availabilityResponseDTO);
 		}
 
+
 		private decimal GetSinglePriceWithCommission(decimal totalPriceIncludingCommission, decimal quantity)
 		{
 			return totalPriceIncludingCommission / quantity;
@@ -76,5 +78,55 @@ namespace API.Settlement.Infrastructure.Services
 
 			}
 		}
+
+		public IEnumerable<Transaction> MapToTransactionEntities(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+		{
+
+			var transactions = _mapper.Map<IEnumerable<Transaction>>(finalizeTransactionResponseDTO.StockInfoResponseDTOs);
+			foreach (var transaction in transactions)
+			{
+				transaction.WalletId = finalizeTransactionResponseDTO.WalletId;
+				transaction.UserId = finalizeTransactionResponseDTO.UserId;
+				transaction.IsSale = finalizeTransactionResponseDTO.IsSale;
+			}
+
+			return transactions;
+		}
+		public IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> transactions)
+		{
+			var groupedTransactions = transactions
+				.GroupBy(transaction => new { transaction.WalletId, transaction.UserId, transaction.IsSale });
+
+			var finalizeTransactionResponseDTOs = new List<FinalizeTransactionResponseDTO>();
+			foreach (var currentGroup in groupedTransactions)
+			{
+				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
+				finalizeTransactionResponseDTO.WalletId = currentGroup.Key.WalletId;
+				finalizeTransactionResponseDTO.UserId = currentGroup.Key.UserId;
+				finalizeTransactionResponseDTO.IsSale = currentGroup.Key.IsSale;
+
+				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
+				foreach (var currentTransaction in currentGroup)
+				{
+					var stockInfoResponseDTO = new StockInfoResponseDTO()
+					{
+						TransactionId = currentTransaction.TransactionId,
+						Message = currentTransaction.Message,
+						StockId = currentTransaction.StockId,
+						StockName = currentTransaction.StockName,
+						Quantity = currentTransaction.Quantity,
+						SinglePriceIncludingCommission = currentTransaction.SinglePriceIncludingCommission
+					};
+					stockInfoResponseDTOs.Add(stockInfoResponseDTO);
+				}
+
+				finalizeTransactionResponseDTO.StockInfoResponseDTOs = stockInfoResponseDTOs;
+
+				finalizeTransactionResponseDTOs.Add(finalizeTransactionResponseDTO);
+			}
+
+			return finalizeTransactionResponseDTOs;
+		}
+
 	}
 }

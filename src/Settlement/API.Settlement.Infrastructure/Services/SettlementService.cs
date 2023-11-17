@@ -26,6 +26,7 @@ namespace API.Settlement.Infrastructure.Services
 			var filteredAvailabilityResponseDTO = _transactionMapperService.FilterSuccessfulAvailabilityStockInfoDTOs(clonedAvailabilityResponseDTO);
 
 			_hangfireService.ScheduleStockProcessingJob(filteredAvailabilityResponseDTO);
+			_hangfireService.InitializeRecurringFailedTransactionsJob();
 
 			return availabilityResponseDTO;
 		}

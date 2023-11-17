@@ -1,6 +1,7 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+using API.Settlement.Domain.Entities;
 using AutoMapper;
 
 namespace API.Settlement.Infrastructure.Mappings
@@ -31,11 +32,20 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.AvailabilityStockInfoResponseDTOs, opt => opt.MapFrom(src => src.AvailabilityStockInfoResponseDTOs));
 
 			CreateMap<AvailabilityStockInfoResponseDTO, StockInfoResponseDTO>()
+				.ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => Guid.NewGuid().ToString()))
 				.ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))
 				.ForMember(dest => dest.StockId, opt => opt.MapFrom(src => src.StockId))
 				.ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.StockName))
 				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
 				.ForMember(dest => dest.SinglePriceIncludingCommission, opt => opt.MapFrom(src => src.SinglePriceIncludingCommission));
+
+			CreateMap<StockInfoResponseDTO, Transaction>()
+				.ForMember(dest => dest.TransactionId, opt => opt.MapFrom(src => src.TransactionId))
+				.ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))
+				.ForMember(dest => dest.StockId, opt => opt.MapFrom(src => src.StockId))
+				.ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.StockName))
+				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+				.ForMember(dest => dest.TotalPriceIncludingCommission, opt => opt.MapFrom(src => src.TotalPriceIncludingCommission));
 		}
 	}
 }

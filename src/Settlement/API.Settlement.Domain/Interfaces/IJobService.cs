@@ -5,5 +5,6 @@ namespace API.Settlement.Domain.Interfaces
 	public interface IJobService
 	{
 		Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO);
+		Task RecurringFailedTransactionsJob();
 	}
 }

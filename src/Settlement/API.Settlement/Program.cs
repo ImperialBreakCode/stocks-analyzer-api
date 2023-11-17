@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container
+builder.Services.AddSQLiteConfiguration(configuration);
 builder.Services.AddCustomServices();
 builder.Services.AddHangfireConfiguration(configuration);
 
@@ -28,6 +29,8 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseDatabaseInitialization();
 
 app.UseEndpoints(endpoints =>
 {
