@@ -21,7 +21,6 @@ namespace API.Settlement.Infrastructure.Services
 		public async Task<AvailabilityResponseDTO> ProcessTransactions(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
 			var availabilityResponseDTO = await _transactionWrapper.CheckAvailability(finalizeTransactionRequestDTO);
-
 			var clonedAvailabilityResponseDTO = _transactionMapperService.CloneAvailabilityResponseDTO(availabilityResponseDTO);
 			var filteredAvailabilityResponseDTO = _transactionMapperService.FilterSuccessfulAvailabilityStockInfoDTOs(clonedAvailabilityResponseDTO);
 

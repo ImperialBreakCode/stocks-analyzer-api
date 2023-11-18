@@ -27,7 +27,7 @@ namespace API.Settlement.Extensions
 			services.AddScoped<ISuccessfulTransactionRepository, SuccessfulTransactionRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddTransient<ITransactionResponseHandlerService, TransactionResponseHandlerService>();
-			services.AddSingleton<IInfrastructureConstants, InfrastructureConstants>();
+			services.AddTransient<IInfrastructureConstants, InfrastructureConstants>();
 			services.AddTransient<ITransactionMapperService, TransactionMapperService>();
 			services.AddTransient<IDateTimeService, DateTimeService>();
 			services.AddTransient<IBuyService, BuyService>();
@@ -71,6 +71,7 @@ namespace API.Settlement.Extensions
 				new MongoClient(configuration.GetValue<string>("WalletDatabaseSettings:ConnectionString")));
 
 			services.AddScoped<IWalletRepository, WalletRepository>();
+			services.AddScoped<IWalletService, WalletService>();
 		}
 
 	}

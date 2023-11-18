@@ -15,5 +15,7 @@ namespace API.Settlement.Domain.Interfaces
 		AvailabilityResponseDTO FilterSuccessfulAvailabilityStockInfoDTOs(AvailabilityResponseDTO availabilityResponseDTO);
 		IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> walletAndIsSaleTransactions);
 		IEnumerable<Transaction> MapToTransactionEntities(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
+		Wallet MapToWalletEntity(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
+		Stock MapToStockEntity(StockInfoResponseDTO stockInfoResponseDTO);
 	}
 }

@@ -3,9 +3,7 @@
     public class Wallet
     {
         public string WalletId { get; set; }
-        public string StockId { get; set; }
-        public string StockName {  get; set; }
-        public decimal InvestedAmount { get; set; }
-        public int Quantity { get; set; }
+        public string UserId { get; set; }
+        public IEnumerable<Stock> Stocks { get; set; } = Enumerable.Empty<Stock>();
     }
 }

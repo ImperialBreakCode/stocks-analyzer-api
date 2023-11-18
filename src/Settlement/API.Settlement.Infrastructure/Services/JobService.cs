@@ -17,19 +17,22 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly ITransactionResponseHandlerService _transactionResponseHandlerService;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IWalletService _walletService;
 
 
 		public JobService(IHttpClientFactory httpClientFactory,
 						ITransactionMapperService transactionMapperService,
 						IInfrastructureConstants infrastructureConstants,
 						ITransactionResponseHandlerService transactionResponseHandlerService,
-						IUnitOfWork unitOfWork)
+						IUnitOfWork unitOfWork,
+						IWalletService walletService)
 		{
 			_httpClientFactory = httpClientFactory;
 			_transactionMapperService = transactionMapperService;
 			_infrastructureConstants = infrastructureConstants;
 			_transactionResponseHandlerService = transactionResponseHandlerService;
 			_unitOfWork = unitOfWork;
+			_walletService = walletService;
 		}
 
 		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO)
@@ -50,6 +53,8 @@ namespace API.Settlement.Infrastructure.Services
                 }
 				finally
 				{
+					_walletService.UpdateStocksInWallet(finalizeTransactionResponseDTO);
+
 					var transactions = _transactionMapperService.MapToTransactionEntities(finalizeTransactionResponseDTO);
 					_transactionResponseHandlerService.HandleTransactionResponse(response, transactions);
 				}

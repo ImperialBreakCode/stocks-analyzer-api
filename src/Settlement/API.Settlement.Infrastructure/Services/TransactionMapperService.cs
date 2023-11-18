@@ -128,5 +128,14 @@ namespace API.Settlement.Infrastructure.Services
 			return finalizeTransactionResponseDTOs;
 		}
 
+		public Wallet MapToWalletEntity(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+		{
+			return _mapper.Map<Wallet>(finalizeTransactionResponseDTO);
+		}
+
+		public Stock MapToStockEntity(StockInfoResponseDTO stockInfoResponseDTO)
+		{
+			return _mapper.Map<Stock>(stockInfoResponseDTO);
+		}
 	}
 }
