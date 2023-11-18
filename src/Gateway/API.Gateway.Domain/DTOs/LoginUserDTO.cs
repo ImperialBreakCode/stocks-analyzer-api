@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace API.Gateway.Domain.DTOs
 {
-	public class StockDTO
+	public class LoginUserDTO
 	{
 		[Required]
-		public string StockName { get; set; }
-
+		public string Username { get; set; }
 		[Required]
-		public int Quantity { get; set; }
+		public string Password { get; set; }
 	}
 }

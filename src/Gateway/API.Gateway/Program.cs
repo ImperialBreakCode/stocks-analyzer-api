@@ -1,7 +1,9 @@
 using API.Gateway.Extensions;
 using API.Gateway.Middleware;
 using API.Gateway.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Formatting.Compact;
 
@@ -26,7 +28,29 @@ builder.Host.UseSerilog((context, configuration) =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+	// add JWT Authentication
+	var securityScheme = new OpenApiSecurityScheme
+	{
+		Name = "JWT Authentication",
+		Description = "Enter JWT Bearer token **_only_**",
+		In = ParameterLocation.Header,
+		Type = SecuritySchemeType.Http,
+		Scheme = "bearer",
+		BearerFormat = "JWT",
+		Reference = new OpenApiReference
+		{
+			Id = JwtBearerDefaults.AuthenticationScheme,
+			Type = ReferenceType.SecurityScheme
+		}
+	};
+	options.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+	options.AddSecurityRequirement(new OpenApiSecurityRequirement
+	{
+		{securityScheme, new string[] { }}
+	});
+});
 
 var app = builder.Build();
 
@@ -43,10 +67,12 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<RequestLoggingMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<RequestLoggingMiddleware>();
+
 
 app.MapControllers();
 

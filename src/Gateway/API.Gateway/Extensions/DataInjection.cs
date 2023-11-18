@@ -16,7 +16,11 @@ namespace API.Gateway.Extensions
 			services.AddTransient<IAnalyzerService, AnalyzerService>();
 			services.AddTransient<IWalletService, WalletService>();
 			services.AddTransient<IStockService, StockService>();
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+			services.AddScoped<IJwtTokenParser, JwtTokenParser>();
 
+			services.AddHttpContextAccessor();
+			services.AddMemoryCache();
 
 			return services;
 		}

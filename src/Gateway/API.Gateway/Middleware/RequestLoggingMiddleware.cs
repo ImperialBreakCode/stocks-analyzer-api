@@ -47,7 +47,7 @@ namespace API.Gateway.Middleware
 				using (var reader = new StreamReader(responseBodyStream))
 				{
 					var responseBody = await reader.ReadToEndAsync();
-					Log.Information("Outgoing Response Body: {ResponseBody}", FormatJsonHelper.FormatJson(responseBody));
+					Log.Information("Response Body: {ResponseBody}", FormatJsonHelper.FormatJson(responseBody));
 				}
 
 				context.Response.Body = originalResponseBody;
