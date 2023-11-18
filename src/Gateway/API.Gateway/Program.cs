@@ -1,4 +1,5 @@
 using API.Gateway.Extensions;
+using API.Gateway.Middleware;
 using API.Gateway.Settings;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -44,6 +45,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.MapControllers();
 
