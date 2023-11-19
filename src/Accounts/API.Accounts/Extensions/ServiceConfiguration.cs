@@ -13,7 +13,6 @@ namespace API.Accounts.Extensions
             services
                 .InjectData()
                 .AddHttpClientServices()
-                .AddClockBackgroundService()
                 .AddSettings()
                 .AddClockBackgroundService()
                 .AddAccountServices()
