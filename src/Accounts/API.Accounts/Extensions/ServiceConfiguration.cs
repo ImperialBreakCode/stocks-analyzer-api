@@ -53,6 +53,7 @@ namespace API.Accounts.Extensions
         {
             services.AddApplicationEventClock();
             services.AddHostedService<EventClockService>();
+            services.AddHostedService<StartupSetupService>();
             return services;
         }
     }

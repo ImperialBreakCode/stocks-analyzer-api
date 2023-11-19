@@ -13,7 +13,7 @@ namespace API.Accounts.Application.Services.TransactionService
             _accountsData = accountsData;
         }
 
-        public void CompleteTransactions(FinalizeTransactionDTO finalizeTransactionDTO)
+        public bool CompleteTransactions(FinalizeTransactionDTO finalizeTransactionDTO)
         {
             using (var context = _accountsData.CreateDbContext())
             {
@@ -21,7 +21,7 @@ namespace API.Accounts.Application.Services.TransactionService
 
                 if (wallet is null)
                 {
-                    return;
+                    return false;
                 }
 
                 foreach (var stockInfo in finalizeTransactionDTO.StockInfoResponseDTOs)
@@ -56,6 +56,8 @@ namespace API.Accounts.Application.Services.TransactionService
 
                 context.Commit();
             }
+
+            return true;
         }
 
         private decimal CalculateTotalAmount(TransactionStockInfo stockInfo, bool isSale)

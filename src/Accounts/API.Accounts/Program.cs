@@ -1,4 +1,4 @@
-using API.Accounts.Application.Settings;
+using API.Accounts.Application.Settings.Options;
 using API.Accounts.Extensions;
 using System.Text.Json.Serialization;
 

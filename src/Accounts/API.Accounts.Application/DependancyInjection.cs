@@ -10,6 +10,7 @@ using API.Accounts.Application.Services.StockService.SubServices;
 using API.Accounts.Application.Services.TransactionService;
 using API.Accounts.Application.Services.UserService;
 using API.Accounts.Application.Services.WalletService;
+using API.Accounts.Application.Settings.UpdateHandlers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Accounts.Application
@@ -49,6 +50,7 @@ namespace API.Accounts.Application
         {
             services.AddSingleton<IEventClock, EventClock>();
             services.AddSingleton<IDemoWalletDeleteHandler, DemoWalletDeleteHandler>();
+            services.AddSingleton<ISecretKeyGatewayNotifyer, SecretKeyGatewayNotifyer>();
 
             return services;
         }

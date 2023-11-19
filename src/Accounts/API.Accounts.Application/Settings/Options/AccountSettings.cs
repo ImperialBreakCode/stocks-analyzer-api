@@ -1,4 +1,4 @@
-﻿namespace API.Accounts.Application.Settings
+﻿namespace API.Accounts.Application.Settings.Options
 {
     public class AccountSettings
     {
