@@ -3,6 +3,8 @@ using API.Accounts.Application.Settings;
 using API.Accounts.BackgroundServices;
 using API.Accounts.Implementations;
 using API.Accounts.Application;
+using API.Accounts.Application.Settings.GatewaySecretKeySender;
+using API.Accounts.Application.Settings.GatewaySettingsSender;
 
 namespace API.Accounts.Extensions
 {
@@ -45,6 +47,7 @@ namespace API.Accounts.Extensions
         public static IServiceCollection AddSettings(this IServiceCollection services)
         {
             services.AddSingleton<IAccountsSettingsManager, AccountSettingsAdapter>();
+            services.AddTransient<IGatewaySettingsSender, SignalRGatewaySettingSender>();
 
             return services;
         }

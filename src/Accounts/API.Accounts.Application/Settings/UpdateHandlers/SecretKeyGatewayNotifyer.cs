@@ -1,8 +1,16 @@
-﻿namespace API.Accounts.Application.Settings.UpdateHandlers
+﻿using API.Accounts.Application.Settings.GatewaySecretKeySender;
+
+namespace API.Accounts.Application.Settings.UpdateHandlers
 {
     public class SecretKeyGatewayNotifyer : ISecretKeyGatewayNotifyer
     {
         private string? _waitingSecretKey;
+        private readonly IGatewaySettingsSender _settingsSender;
+
+        public SecretKeyGatewayNotifyer(IGatewaySettingsSender gatewaySettings)
+        {
+            _settingsSender = gatewaySettings;
+        }
 
         public void NotifyGateway()
         {
@@ -14,9 +22,16 @@
 
         public void NotifyGateway(string secretKey)
         {
-            // if gateway is not avalibale add the secretKey as waiting (_waiting secret key)
-
-            Console.WriteLine("notify gateway");
+            if (!_settingsSender.SendSecretKeyToGateway(secretKey))
+            {
+                _waitingSecretKey = secretKey;
+                Console.WriteLine("added on waiting list");
+            }
+            else
+            {
+                _waitingSecretKey = null;
+                Console.WriteLine("send to gateway");
+            }
         }
     }
 }
