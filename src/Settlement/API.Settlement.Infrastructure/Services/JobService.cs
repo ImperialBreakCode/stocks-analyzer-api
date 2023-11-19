@@ -90,6 +90,10 @@ namespace API.Settlement.Infrastructure.Services
 				}
 			}
 		}
+		public Task RecurringCapitalLossCheckJob()
+		{
+			_walletService.CapitalLossCheck();
+		}
 
 	}
 }

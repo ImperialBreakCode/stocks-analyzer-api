@@ -32,6 +32,15 @@ namespace API.Settlement.Infrastructure.Services
 				_constants.IsInitializedRecurringFailedTransactionsJob = true;
 			}
 		}
+		public void InitializeRecurringCapitalLossJobCheck()
+		{
+			if (!_constants.IsInitializedRecurringCapitalLossCheckJob)
+			{
+				RecurringJob.AddOrUpdate("recurringCapitalLossJobCheck", () => _jobService.RecurringCapitalLossCheckJob(), _dateTimeService.GetCronExpressionForEveryHour());
+				_constants.IsInitializedRecurringCapitalLossCheckJob= true;
+			}
+		}
+		
 
 
 	}

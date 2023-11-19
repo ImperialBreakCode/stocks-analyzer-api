@@ -13,5 +13,6 @@ namespace API.Settlement.Domain.Interfaces
 		string POSTCompleteTransactionRoute(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
 		string GETStockRoute(string stockId);
 		bool IsInitializedRecurringFailedTransactionsJob { get; set; }
+		bool IsInitializedRecurringCapitalLossCheckJob {get;set;}
 	}
 }

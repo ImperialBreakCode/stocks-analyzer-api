@@ -6,5 +6,6 @@ namespace API.Settlement.Domain.Interfaces
 	{
 		void ScheduleStockProcessingJob(AvailabilityResponseDTO availabilityResponseDTO);
 		void InitializeRecurringFailedTransactionsJob();
+		void InitializeRecurringCapitalLossJobCheck();
 	}
 }

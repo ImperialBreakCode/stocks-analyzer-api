@@ -12,6 +12,7 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 		private static readonly decimal _commission = 0.0005M;
 		private static readonly string _baseAccountHost = "https://localhost:5032";
 		private static bool _isInitializedRecurringFailedTransactionsJob = false;
+		private static bool _isInitializedRecurringCapitalLossCheckJob = false;
 		public string TransactionDeclinedMessage => _transactionDeclinedMessage;
 
 		public string TransactionScheduledMessage => _transactionScheduledMessage;
@@ -36,6 +37,17 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 			set
 			{
 				_isInitializedRecurringFailedTransactionsJob = value;
+			}
+		}
+		public bool IsInitializedRecurringCapitalLossCheckJob
+		{
+			get
+			{
+				return _isInitializedRecurringCapitalLossCheckJob;
+			}
+			set
+			{
+				_isInitializedRecurringCapitalLossCheckJob = value;
 			}
 		}
 

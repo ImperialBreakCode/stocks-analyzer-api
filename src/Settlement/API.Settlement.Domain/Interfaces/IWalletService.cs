@@ -10,5 +10,7 @@ namespace API.Settlement.Domain.Interfaces
 	public interface IWalletService
 	{
 		void UpdateStocksInWallet(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
-    }
+		void CapitalLossCheck();
+
+	}
 }

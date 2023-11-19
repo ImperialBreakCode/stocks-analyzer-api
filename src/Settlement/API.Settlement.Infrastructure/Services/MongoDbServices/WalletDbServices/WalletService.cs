@@ -43,6 +43,45 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 			}
 
 		}
+		public void CapitalLossCheck()
+		{
+			var wallets = _walletRepository.GetWallets();
+			foreach (var wallet in wallets)
+			{
+				foreach (var stock in wallet.Stocks)
+				{
+					var actualSingleStockPrice = GetActualSingleStockPrice(stock.StockName);
+					var actualTotalStockPrice = stock.Quantity * actualSingleStockPrice;
+					var percentageDifference = (actualTotalStockPrice - stock.InvestedAmount) / actualTotalStockPrice * 100;
+
+					if (percentageDifference > 0)
+					{
+
+					}
+					else if (percentageDifference < 0)
+					{
+						if (percentageDifference <= -15)
+						{
+
+						}
+						else
+						{
+
+						}
+					}
+					else
+					{
+						continue;
+					}
+				}
+			}
+		}
+
+		private decimal GetActualSingleStockPrice(string stockName)
+		{
+			return 900;
+		}
+
 		private void PerformBuyLogic(Wallet wallet, FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
 		{
 			foreach (var stockInfoResponseDTO in finalizeTransactionResponseDTO.StockInfoResponseDTOs)
@@ -75,7 +114,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 			foreach (var stockInfoResponseDTO in finalizeTransactionResponseDTO.StockInfoResponseDTOs)
 			{
 				var stock = _walletRepository.GetStockFromWallet(wallet.WalletId, stockInfoResponseDTO.StockId);
-				if(stock != null)
+				if (stock != null)
 				{
 					if (stock != null && stock.Quantity >= stockInfoResponseDTO.Quantity)
 					{
@@ -86,12 +125,14 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 					if (stock.Quantity == 0) { _walletRepository.RemoveStock(wallet.WalletId, stock.StockId); }
 					else { _walletRepository.UpdateStock(wallet.WalletId, stock); }
 				}
-				
+
 
 			}
 		}
 		private decimal CalculateBuyPriceWithoutCommission(decimal priceIncludingCommission) => priceIncludingCommission / (1 + _infrastructureConstants.Commission);
 		private decimal CalculateSalePriceWithoutCommission(decimal priceIncludingCommission) => priceIncludingCommission / (1 - _infrastructureConstants.Commission);
+
+
 	}
 
 }
