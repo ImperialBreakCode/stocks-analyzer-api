@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.MongoDb.WalletDb
 {
-    public class WalletDbSettings : IWalletDbSettings
+    public class WalletDatabaseSettings : IWalletDbSettings
 	{
 		public string WalletsCollectionName { get; set; } = String.Empty;
 		public string ConnectionString { get; set; } = String.Empty;

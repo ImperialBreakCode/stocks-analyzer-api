@@ -71,7 +71,7 @@ namespace API.Settlement.Infrastructure.Services
 				{
 					var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
 					var content = new StringContent(json, Encoding.UTF8, "application/json");
-					var response = new HttpResponseMessage(HttpStatusCode.OK);
+					var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
 					try
 					{
 						//response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);

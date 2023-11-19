@@ -30,7 +30,7 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 				_connection.Open();
 				command.Parameters.AddWithValue("@WalletId", transaction.WalletId);
 				command.Parameters.AddWithValue("@UserId", transaction.UserId);
-				command.Parameters.AddWithValue("@IsSale", 0);
+				command.Parameters.AddWithValue("@IsSale", transaction.IsSale);
 				command.Parameters.AddWithValue("TransactionId", transaction.TransactionId);
 				command.Parameters.AddWithValue("TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
 				command.Parameters.AddWithValue("Quantity", transaction.Quantity);

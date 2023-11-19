@@ -14,7 +14,7 @@ namespace API.Settlement.Domain.Interfaces
 		void CreateWallet(Wallet wallet);
 		void UpdateWallet(string id, Wallet wallet);
 		void DeleteWallet(string id);
-		Stock? GetStockFromWallet(Wallet existingWallet, string stockId);
+		Stock? GetStockFromWallet(string walletId, string stockId);
 		void AddStock(string walletId, Stock stock);
 		void RemoveStock(string walletId, string stockId);
 		void UpdateStock(string walletId, Stock? existingStock);

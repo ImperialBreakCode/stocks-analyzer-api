@@ -46,30 +46,38 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 		{
 			_walletRepository.ReplaceOne(wallet => wallet.WalletId == id, wallet);
 		}
-		public Stock? GetStockFromWallet(Wallet existingWallet, string stockId)
+		public Stock? GetStockFromWallet(string walletId, string stockId)
 		{
-			return existingWallet.Stocks.FirstOrDefault(s => s.StockId == stockId);
+			var filter = Builders<Wallet>.Filter.And(
+				Builders<Wallet>.Filter.Eq(w => w.WalletId, walletId),
+				Builders<Wallet>.Filter.ElemMatch(w => w.Stocks, s => s.StockId == stockId)
+				);
+
+			var wallet = _walletRepository.Find(filter).SingleOrDefault();
+			if (wallet == null) { return null; }
+			return wallet.Stocks.FirstOrDefault(s => s.StockId == stockId);
 		}
 		public void AddStock(string walletId, Stock stock)
 		{
-			var filter = Builders<Wallet>.Filter.Where(w => w.WalletId == walletId);
+			var filter = Builders<Wallet>.Filter.Eq(w => w.WalletId, walletId);
 			var update = Builders<Wallet>.Update.Push(w => w.Stocks, stock);
 			_walletRepository.UpdateOne(filter, update);
 		}
 		public void RemoveStock(string walletId, string stockId)
 		{
-			var filter = Builders<Wallet>.Filter.Where(w => w.WalletId == walletId);
+			var filter = Builders<Wallet>.Filter.Eq(w => w.WalletId, walletId);
 			var update = Builders<Wallet>.Update.PullFilter(w => w.Stocks, s => s.StockId == stockId);
 			_walletRepository.UpdateOne(filter, update);
 		}
 
-		public void UpdateStock(string walletId, Stock? existingStock)
+		public void UpdateStock(string walletId, Stock? updatedStock)
 		{
 			var filter = Builders<Wallet>.Filter.And(
-			Builders<Wallet>.Filter.Eq(w => w.WalletId, walletId),
-			Builders<Wallet>.Filter.ElemMatch(w => w.Stocks, s => s.StockId == existingStock.StockId));
+				Builders<Wallet>.Filter.Eq(w => w.WalletId, walletId),
+				Builders<Wallet>.Filter.ElemMatch(w => w.Stocks, s => s.StockId == updatedStock.StockId)
+				);
 
-			var update = Builders<Wallet>.Update.Set("Stocks.$", existingStock);
+			var update = Builders<Wallet>.Update.Set("Stocks.$", updatedStock);
 
 			_walletRepository.UpdateOne(filter, update);
 		}

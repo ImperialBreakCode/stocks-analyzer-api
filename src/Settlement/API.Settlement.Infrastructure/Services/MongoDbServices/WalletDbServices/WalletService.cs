@@ -43,45 +43,55 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 			}
 
 		}
-
-		private void PerformBuyLogic(Wallet existingWallet, FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+		private void PerformBuyLogic(Wallet wallet, FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
 		{
 			foreach (var stockInfoResponseDTO in finalizeTransactionResponseDTO.StockInfoResponseDTOs)
 			{
-				Stock? existingStock = _walletRepository.GetStockFromWallet(existingWallet, stockInfoResponseDTO.StockId);
-				if (existingStock == null)
+				Stock? stock = _walletRepository.GetStockFromWallet(wallet.WalletId, stockInfoResponseDTO.StockId);
+				if (stock == null)
 				{
-					existingStock = _transactionMapperService.MapToStockEntity(stockInfoResponseDTO);
+					var newStock = new Stock()
+					{
+						StockId = stockInfoResponseDTO.StockId,
+						StockName = stockInfoResponseDTO.StockName,
+						Quantity = stockInfoResponseDTO.Quantity,
+						AverageSingleStockPrice = CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.SinglePriceIncludingCommission),
+						InvestedAmount = CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.TotalPriceIncludingCommission)
+					};
+					_walletRepository.AddStock(wallet.WalletId, newStock);
 				}
 				else
 				{
-					existingStock.InvestedAmount += CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.TotalPriceIncludingCommission);
-					existingStock.AverageSingleStockPrice = CalculateBuyPriceWithoutCommission((existingStock.AverageSingleStockPrice + stockInfoResponseDTO.SinglePriceIncludingCommission) / 2);
-					existingStock.Quantity += stockInfoResponseDTO.Quantity;
+					stock.Quantity += stockInfoResponseDTO.Quantity;
+					stock.InvestedAmount += CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.TotalPriceIncludingCommission);
+					stock.AverageSingleStockPrice = (stock.AverageSingleStockPrice + (CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.SinglePriceIncludingCommission))) / 2;
+					_walletRepository.UpdateStock(wallet.WalletId, stock);
 				}
-				_walletRepository.AddStock(existingWallet.WalletId, existingStock);
-
 			}
 		}
-		private void PerformSaleLogic(Wallet existingWallet, FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+
+		private void PerformSaleLogic(Wallet wallet, FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
 		{
 			foreach (var stockInfoResponseDTO in finalizeTransactionResponseDTO.StockInfoResponseDTOs)
 			{
-				Stock? existingStock = _walletRepository.GetStockFromWallet(existingWallet, stockInfoResponseDTO.StockId);
-				if (existingStock != null && existingStock.Quantity >= stockInfoResponseDTO.Quantity)
+				var stock = _walletRepository.GetStockFromWallet(wallet.WalletId, stockInfoResponseDTO.StockId);
+				if(stock != null)
 				{
-					existingStock.InvestedAmountPerStock = existingStock.InvestedAmount / existingStock.Quantity;
-					existingStock.Quantity -= stockInfoResponseDTO.Quantity;
-					existingStock.InvestedAmount = existingStock.InvestedAmountPerStock * existingStock.Quantity;
-
+					if (stock != null && stock.Quantity >= stockInfoResponseDTO.Quantity)
+					{
+						stock.Quantity -= stockInfoResponseDTO.Quantity;
+						stock.InvestedAmount = stock.InvestedAmount - (CalculateSalePriceWithoutCommission(stock.AverageSingleStockPrice) * stockInfoResponseDTO.Quantity);
+						stock.AverageSingleStockPrice = (CalculateSalePriceWithoutCommission(stock.AverageSingleStockPrice) + CalculateSalePriceWithoutCommission(stockInfoResponseDTO.SinglePriceIncludingCommission)) / 2;
+					}
+					if (stock.Quantity == 0) { _walletRepository.RemoveStock(wallet.WalletId, stock.StockId); }
+					else { _walletRepository.UpdateStock(wallet.WalletId, stock); }
 				}
 				
-				_walletRepository.UpdateStock(existingWallet.WalletId, existingStock);
 
 			}
 		}
-
-
-		private decimal CalculateBuyPriceWithoutCommission(decimal priceIncludingCommission) => priceIncludingCommission - (priceIncludingCommission * _infrastructureConstants.Commission);
+		private decimal CalculateBuyPriceWithoutCommission(decimal priceIncludingCommission) => priceIncludingCommission / (1 + _infrastructureConstants.Commission);
+		private decimal CalculateSalePriceWithoutCommission(decimal priceIncludingCommission) => priceIncludingCommission / (1 - _infrastructureConstants.Commission);
 	}
+
 }

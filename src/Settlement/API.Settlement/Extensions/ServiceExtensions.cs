@@ -61,11 +61,11 @@ namespace API.Settlement.Extensions
 
 		public static void AddWalletDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
 		{
-			services.Configure<WalletDbSettings>(
-				configuration.GetSection(nameof(WalletDbSettings)));
+			services.Configure<WalletDatabaseSettings>(
+				configuration.GetSection(nameof(WalletDatabaseSettings)));
 
 			services.AddSingleton<IWalletDbSettings>(w =>
-				w.GetRequiredService<IOptions<WalletDbSettings>>().Value);
+				w.GetRequiredService<IOptions<WalletDatabaseSettings>>().Value);
 
 			services.AddSingleton<IMongoClient>(m =>
 				new MongoClient(configuration.GetValue<string>("WalletDatabaseSettings:ConnectionString")));
