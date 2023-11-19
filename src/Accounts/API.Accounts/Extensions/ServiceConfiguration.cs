@@ -1,19 +1,8 @@
-﻿using API.Accounts.Application.Auth.PasswordManager;
-using API.Accounts.Application.Auth.TokenManager;
-using API.Accounts.Application.Data;
-using API.Accounts.Application.Data.ExchangeRates;
-using API.Accounts.Application.Data.StocksData;
-using API.Accounts.Application.EventClocks;
-using API.Accounts.Application.HttpClientService;
-using API.Accounts.Application.Services.StockService;
-using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
-using API.Accounts.Application.Services.StockService.SubServices;
-using API.Accounts.Application.Services.TransactionService;
-using API.Accounts.Application.Services.UserService;
-using API.Accounts.Application.Services.WalletService;
+﻿using API.Accounts.Application.HttpClientService;
 using API.Accounts.Application.Settings;
 using API.Accounts.BackgroundServices;
 using API.Accounts.Implementations;
+using API.Accounts.Application;
 
 namespace API.Accounts.Extensions
 {
@@ -24,22 +13,23 @@ namespace API.Accounts.Extensions
             services
                 .InjectData()
                 .AddHttpClientServices()
-                .AddAuthentication()
+                .AddClockBackgroundService()
                 .AddSettings()
-                .AddServices();
+                .AddClockBackgroundService()
+                .AddAccountServices()
+                .AddAccountAuthentication();
+
         }
 
         public static IServiceCollection InjectData(this IServiceCollection services)
         {
+            services.AddApplicationData();
+
             // Sql Db
-            //services.AddTransient<ISqlContextCreator, SqlContextCreator>();
-            //services.AddTransient<IAccountsData, AccountDataAdapter>();
+            //services.UseSqlDatabase<AccountDataAdapter>();
 
             // mocking memory db
-            services.AddSingleton<IAccountsData, AccountMockupData>();
-
-            services.AddTransient<IStocksData, StocksDataMockup>();
-            services.AddTransient<IExchangeRatesData, ExchangeRateDataMockup>();
+            services.UseMemoryMockupDb();
 
             return services;
         }
@@ -53,14 +43,6 @@ namespace API.Accounts.Extensions
             return services;
         }
 
-        public static IServiceCollection AddAuthentication(this IServiceCollection services)
-        {
-            services.AddSingleton<IPasswordManager, PasswordManager>();
-            services.AddSingleton<ITokenManager, TokenManager>();
-
-            return services;
-        }
-
         public static IServiceCollection AddSettings(this IServiceCollection services)
         {
             services.AddSingleton<IAccountsSettingsManager, AccountSettingsAdapter>();
@@ -68,31 +50,11 @@ namespace API.Accounts.Extensions
             return services;
         }
 
-        public static IServiceCollection AddServices(this IServiceCollection services)
+        public static IServiceCollection AddClockBackgroundService(this IServiceCollection services)
         {
-            AddEventClock(services);
-            AddStockService(services);
-
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IWalletService, WalletService>();
-            services.AddTransient<ITransactionService, TransactionService>();
-
-            return services;
-        }
-
-        private static void AddStockService(IServiceCollection services)
-        {
-            services.AddTransient<IStockService, StockService>();
-            services.AddTransient<IStockActionExecuter, StockActionExecuter>();
-            services.AddTransient<IStockActionFinalizer, StockActionFinalizer>();
-            services.AddTransient<IStockActionManager, StockActionManager>();
-        }
-
-        private static void AddEventClock(IServiceCollection services)
-        {
-            services.AddSingleton<IEventClock, EventClock>();
-            services.AddSingleton<IDemoWalletDeleteHandler, DemoWalletDeleteHandler>();
+            services.AddApplicationEventClock();
             services.AddHostedService<EventClockService>();
+            return services;
         }
     }
 }

@@ -13,12 +13,14 @@ namespace API.Accounts.Application.Services.UserService
         private readonly IAccountsData _data;
         private readonly IPasswordManager _passwordManager;
         private readonly ITokenManager _tokenManager;
+        private readonly IUserTypeManager _userTypeManager;
 
-        public UserService(IAccountsData data, IPasswordManager passwordManager, ITokenManager tokenManager)
+        public UserService(IAccountsData data, IPasswordManager passwordManager, ITokenManager tokenManager, IUserTypeManager userTypeManager)
         {
             _data = data;
             _passwordManager = passwordManager;
             _tokenManager = tokenManager;
+            _userTypeManager = userTypeManager;
         }
 
         public LoginResponseDTO LoginUser(LoginUserDTO loginDTO, string secretKey)
@@ -49,7 +51,7 @@ namespace API.Accounts.Application.Services.UserService
 
         public string? RegisterUser(RegisterUserDTO registerDTO)
         {
-            string result = null;
+            string? result = null;
 
             using(var context = _data.CreateDbContext())
             {
@@ -94,14 +96,17 @@ namespace API.Accounts.Application.Services.UserService
 
                 if (user is not null)
                 {
+                    Wallet? wallet = context.Wallets.GetUserWallet(user.Id);
+
                     responseDTO = new GetUserResponseDTO()
                     {
                         UserId = user.Id,
                         UserName = username,
+                        UserRank = _userTypeManager.GetUserType(wallet),
                         FirstName = user.FirstName,
                         UserEmail = user.Email,
                         LastName = user.LastName,
-                        WalletId = context.Wallets.GetUserWallet(user.Id)?.Id
+                        WalletId = wallet?.Id
                     };
                 }
             }

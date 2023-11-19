@@ -3,6 +3,7 @@ using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.ExternalRequestDTOs;
 using API.Accounts.Application.DTOs.ExternalResponseDTOs;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
+using API.Accounts.Application.Services.UserService;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.DbContext;
 
@@ -12,11 +13,13 @@ namespace API.Accounts.Application.Services.StockService.SubServices
     {
         private readonly IAccountsData _accountsData;
         private readonly IStockActionExecuter _actionExecuter;
+        private readonly IUserTypeManager _userTypeManager;
 
-        public StockActionFinalizer(IAccountsData accountsData, IStockActionExecuter actionExecuter)
+        public StockActionFinalizer(IAccountsData accountsData, IStockActionExecuter actionExecuter, IUserTypeManager userTypeManager)
         {
             _accountsData = accountsData;
             _actionExecuter = actionExecuter;
+            _userTypeManager = userTypeManager;
         }
 
         public async Task<string> ConfirmPurchase(string username)
@@ -42,7 +45,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     return ResponseMessages.NoStocksAddedForPurchaseSale;
                 }
 
-                var finalizeDto = CreateFinalizeStockDto(false, wallet.Id, wallet.UserId);
+                var finalizeDto = CreateFinalizeStockDto(false, wallet);
 
                 var res = await _actionExecuter.ExecutePurchase(finalizeDto, stocksForPurchase);
 
@@ -80,7 +83,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     return ResponseMessages.NoStocksAddedForPurchaseSale;
                 }
 
-                var finalizeDto = CreateFinalizeStockDto(true, wallet.Id, wallet.UserId);
+                var finalizeDto = CreateFinalizeStockDto(true, wallet);
 
                 var res = await _actionExecuter.ExecuteSell(finalizeDto, stocksForSale);
 
@@ -92,12 +95,13 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             return ResponseMessages.TransactionSendForProccessing;
         }
 
-        private FinalizeStockActionDTO CreateFinalizeStockDto(bool forSale, string walletId, string userId)
+        private FinalizeStockActionDTO CreateFinalizeStockDto(bool forSale, Wallet wallet)
         {
             FinalizeStockActionDTO finalizeDto = new FinalizeStockActionDTO();
             finalizeDto.IsSale = forSale;
-            finalizeDto.WalletId = walletId;
-            finalizeDto.UserId = userId;
+            finalizeDto.WalletId = wallet.Id;
+            finalizeDto.UserId = wallet.UserId;
+            finalizeDto.UserRank = (UserType)_userTypeManager.GetUserType(wallet)!;
 
             return finalizeDto;
         }
