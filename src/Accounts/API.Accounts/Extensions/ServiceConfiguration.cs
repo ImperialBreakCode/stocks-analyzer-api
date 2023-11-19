@@ -16,7 +16,7 @@ namespace API.Accounts.Extensions
                 .InjectData()
                 .AddHttpClientServices()
                 .AddSettings()
-                .AddClockBackgroundService()
+                .AddBackgroundServices()
                 .AddAccountServices()
                 .AddAccountAuthentication();
 
@@ -52,7 +52,7 @@ namespace API.Accounts.Extensions
             return services;
         }
 
-        public static IServiceCollection AddClockBackgroundService(this IServiceCollection services)
+        public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
         {
             services.AddApplicationEventClock();
             services.AddHostedService<EventClockService>();
