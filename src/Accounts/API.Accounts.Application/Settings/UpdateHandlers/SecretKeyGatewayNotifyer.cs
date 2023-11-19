@@ -25,12 +25,10 @@ namespace API.Accounts.Application.Settings.UpdateHandlers
             if (!_settingsSender.SendSecretKeyToGateway(secretKey))
             {
                 _waitingSecretKey = secretKey;
-                Console.WriteLine("added on waiting list");
             }
             else
             {
                 _waitingSecretKey = null;
-                Console.WriteLine("send to gateway");
             }
         }
     }
