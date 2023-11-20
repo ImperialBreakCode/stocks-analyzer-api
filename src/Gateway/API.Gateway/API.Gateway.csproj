@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\API.Gateway.Domain\API.Gateway.Domain.csproj" />
+    <ProjectReference Include="..\API.Gateway.Infrastructure\API.Gateway.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
