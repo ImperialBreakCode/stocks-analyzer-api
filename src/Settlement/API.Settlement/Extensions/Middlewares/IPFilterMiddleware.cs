@@ -19,7 +19,7 @@ namespace API.Settlement.Extensions.Middlewares
 				? remoteIpAddress.MapToIPv4().ToString()
 				: remoteIpAddress.ToString();
 
-			if (_blackListedIPs.Contains(remoteIpAddress.ToString()))
+			if (_blackListedIPs.Contains(remoteIp))
             {
 				context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 				return;
