@@ -1,4 +1,4 @@
-using API.Settlement.Extensions;
+using API.Settlement.Extensions.Configuration;
 using Hangfire;
 using System.Text.Json.Serialization;
 
@@ -31,6 +31,8 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseCustomMiddlewares();
 
 app.UseDatabaseInitialization();
 
