@@ -8,6 +8,6 @@
 		public string StockName { get; set; }
 		public int Quantity { get; set; }
 		public decimal SinglePriceIncludingCommission { get; set; }
-		public decimal TotalPriceIncludingCommission { get { return Quantity * SinglePriceIncludingCommission; } }
+		public decimal TotalPriceIncludingCommission => Quantity * SinglePriceIncludingCommission;
 	}
 }

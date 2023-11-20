@@ -1,6 +1,7 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+using API.Settlement.Domain.DTOs.Response.LossCheckDTOs;
 using API.Settlement.Domain.Entities;
 using AutoMapper;
 
@@ -58,6 +59,7 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.InvestedAmount, opt => opt.MapFrom(src => src.TotalPriceIncludingCommission))
 				.ForMember(dest => dest.AverageSingleStockPrice, opt => opt.MapFrom(src => src.SinglePriceIncludingCommission))
 				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
 
 		}
 	}

@@ -1,6 +1,7 @@
 ﻿using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using Azure;
 using Microsoft.AspNetCore.Http;
@@ -35,7 +36,7 @@ namespace API.Settlement.Infrastructure.Services
 			_walletService = walletService;
 		}
 
-		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO)
+		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO, UserType userRank)
 		{
 			var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
 			var finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(availabilityResponseDTO);
@@ -53,7 +54,7 @@ namespace API.Settlement.Infrastructure.Services
                 }
 				finally
 				{
-					_walletService.UpdateStocksInWallet(finalizeTransactionResponseDTO);
+					_walletService.UpdateStocksInWallet(finalizeTransactionResponseDTO, userRank);
 
 					var transactions = _transactionMapperService.MapToTransactionEntities(finalizeTransactionResponseDTO);
 					_transactionResponseHandlerService.HandleTransactionResponse(response, transactions);
@@ -90,7 +91,7 @@ namespace API.Settlement.Infrastructure.Services
 				}
 			}
 		}
-		public Task RecurringCapitalLossCheckJob()
+		public async Task RecurringCapitalLossCheckJob()
 		{
 			_walletService.CapitalLossCheck();
 		}

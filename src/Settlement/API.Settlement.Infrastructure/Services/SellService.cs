@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using Newtonsoft.Json;
@@ -48,7 +49,7 @@ namespace API.Settlement.Infrastructure.Services
 			return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
 		}
 		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
-			=> totalPriceExcludingCommission - (totalPriceExcludingCommission * _infrastructureConstants.Commission);
+			=> totalPriceExcludingCommission - (totalPriceExcludingCommission * _infrastructureConstants.GetCommissionBasedOnUserType(UserType.Demo));
 		private async Task<StockDTO> GetStockDTO(string uri)
 		{
 			using (var _httpClient = _httpClientFactory.CreateClient())

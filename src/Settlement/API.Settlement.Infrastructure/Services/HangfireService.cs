@@ -1,4 +1,5 @@
 ﻿using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,8 +23,8 @@ namespace API.Settlement.Infrastructure.Services
 		}
 
 
-		public void ScheduleStockProcessingJob(AvailabilityResponseDTO availabilityResponseDTO)
-			=> BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(availabilityResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
+		public void ScheduleStockProcessingJob(AvailabilityResponseDTO availabilityResponseDTO, UserType userRank)
+			=> BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(availabilityResponseDTO, userRank), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
 		public void InitializeRecurringFailedTransactionsJob()
 		{
 			if(!_constants.IsInitializedRecurringFailedTransactionsJob)

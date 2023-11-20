@@ -1,4 +1,5 @@
 ﻿using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface IWalletService
 	{
-		void UpdateStocksInWallet(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
-		void CapitalLossCheck();
+		void UpdateStocksInWallet(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, UserType userRank);
+		Task CapitalLossCheck();
 
 	}
 }

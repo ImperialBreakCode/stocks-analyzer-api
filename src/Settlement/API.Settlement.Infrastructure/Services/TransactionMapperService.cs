@@ -2,7 +2,9 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
+using API.Settlement.Infrastructure.Helpers.Constants;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using AutoMapper;
 
@@ -11,20 +13,20 @@ namespace API.Settlement.Infrastructure.Services
 	public class TransactionMapperService : ITransactionMapperService
 	{
 		private readonly IMapper _mapper;
-		private readonly IInfrastructureConstants _InfrastructureConstants;
+		private readonly IInfrastructureConstants _infrastructureConstants;
 
 		public TransactionMapperService(IMapper mapper,
 									IInfrastructureConstants infrastructureConstants)
 		{
 			_mapper = mapper;
-			_InfrastructureConstants = infrastructureConstants;
+			_infrastructureConstants = infrastructureConstants;
 		}
 
 		public AvailabilityStockInfoResponseDTO MapToAvailabilityStockInfoResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
 		{
 			var availabilityStockResponseDTO = _mapper.Map<AvailabilityStockInfoResponseDTO>(stockInfoRequestDTO);
 			availabilityStockResponseDTO.IsSuccessful = status == Status.Scheduled;
-			availabilityStockResponseDTO.Message = GetMessageBasedOnStatus(status);
+			availabilityStockResponseDTO.Message = _infrastructureConstants.GetMessageBasedOnStatus(status);
 			availabilityStockResponseDTO.SinglePriceIncludingCommission = GetSinglePriceWithCommission(totalPriceIncludingCommission, availabilityStockResponseDTO.Quantity);
 
 			return availabilityStockResponseDTO;
@@ -65,18 +67,6 @@ namespace API.Settlement.Infrastructure.Services
 		private decimal GetSinglePriceWithCommission(decimal totalPriceIncludingCommission, decimal quantity)
 		{
 			return totalPriceIncludingCommission / quantity;
-		}
-
-		private string GetMessageBasedOnStatus(Status status)
-		{
-			switch (status)
-			{
-				case Status.Declined: return _InfrastructureConstants.TransactionDeclinedMessage;
-				case Status.Success: return _InfrastructureConstants.TransactionSuccessMessage;
-				case Status.Scheduled: return _InfrastructureConstants.TransactionScheduledMessage;
-				default: return String.Empty;
-
-			}
 		}
 
 		public IEnumerable<Transaction> MapToTransactionEntities(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
@@ -133,9 +123,30 @@ namespace API.Settlement.Infrastructure.Services
 			return _mapper.Map<Wallet>(finalizeTransactionResponseDTO);
 		}
 
-		public Stock MapToStockEntity(StockInfoResponseDTO stockInfoResponseDTO)
+		public Stock MapToStockEntity(StockInfoResponseDTO stockInfoResponseDTO, UserType userRank)
 		{
-			return _mapper.Map<Stock>(stockInfoResponseDTO);
+			var stock = _mapper.Map<Stock>(stockInfoResponseDTO);
+			stock.AverageSingleStockPrice = CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank); //finalizeTransactionResponseDTO.Rank...
+			stock.InvestedAmount = CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.TotalPriceIncludingCommission, userRank);//finalizeTransactionResponseDTO.Rank...
+			return stock;
 		}
+
+		public Stock UpdateStockForPurchase(Stock stock, StockInfoResponseDTO stockInfoResponseDTO, UserType userRank)
+		{
+			stock.Quantity += stockInfoResponseDTO.Quantity;
+			stock.InvestedAmount += CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.TotalPriceIncludingCommission, userRank); //finalizeTransactionResponseDTO.Rank
+			stock.AverageSingleStockPrice = (stock.AverageSingleStockPrice + (CalculateBuyPriceWithoutCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank))) / 2; //finalizeTransactionResponseDTO.Rank
+			return stock;
+		}
+
+		public Stock UpdateStockForSale(Stock stock, StockInfoResponseDTO stockInfoResponseDTO, UserType userRank)
+		{
+			stock.Quantity -= stockInfoResponseDTO.Quantity;
+			stock.InvestedAmount = stock.InvestedAmount - (stock.AverageSingleStockPrice * stockInfoResponseDTO.Quantity);
+			stock.AverageSingleStockPrice = (stock.AverageSingleStockPrice + CalculateSalePriceWithoutCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank)) / 2;
+			return stock;
+		}
+		private decimal CalculateBuyPriceWithoutCommission(decimal priceIncludingCommission, UserType userRank) => priceIncludingCommission / (1 + _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
+		private decimal CalculateSalePriceWithoutCommission(decimal priceIncludingCommission, UserType userRank) => priceIncludingCommission / (1 - _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
 	}
 }

@@ -2,6 +2,7 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Enums;
 using API.Settlement.Infrastructure.Helpers.Enums;
 
 namespace API.Settlement.Domain.Interfaces
@@ -16,6 +17,8 @@ namespace API.Settlement.Domain.Interfaces
 		IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> walletAndIsSaleTransactions);
 		IEnumerable<Transaction> MapToTransactionEntities(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
 		Wallet MapToWalletEntity(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
-		Stock MapToStockEntity(StockInfoResponseDTO stockInfoResponseDTO);
+		Stock MapToStockEntity(StockInfoResponseDTO stockInfoResponseDTO, UserType userRank);
+		Stock UpdateStockForPurchase(Stock stock, StockInfoResponseDTO stockInfoResponseDTO, UserType userRank);
+		Stock UpdateStockForSale(Stock stock, StockInfoResponseDTO stockInfoResponseDTO, UserType userRank);
 	}
 }

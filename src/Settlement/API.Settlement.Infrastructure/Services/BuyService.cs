@@ -1,6 +1,7 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using Newtonsoft.Json;
@@ -29,7 +30,7 @@ namespace API.Settlement.Infrastructure.Services
 			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
 			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 			{
-				var availabilityStockInfoResponseDTO = GenerateAvailabilityStockInfoResponse(stockInfoRequestDTO, ref walletBalance);
+				var availabilityStockInfoResponseDTO = GenerateAvailabilityStockInfoResponse(stockInfoRequestDTO, finalizeTransactionRequestDTO.UserRank, ref walletBalance);
 				availabilityStockInfoResponseDTOs.Add(availabilityStockInfoResponseDTO);
 
 			}
@@ -37,13 +38,13 @@ namespace API.Settlement.Infrastructure.Services
 			return _transactionMapperService.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
 		}
 
-		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
+		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission, UserType userRank)
 		{
-			return totalPriceExcludingCommission + (totalPriceExcludingCommission * _infrastructureConstants.Commission);
+			return totalPriceExcludingCommission + (totalPriceExcludingCommission * _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
 		}
-		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO, ref decimal walletBalance)
+		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO,UserType userRank, ref decimal walletBalance)
 		{
-			decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
+			decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, userRank);
 			if (walletBalance < totalPriceIncludingCommission)
 			{
 				return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
