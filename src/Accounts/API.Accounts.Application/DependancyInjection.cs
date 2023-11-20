@@ -4,12 +4,16 @@ using API.Accounts.Application.Data;
 using API.Accounts.Application.Data.ExchangeRates;
 using API.Accounts.Application.Data.StocksData;
 using API.Accounts.Application.EventClocks;
+using API.Accounts.Application.HttpClientService;
 using API.Accounts.Application.Services.StockService;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
 using API.Accounts.Application.Services.StockService.SubServices;
 using API.Accounts.Application.Services.TransactionService;
 using API.Accounts.Application.Services.UserService;
 using API.Accounts.Application.Services.WalletService;
+using API.Accounts.Application.Settings.GatewayAuthSettingsSender;
+using API.Accounts.Application.Settings.GatewaySettingsSender;
+using API.Accounts.Application.Settings;
 using API.Accounts.Application.Settings.UpdateHandlers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -38,6 +42,15 @@ namespace API.Accounts.Application
             return services;
         }
 
+        public static IServiceCollection AddHttpClientServices<T>(this IServiceCollection services)
+            where T : class, IHttpService
+        {
+            services.AddSingleton<IHttpClientRoutes, HttpClientRoutes>();
+            services.AddScoped<IHttpService, T>();
+
+            return services;
+        }
+
         public static IServiceCollection AddAccountAuthentication(this IServiceCollection services)
         {
             services.AddSingleton<IPasswordManager, PasswordManager>();
@@ -62,6 +75,15 @@ namespace API.Accounts.Application
 
             services.AddTransient<IWalletService, WalletService>();
             services.AddTransient<ITransactionService, TransactionService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSettings<TSettingsAdapter>(this IServiceCollection services)
+            where TSettingsAdapter : class, IAccountsSettingsManager
+        {
+            services.AddSingleton<IAccountsSettingsManager, TSettingsAdapter>();
+            services.AddTransient<IGatewaySettingsSender, SocketGatewaySettingsSender>();
 
             return services;
         }

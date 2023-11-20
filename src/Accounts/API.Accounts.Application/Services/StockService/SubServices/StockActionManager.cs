@@ -4,11 +4,10 @@ using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
 using API.Accounts.Domain.Entities;
-using API.Accounts.Domain.Interfaces.DbContext;
 
 namespace API.Accounts.Application.Services.StockService.SubServices
 {
-    public class StockActionManager : IStockActionManager
+    internal class StockActionManager : IStockActionManager
     {
         private readonly IAccountsData _accountsData;
         private readonly IStocksData _stocksData;

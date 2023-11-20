@@ -8,7 +8,7 @@ using API.Accounts.Domain.Entities;
 
 namespace API.Accounts.Application.Services.UserService
 {
-    public class UserService : IUserService
+    internal class UserService : IUserService
     {
         private readonly IAccountsData _data;
         private readonly IPasswordManager _passwordManager;

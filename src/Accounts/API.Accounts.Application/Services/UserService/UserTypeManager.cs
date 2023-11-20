@@ -2,7 +2,7 @@
 
 namespace API.Accounts.Application.Services.UserService
 {
-    public class UserTypeManager : IUserTypeManager
+    internal class UserTypeManager : IUserTypeManager
     {
         private decimal _specialTraderMin = 10000;
         private decimal _vipTraderMin = 100000;

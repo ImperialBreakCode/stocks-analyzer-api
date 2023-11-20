@@ -9,7 +9,7 @@ using API.Accounts.Domain.Interfaces.DbContext;
 
 namespace API.Accounts.Application.Services.StockService.SubServices
 {
-    public class StockActionFinalizer : IStockActionFinalizer
+    internal class StockActionFinalizer : IStockActionFinalizer
     {
         private readonly IAccountsData _accountsData;
         private readonly IStockActionExecuter _actionExecuter;

@@ -1,6 +1,6 @@
 ﻿using API.Accounts.Application.Settings.Options;
 
-namespace API.Accounts.Application.Settings.GatewaySecretKeySender
+namespace API.Accounts.Application.Settings.GatewayAuthSettingsSender
 {
     public interface IGatewaySettingsSender
     {

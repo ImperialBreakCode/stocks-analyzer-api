@@ -7,7 +7,7 @@ using API.Accounts.Domain.Entities;
 
 namespace API.Accounts.Application.Services.StockService.SubServices
 {
-    public class StockActionExecuter : IStockActionExecuter
+    internal class StockActionExecuter : IStockActionExecuter
     {
         private readonly IHttpService _httpService;
         private readonly IHttpClientRoutes _httpRoutes;

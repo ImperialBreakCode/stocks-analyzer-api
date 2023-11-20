@@ -1,9 +1,9 @@
-﻿using API.Accounts.Application.Settings.GatewaySecretKeySender;
+﻿using API.Accounts.Application.Settings.GatewayAuthSettingsSender;
 using API.Accounts.Application.Settings.Options;
 
 namespace API.Accounts.Application.Settings.UpdateHandlers
 {
-    public class AuthTokenGatewayNotifyer : IAuthTokenGatewayNotifyer
+    internal class AuthTokenGatewayNotifyer : IAuthTokenGatewayNotifyer
     {
         private readonly IGatewaySettingsSender _settingsSender;
         private AuthValues? _waitingAuthTokenData;
@@ -28,7 +28,6 @@ namespace API.Accounts.Application.Settings.UpdateHandlers
 
             if (!_settingsSender.SendAuthTokenSettingsToGateway(authData, _gatwaySocketHost).Result)
             {
-                Console.WriteLine("added for waiting");
                 _waitingAuthTokenData = authData;
             }
             else

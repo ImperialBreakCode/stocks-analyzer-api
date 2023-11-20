@@ -1,4 +1,4 @@
-﻿using API.Accounts.Application.Settings.GatewaySecretKeySender;
+﻿using API.Accounts.Application.Settings.GatewayAuthSettingsSender;
 using API.Accounts.Application.Settings.Options;
 using Newtonsoft.Json;
 using System.Net.WebSockets;
@@ -6,7 +6,7 @@ using System.Text;
 
 namespace API.Accounts.Application.Settings.GatewaySettingsSender
 {
-    public class SocketGatewaySettingsSender : IGatewaySettingsSender
+    internal class SocketGatewaySettingsSender : IGatewaySettingsSender
     {
         public async Task<bool> SendAuthTokenSettingsToGateway(AuthValues gatewayKey, string gatewaySocketHost)
         {

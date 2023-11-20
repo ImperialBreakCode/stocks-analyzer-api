@@ -4,7 +4,7 @@ using API.Accounts.Domain.Entities;
 
 namespace API.Accounts.Application.Services.TransactionService
 {
-    public class TransactionService : ITransactionService
+    internal class TransactionService : ITransactionService
     {
         private readonly IAccountsData _accountsData;
 

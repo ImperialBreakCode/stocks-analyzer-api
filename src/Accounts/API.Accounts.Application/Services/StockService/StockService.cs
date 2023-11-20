@@ -5,7 +5,7 @@ using API.Accounts.Domain.Entities;
 
 namespace API.Accounts.Application.Services.StockService
 {
-    public class StockService : IStockService
+    internal class StockService : IStockService
     {
         private readonly IAccountsData _accountsData;
         private readonly IStockActionFinalizer _stockActionFinalizer;
