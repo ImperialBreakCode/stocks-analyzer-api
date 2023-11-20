@@ -4,5 +4,6 @@
     {
         public string SettlementHost { get; set; }
         public string StockApiHost { get; set; }
+        public string GatewaySocket { get; set; }
     }
 }

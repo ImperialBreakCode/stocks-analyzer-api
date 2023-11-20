@@ -47,7 +47,7 @@ namespace API.Accounts.Extensions
         public static IServiceCollection AddSettings(this IServiceCollection services)
         {
             services.AddSingleton<IAccountsSettingsManager, AccountSettingsAdapter>();
-            services.AddTransient<IGatewaySettingsSender, SignalRGatewaySettingSender>();
+            services.AddTransient<IGatewaySettingsSender, SocketGatewaySettingsSender>();
 
             return services;
         }

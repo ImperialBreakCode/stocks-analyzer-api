@@ -50,7 +50,7 @@ namespace API.Accounts.Application
         {
             services.AddSingleton<IEventClock, EventClock>();
             services.AddSingleton<IDemoWalletDeleteHandler, DemoWalletDeleteHandler>();
-            services.AddSingleton<ISecretKeyGatewayNotifyer, SecretKeyGatewayNotifyer>();
+            services.AddSingleton<IAuthTokenGatewayNotifyer, AuthTokenGatewayNotifyer>();
 
             return services;
         }

@@ -1,7 +1,9 @@
-﻿namespace API.Accounts.Application.Settings.GatewaySecretKeySender
+﻿using API.Accounts.Application.Settings.Options;
+
+namespace API.Accounts.Application.Settings.GatewaySecretKeySender
 {
     public interface IGatewaySettingsSender
     {
-        bool SendSecretKeyToGateway(string gatewayKey);
+        Task<bool> SendAuthTokenSettingsToGateway(AuthValues gatewayKey, string gatewaySocketHost);
     }
 }

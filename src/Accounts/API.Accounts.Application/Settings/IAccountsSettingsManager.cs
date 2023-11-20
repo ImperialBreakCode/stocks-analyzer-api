@@ -7,6 +7,7 @@ namespace API.Accounts.Application.Settings
         ExternalMicroservicesHosts GetExternalHosts { get; }
         ICollection<string> GetAllowedHosts { get; }
         string GetSecretKey { get; }
+        AuthValues GetAuthSettings { get; }
         void SetupOnChangeHandlers();
     }
 }

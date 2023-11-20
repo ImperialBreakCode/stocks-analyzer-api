@@ -8,12 +8,12 @@ namespace API.Accounts.BackgroundServices
     {
         private readonly IEventClock _eventClock;
         private readonly IDemoWalletDeleteHandler _deleteDemoWalletHandler;
-        private readonly ISecretKeyGatewayNotifyer _secretKeyGatewayNotifyer;
+        private readonly IAuthTokenGatewayNotifyer _secretKeyGatewayNotifyer;
 
         public EventClockService(
             IEventClock eventClock, 
             IDemoWalletDeleteHandler deleteDemoWalletHandler, 
-            ISecretKeyGatewayNotifyer secretKeyGatewayNotifyer
+            IAuthTokenGatewayNotifyer secretKeyGatewayNotifyer
             )
         {
             _eventClock = eventClock;

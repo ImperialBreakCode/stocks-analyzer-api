@@ -23,7 +23,7 @@ namespace API.Accounts.Application.Services.UserService
             _userTypeManager = userTypeManager;
         }
 
-        public LoginResponseDTO LoginUser(LoginUserDTO loginDTO, string secretKey)
+        public LoginResponseDTO LoginUser(LoginUserDTO loginDTO)
         {
             LoginResponseDTO responseDTO = new LoginResponseDTO();
 
@@ -42,7 +42,7 @@ namespace API.Accounts.Application.Services.UserService
                 else
                 {
                     responseDTO.Message = ResponseMessages.AuthSuccess;
-                    responseDTO.Token = _tokenManager.CreateToken(loginDTO.Username, 60, secretKey);
+                    responseDTO.Token = _tokenManager.CreateToken(loginDTO.Username, 60);
                 }
             }
 

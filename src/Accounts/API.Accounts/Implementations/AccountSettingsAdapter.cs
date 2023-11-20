@@ -9,9 +9,9 @@ namespace API.Accounts.Implementations
     {
         private readonly IOptionsMonitor<AccountSettings> _settings;
         private IDisposable? _onChangeListenerDisposable;
-        private readonly ISecretKeyGatewayNotifyer _secretKeyGatewayNotifyer;
+        private readonly IAuthTokenGatewayNotifyer _secretKeyGatewayNotifyer;
 
-        public AccountSettingsAdapter(IOptionsMonitor<AccountSettings> settings, ISecretKeyGatewayNotifyer secretKeyGatewayNotifyer)
+        public AccountSettingsAdapter(IOptionsMonitor<AccountSettings> settings, IAuthTokenGatewayNotifyer secretKeyGatewayNotifyer)
         {
             _settings = settings;
             _secretKeyGatewayNotifyer = secretKeyGatewayNotifyer;
@@ -24,7 +24,11 @@ namespace API.Accounts.Implementations
             => _settings.CurrentValue.ExternalMicroservicesHosts;
 
         public string GetSecretKey
-            => _settings.CurrentValue.SecretKey;
+            => _settings.CurrentValue.Auth.SecretKey;
+
+        public AuthValues GetAuthSettings
+            => _settings.CurrentValue.Auth;
+
 
         public void Dispose()
         {
@@ -33,12 +37,22 @@ namespace API.Accounts.Implementations
 
         public void SetupOnChangeHandlers()
         {
-            _secretKeyGatewayNotifyer.NotifyGateway(GetSecretKey);
+            _secretKeyGatewayNotifyer.NotifyGateway(GetAuthSettings, GetExternalHosts.GatewaySocket);
 
             _onChangeListenerDisposable = _settings.OnChange(accountSettings =>
             {
-                _secretKeyGatewayNotifyer.NotifyGateway(accountSettings.SecretKey);
+                if (CheckIfAuthSettingsAreChanged(accountSettings.Auth))
+                {
+                    _secretKeyGatewayNotifyer.NotifyGateway(accountSettings.Auth, GetExternalHosts.GatewaySocket);
+                }
             });
+        }
+
+        private bool CheckIfAuthSettingsAreChanged(AuthValues updatedValues)
+        {
+            return GetAuthSettings.Issuer != updatedValues.Issuer 
+                || GetAuthSettings.Audience != updatedValues.Audience
+                || GetSecretKey != updatedValues.SecretKey;
         }
     }
 }
