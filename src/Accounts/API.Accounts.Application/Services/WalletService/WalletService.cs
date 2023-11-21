@@ -8,7 +8,7 @@ using API.Accounts.Domain.Interfaces.RepositoryBase;
 
 namespace API.Accounts.Application.Services.WalletService
 {
-    public class WalletService : IWalletService
+    internal class WalletService : IWalletService
     {
         private readonly IAccountsData _accountData;
         private readonly IExchangeRatesData _exchangeRatesData;

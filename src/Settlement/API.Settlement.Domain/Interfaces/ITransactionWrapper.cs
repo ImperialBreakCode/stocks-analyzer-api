@@ -1,10 +1,5 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
-using API.Settlement.Domain.DTOs.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 
 namespace API.Settlement.Domain.Interfaces
 {
@@ -12,6 +7,6 @@ namespace API.Settlement.Domain.Interfaces
 	{
 		IBuyService BuyService { get; }
 		ISellService SellService { get; }
-		Task<FinalizeTransactionResponseDTO> ProcessNextDayAccountTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
+		Task<AvailabilityResponseDTO> CheckAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }
