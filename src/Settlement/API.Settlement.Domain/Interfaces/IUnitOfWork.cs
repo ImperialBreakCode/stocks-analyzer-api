@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Interfaces
 {
-	public interface IHttpClientService
+	public interface IUnitOfWork
 	{
-
+		ISuccessfulTransactionRepository SuccessfulTransactions { get; }
+		IFailedTransactionRepository FailedTransactions { get; }
 	}
 }
