@@ -65,17 +65,19 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 
 					if (percentageDifference > 0)
 					{
-
+						var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has increased by {percentageDifference}%!");
+						await _emailService.SendEmail(emailDTO);
 					}
 					else if (percentageDifference < 0)
 					{
 						if (percentageDifference <= -15)
 						{
-
+							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%! It has been automatically sold!");
+							await _emailService.SendEmail(emailDTO);
 						}
 						else
 						{
-							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock has decreased by {percentageDifference}%!");
+							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%!");
 							await _emailService.SendEmail(emailDTO);
 						}
 					}
