@@ -7,7 +7,7 @@
 
         public EventClock()
         {
-            _periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(10));
+            _periodicTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
         }
 
         public void RegisterClockHandler(Action handler)
