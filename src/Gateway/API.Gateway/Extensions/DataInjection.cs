@@ -1,4 +1,7 @@
 ﻿using API.Gateway.Domain.Interfaces;
+using API.Gateway.Infrastructure.Contexts;
+using API.Gateway.Infrastructure.Init;
+using API.Gateway.Infrastructure.Provider;
 using API.Gateway.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +19,14 @@ namespace API.Gateway.Extensions
 			services.AddTransient<IAnalyzerService, AnalyzerService>();
 			services.AddTransient<IWalletService, WalletService>();
 			services.AddTransient<IStockService, StockService>();
+			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+			services.AddScoped<IJwtTokenParser, JwtTokenParser>();
+			services.AddSingleton<Context>();
+			services.AddTransient<IEmailService, EmailService>();
+			services.AddTransient<IDatabaseInit, DatabaseInit>();
 
+			services.AddHttpContextAccessor();
+			services.AddMemoryCache();
 
 			return services;
 		}

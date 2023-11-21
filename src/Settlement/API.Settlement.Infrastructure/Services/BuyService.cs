@@ -1,5 +1,7 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using Newtonsoft.Json;
@@ -22,47 +24,42 @@ namespace API.Settlement.Infrastructure.Services
 			_transactionMapperService = buyTransactionMapperService;
 		}
 
-		public async Task<FinalizeTransactionResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public async Task<AvailabilityResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
-				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
-				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
-				foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
-				{
-					var stockInfoResponseDTO = new StockInfoResponseDTO();
-					decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission);
-					if (walletBalance < totalPriceIncludingCommission)
-					{
-						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
-					}
-					else
-					{
-						walletBalance -= totalPriceIncludingCommission;
-						stockInfoResponseDTO = _transactionMapperService.MapToStockResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Success);
-						//var stock = _transactionMapperService.CreateStockDTO();
-						//TODO: _userDictionaryService.CreateOrUpdateWallet(stock);
-					}
+			decimal walletBalance = 1000.5M;//await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
+			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
+			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
+			{
+				var availabilityStockInfoResponseDTO = GenerateAvailabilityStockInfoResponse(stockInfoRequestDTO, finalizeTransactionRequestDTO.UserRank, ref walletBalance);
+				availabilityStockInfoResponseDTOs.Add(availabilityStockInfoResponseDTO);
 
-					stockInfoResponseDTOs.Add(stockInfoResponseDTO);
-				}
+			}
 
-				finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(finalizeTransactionRequestDTO, stockInfoResponseDTOs);
-
-			return finalizeTransactionResponseDTO;
+			return _transactionMapperService.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
 		}
 
-		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission)
+		private decimal CalculatePriceIncludingCommission(decimal totalPriceExcludingCommission, UserType userRank)
 		{
-			return totalPriceExcludingCommission + (totalPriceExcludingCommission * _infrastructureConstants.Commission);
+			return totalPriceExcludingCommission + (totalPriceExcludingCommission * _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
 		}
+		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO,UserType userRank, ref decimal walletBalance)
+		{
+			decimal totalPriceIncludingCommission = CalculatePriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, userRank);
+			if (walletBalance < totalPriceIncludingCommission)
+			{
+				return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
+			}
 
+			walletBalance -= totalPriceIncludingCommission;
+			return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
+		}
 		private async Task<decimal> GetWalletBalance(string walletId)
 		{
 			decimal balance = 0;
 			using (var _httpClient = _httpClientFactory.CreateClient())
 			{
 				var response = await _httpClient.GetAsync(_infrastructureConstants.GETWalletBalanceRoute(walletId));
-				if(response.IsSuccessStatusCode)
+				if (response.IsSuccessStatusCode)
 				{
 					var json = await response.Content.ReadAsStringAsync();
 					balance = JsonConvert.DeserializeObject<decimal>(json);
@@ -70,6 +67,5 @@ namespace API.Settlement.Infrastructure.Services
 			}
 			return balance;
 		}
-
 	}
 }

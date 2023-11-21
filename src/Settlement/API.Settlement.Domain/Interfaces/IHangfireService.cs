@@ -1,10 +1,12 @@
-﻿using API.Settlement.Domain.DTOs.Request;
-using API.Settlement.Domain.DTOs.Response;
+﻿using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
+using API.Settlement.Domain.Enums;
 
 namespace API.Settlement.Domain.Interfaces
 {
 	public interface IHangfireService
 	{
-		void ScheduleStockProcessingJob(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
+		void ScheduleStockProcessingJob(AvailabilityResponseDTO availabilityResponseDTO, UserType userRank);
+		void InitializeRecurringFailedTransactionsJob();
+		void InitializeRecurringCapitalLossJobCheck();
 	}
 }

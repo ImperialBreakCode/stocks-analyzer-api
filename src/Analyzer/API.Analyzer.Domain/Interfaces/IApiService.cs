@@ -8,7 +8,8 @@ namespace API.Analyzer.Domain.Interfaces
     {
         public Task<GetWalletResponseDTO> UserProfilInfo(string userName);
         
-       // public Task GetProfitabilityForDate(); //нужна е имплементация в сървъра
-        public Task<decimal?> ProfitablenessAccountCheck(string userName, decimal? balance);
+        public Task<decimal?> CurrentProfitability(string userName);
+
+        public Task<decimal> PercentageChange(string symbol);
     }
 }
