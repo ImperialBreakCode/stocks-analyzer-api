@@ -146,7 +146,17 @@ namespace API.Settlement.Infrastructure.Services
 			stock.AverageSingleStockPrice = (stock.AverageSingleStockPrice + CalculateSalePriceWithoutCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank)) / 2;
 			return stock;
 		}
+		public Email CreateEmailDTO(string userEmail, string subject, string message)
+		{
+			return new Email()
+			{
+				To = userEmail,
+				Subject = subject,
+				Body = message
+			};
+		}
 		private decimal CalculateBuyPriceWithoutCommission(decimal priceIncludingCommission, UserType userRank) => priceIncludingCommission / (1 + _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
 		private decimal CalculateSalePriceWithoutCommission(decimal priceIncludingCommission, UserType userRank) => priceIncludingCommission / (1 - _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
+
 	}
 }

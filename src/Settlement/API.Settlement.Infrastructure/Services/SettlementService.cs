@@ -27,7 +27,7 @@ namespace API.Settlement.Infrastructure.Services
 			var userRank = finalizeTransactionRequestDTO.UserRank;
 			_hangfireService.ScheduleStockProcessingJob(filteredAvailabilityResponseDTO, userRank);
 			_hangfireService.InitializeRecurringFailedTransactionsJob();
-			//_hangfireService.InitializeRecurringCapitalLossJobCheck();
+			_hangfireService.InitializeRecurringCapitalLossJobCheck();
 
 			return availabilityResponseDTO;
 		}

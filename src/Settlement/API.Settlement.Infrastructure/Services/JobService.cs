@@ -93,7 +93,7 @@ namespace API.Settlement.Infrastructure.Services
 		}
 		public async Task RecurringCapitalLossCheckJob()
 		{
-			_walletService.CapitalLossCheck();
+			await _walletService.CapitalLossCheck();
 		}
 
 	}

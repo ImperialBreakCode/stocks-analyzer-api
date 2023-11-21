@@ -1,7 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
-using API.Settlement.Domain.DTOs.Response.LossCheckDTOs;
 using API.Settlement.Domain.Entities;
 using AutoMapper;
 
@@ -19,16 +18,19 @@ namespace API.Settlement.Infrastructure.Mappings
 			CreateMap<FinalizeTransactionRequestDTO, AvailabilityResponseDTO>()
 				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+				.ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))
 				.ForMember(dest => dest.IsSale, opt => opt.MapFrom(src => src.IsSale));
 
 			CreateMap<AvailabilityResponseDTO, FinalizeTransactionResponseDTO>()
 				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+				.ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))
 				.ForMember(dest => dest.IsSale, opt => opt.MapFrom(src => src.IsSale));
 
 			CreateMap<AvailabilityResponseDTO, AvailabilityResponseDTO>()
 				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+				.ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))
 				.ForMember(dest => dest.IsSale, opt => opt.MapFrom(src => src.IsSale))
 				.ForMember(dest => dest.AvailabilityStockInfoResponseDTOs, opt => opt.MapFrom(src => src.AvailabilityStockInfoResponseDTOs));
 
@@ -51,6 +53,7 @@ namespace API.Settlement.Infrastructure.Mappings
 			CreateMap<FinalizeTransactionResponseDTO, Wallet>()
 				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+				.ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))
 				.ForMember(dest => dest.Stocks, opt => opt.MapFrom(src => Enumerable.Empty<Stock>()));
 
 			CreateMap<StockInfoResponseDTO, Stock>()

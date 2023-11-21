@@ -19,15 +19,18 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 		private readonly ITransactionMapperService _transactionMapperService;
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly IHttpClientFactory _httpClientFactory;
+		private readonly IEmailService _emailService;
 		public WalletService(IWalletRepository walletRepository,
 							ITransactionMapperService transactionMapperService,
 							IInfrastructureConstants infrastructureConstants,
-							IHttpClientFactory httpClientFactory)
+							IHttpClientFactory httpClientFactory,
+							IEmailService emailService)
 		{
 			_walletRepository = walletRepository;
 			_transactionMapperService = transactionMapperService;
 			_infrastructureConstants = infrastructureConstants;
 			_httpClientFactory = httpClientFactory;
+			_emailService = emailService;
 		}
 
 		public void UpdateStocksInWallet(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, UserType userRank)
@@ -58,7 +61,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 				{
 					var actualSingleStockPrice = 900;//await GetActualSingleStockPrice(stock.StockName);
 					var actualTotalStockPrice = stock.Quantity * actualSingleStockPrice;
-					var percentageDifference = (stock.InvestedAmount - actualTotalStockPrice) / stock.InvestedAmount * 100;
+					var percentageDifference = (actualTotalStockPrice - stock.InvestedAmount) / stock.InvestedAmount * 100;
 
 					if (percentageDifference > 0)
 					{
@@ -72,7 +75,8 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 						}
 						else
 						{
-
+							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock has decreased by {percentageDifference}%!");
+							await _emailService.SendEmail(emailDTO);
 						}
 					}
 					else

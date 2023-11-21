@@ -20,5 +20,6 @@ namespace API.Settlement.Domain.Interfaces
 		Stock MapToStockEntity(StockInfoResponseDTO stockInfoResponseDTO, UserType userRank);
 		Stock UpdateStockForPurchase(Stock stock, StockInfoResponseDTO stockInfoResponseDTO, UserType userRank);
 		Stock UpdateStockForSale(Stock stock, StockInfoResponseDTO stockInfoResponseDTO, UserType userRank);
+		Email CreateEmailDTO(string userEmail, string subject,string message);
 	}
 }

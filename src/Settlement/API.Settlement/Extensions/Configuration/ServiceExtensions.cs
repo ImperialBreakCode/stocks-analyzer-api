@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Data.SQLite;
 using API.Settlement.Extensions.Middlewares;
+using API.Settlement.Infrastructure.Services.EmailServices;
 
 namespace API.Settlement.Extensions.Configuration
 {
@@ -24,6 +25,7 @@ namespace API.Settlement.Extensions.Configuration
             services.AddHttpClient();
             services.AddAutoMapper(typeof(Infrastructure.Mappings.MappingProfile).Assembly);
 
+            services.AddTransient<IEmailService, EmailService>();
             services.AddScoped<IFailedTransactionRepository, FailedTransactionRepository>();
             services.AddScoped<ISuccessfulTransactionRepository, SuccessfulTransactionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();

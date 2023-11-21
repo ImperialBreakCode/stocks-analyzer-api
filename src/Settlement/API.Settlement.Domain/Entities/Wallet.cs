@@ -12,6 +12,9 @@ namespace API.Settlement.Domain.Entities
         [BsonElement("user_id")]
         public string UserId { get; set; }
 
+        [BsonElement("user_email")]
+        public string UserEmail { get; set; }
+
 		[BsonElement("stocks")]
 		public IEnumerable<Stock> Stocks { get; set; } = Enumerable.Empty<Stock>();
     }
