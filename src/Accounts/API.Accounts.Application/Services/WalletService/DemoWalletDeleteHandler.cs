@@ -2,7 +2,7 @@
 
 namespace API.Accounts.Application.Services.WalletService
 {
-    public class DemoWalletDeleteHandler : IDemoWalletDeleteHandler
+    internal class DemoWalletDeleteHandler : IDemoWalletDeleteHandler
     {
         private readonly IAccountsData _accountsData;
 

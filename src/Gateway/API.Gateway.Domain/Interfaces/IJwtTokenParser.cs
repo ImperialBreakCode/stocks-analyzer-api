@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Settlement.Domain.Interfaces
+namespace API.Gateway.Domain.Interfaces
 {
-	public interface IHttpClientService
+	public interface IJwtTokenParser
 	{
-
+		string GetUsernameFromToken();
 	}
 }

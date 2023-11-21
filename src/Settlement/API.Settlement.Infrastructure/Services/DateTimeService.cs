@@ -5,12 +5,11 @@ namespace API.Settlement.Infrastructure.Services
 	public class DateTimeService : IDateTimeService
 	{
 
-		public DateTime UtcNow { get {  return DateTime.Now; } }
+		public DateTime UtcNow => DateTime.UtcNow;
 
-		public string GetCronExpressionForEveryFiveMinutes()
-		{
-			return "*/5 * * * *";
-		}
+		public string GetCronExpressionForEveryFiveMinutes() => "*/5 * * * *";
+
+		public string GetCronExpressionForEveryHour() => "0 * * * *";
 
 		public TimeSpan GetTimeSpanUntilNextDayAtMinutePastMidnight()
 		{
@@ -20,5 +19,6 @@ namespace API.Settlement.Infrastructure.Services
 
 			return timeUntilDesiredTime;
 		}
+
 	}
 }

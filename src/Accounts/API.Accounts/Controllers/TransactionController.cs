@@ -19,9 +19,12 @@ namespace API.Accounts.Controllers
         [Route("CompleteTransaction")]
         public IActionResult CompleteTransactions(FinalizeTransactionDTO transactionInfo)
         {
-            _transactionService.CompleteTransactions(transactionInfo);
+            if (_transactionService.CompleteTransactions(transactionInfo))
+            {
+                return Ok();
+            }
 
-            return Ok();
+            return NotFound("Wallet not found");
         }
     }
 }
