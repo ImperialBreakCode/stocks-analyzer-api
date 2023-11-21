@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace API.Gateway.Domain.DTOs
 {
-	public class StockDTO
+	public class DepositWalletDTO
 	{
 		[Required]
-		public string StockName { get; set; }
+		public decimal Value { get; set; }
 
 		[Required]
-		public int Quantity { get; set; }
+		public string CurrencyType { get; set; }
 	}
 }
