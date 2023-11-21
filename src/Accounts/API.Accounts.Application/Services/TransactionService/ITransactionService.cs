@@ -4,6 +4,6 @@ namespace API.Accounts.Application.Services.TransactionService
 {
     public interface ITransactionService
     {
-        void CompleteTransactions(FinalizeTransactionDTO finalizeTransactionDTO);
+        bool CompleteTransactions(FinalizeTransactionDTO finalizeTransactionDTO);
     }
 }

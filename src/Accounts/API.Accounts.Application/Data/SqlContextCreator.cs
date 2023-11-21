@@ -3,7 +3,7 @@ using API.Accounts.Infrastructure.DbContext;
 
 namespace API.Accounts.Application.Data
 {
-    public class SqlContextCreator : ISqlContextCreator
+    internal class SqlContextCreator : ISqlContextCreator
     {
         public IAccountsDbContext CreateDbContext(string connectionString)
         {

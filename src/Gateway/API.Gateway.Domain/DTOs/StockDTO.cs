@@ -14,8 +14,5 @@ namespace API.Gateway.Domain.DTOs
 
 		[Required]
 		public int Quantity { get; set; }
-
-		[Required]
-		public string WalletId { get; set; }
 	}
 }

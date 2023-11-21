@@ -1,9 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
-using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace API.Settlement.Controllers
 {
@@ -18,12 +15,12 @@ namespace API.Settlement.Controllers
 		}
 		[HttpPost]
 		[Route("processTransactions")]
-		public IActionResult ProcessTransactions([FromBody] FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public async Task<IActionResult> ProcessTransactions([FromBody] FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			_settlementService.ProcessTransaction(finalizeTransactionRequestDTO);
-            return NoContent();
+			var availabilityResponseDTO = await _settlementService.ProcessTransactions(finalizeTransactionRequestDTO);
+
+			return StatusCode(200, availabilityResponseDTO);
 		}
 
-		
 	}
 }
