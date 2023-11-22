@@ -13,9 +13,9 @@ namespace API.Accounts.Application.Services.StockService.SubServices
     {
         private readonly IAccountsData _accountsData;
         private readonly IStockActionExecuter _actionExecuter;
-        private readonly IUserTypeManager _userTypeManager;
+        private readonly IUserRankManager _userTypeManager;
 
-        public StockActionFinalizer(IAccountsData accountsData, IStockActionExecuter actionExecuter, IUserTypeManager userTypeManager)
+        public StockActionFinalizer(IAccountsData accountsData, IStockActionExecuter actionExecuter, IUserRankManager userTypeManager)
         {
             _accountsData = accountsData;
             _actionExecuter = actionExecuter;
@@ -101,7 +101,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             finalizeDto.IsSale = forSale;
             finalizeDto.WalletId = wallet.Id;
             finalizeDto.UserId = wallet.UserId;
-            finalizeDto.UserRank = (UserType)_userTypeManager.GetUserType(wallet)!;
+            finalizeDto.UserRank = (UserRank)_userTypeManager.GetUserType(wallet)!;
 
             return finalizeDto;
         }

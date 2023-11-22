@@ -99,7 +99,7 @@ namespace API.Accounts.Application
         private static void AddUserService(IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IUserTypeManager, UserTypeManager>();
+            services.AddTransient<IUserRankManager, UserRankManager>();
         }
     }
 }

@@ -27,7 +27,7 @@
                 return ResponseType.Unauthorized;
             }
 
-            if(message == ResponseMessages.UserAlreadyExists || message == ResponseMessages.WalletAlreadyExists)
+            if(message == ResponseMessages.UserNameAlreadyExists || message == ResponseMessages.WalletAlreadyExists)
             {
                 return ResponseType.Conflict;
             }

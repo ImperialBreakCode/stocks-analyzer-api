@@ -18,6 +18,13 @@ namespace API.Accounts.Infrastructure.Repositories
             command.ExecuteNonQuery();
         }
 
+        public User? GetOneByEmail(string email)
+        {
+            var command = CreateCommand($"SELECT * FROM [User] WHERE [Email] = @email");
+            command.Parameters.AddWithValue("@email", email);
+            return EntityConverterHelper.ToEntityCollection<User>(command).FirstOrDefault();
+        }
+
         public User? GetOneByUserName(string username)
         {
             var command = CreateCommand($"SELECT * FROM [User] WHERE UserName = @userName");

@@ -23,11 +23,17 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
         public override void Update(User entity)
         {
             User? userByName = GetOneByUserName(entity.UserName);
+            User? userByEmail = GetOneByEmail(entity.Email);
             User? userById = GetOneById(entity.Id);
 
             if (userByName is not null && userById is not null && userByName.Id != userById.Id)
             {
                 throw new ArgumentException("Username is unique");
+            }
+
+            if (userByEmail is not null && userById is not null && userByEmail.Id != userById.Id)
+            {
+                throw new ArgumentException("Email is unique");
             }
 
             base.Update(entity);
@@ -46,6 +52,11 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
         public User? GetOneByUserName(string username)
         {
             return GetManyByCondition(u => u.UserName == username).FirstOrDefault();
+        }
+
+        public User? GetOneByEmail(string email)
+        {
+            return GetManyByCondition(u => u.Email == email).FirstOrDefault();
         }
     }
 }

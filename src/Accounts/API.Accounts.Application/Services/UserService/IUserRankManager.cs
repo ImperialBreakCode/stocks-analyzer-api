@@ -2,8 +2,8 @@
 
 namespace API.Accounts.Application.Services.UserService
 {
-    public interface IUserTypeManager
+    public interface IUserRankManager
     {
-         UserType? GetUserType(Wallet? userWallet);
+         UserRank? GetUserType(Wallet? userWallet);
     }
 }

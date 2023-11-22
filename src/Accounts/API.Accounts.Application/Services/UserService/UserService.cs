@@ -13,14 +13,14 @@ namespace API.Accounts.Application.Services.UserService
         private readonly IAccountsData _data;
         private readonly IPasswordManager _passwordManager;
         private readonly ITokenManager _tokenManager;
-        private readonly IUserTypeManager _userTypeManager;
+        private readonly IUserRankManager _userRankManager;
 
-        public UserService(IAccountsData data, IPasswordManager passwordManager, ITokenManager tokenManager, IUserTypeManager userTypeManager)
+        public UserService(IAccountsData data, IPasswordManager passwordManager, ITokenManager tokenManager, IUserRankManager userRankManager)
         {
             _data = data;
             _passwordManager = passwordManager;
             _tokenManager = tokenManager;
-            _userTypeManager = userTypeManager;
+            _userRankManager = userRankManager;
         }
 
         public LoginResponseDTO LoginUser(LoginUserDTO loginDTO)
@@ -57,7 +57,12 @@ namespace API.Accounts.Application.Services.UserService
             {
                 if (context.Users.GetOneByUserName(registerDTO.Username) is not null)
                 {
-                    return ResponseMessages.UserAlreadyExists;
+                    return ResponseMessages.UserNameAlreadyExists;
+                }
+
+                if (context.Users.GetOneByEmail(registerDTO.Email) is not null)
+                {
+                    return ResponseMessages.UserEmailAlreadyExists;
                 }
 
                 User user = new()
@@ -102,7 +107,7 @@ namespace API.Accounts.Application.Services.UserService
                     {
                         UserId = user.Id,
                         UserName = username,
-                        UserRank = _userTypeManager.GetUserType(wallet),
+                        UserRank = _userRankManager.GetUserType(wallet),
                         FirstName = user.FirstName,
                         UserEmail = user.Email,
                         LastName = user.LastName,
@@ -130,7 +135,16 @@ namespace API.Accounts.Application.Services.UserService
 
                 if (newUserNameExists)
                 {
-                    return ResponseMessages.UserAlreadyExists;
+                    return ResponseMessages.UserNameAlreadyExists;
+                }
+
+                bool newEmailExists = updateDTO.Email != null
+                    && user.Email != updateDTO.Email
+                    && context.Users.GetOneByEmail(updateDTO.Email) is not null;
+
+                if (newEmailExists)
+                {
+                    return ResponseMessages.UserEmailAlreadyExists;
                 }
 
                 user.UserName = updateDTO.UserName ?? user.UserName;
