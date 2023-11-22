@@ -10,6 +10,28 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
         {
         }
 
+        public override User? GetOneById(string id)
+        {
+            User? user = base.GetOneById(id);
+
+            if (user is not null && !user.IsConfirmed)
+            {
+                return null;
+            }
+
+            return user;
+        }
+
+        public override ICollection<User> GetAll()
+        {
+            return MemoryData.GetAll<User>().Where(u => u.IsConfirmed).ToList();
+        }
+
+        public override ICollection<User> GetManyByCondition(Func<User, bool> condition)
+        {
+            return MemoryData.GetAll<User>().Where(u => u.IsConfirmed).Where(condition).ToList();
+        }
+
         public override void Insert(User entity)
         {
             if (GetOneByUserName(entity.UserName) is not null)

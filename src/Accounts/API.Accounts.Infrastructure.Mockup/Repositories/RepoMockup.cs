@@ -19,17 +19,17 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
             _memoryData.Delete<T>(id);
         }
 
-        public ICollection<T> GetAll()
+        public virtual ICollection<T> GetAll()
         {
             return _memoryData.GetAll<T>();
         }
 
-        public ICollection<T> GetManyByCondition(Func<T, bool> condition)
+        public virtual ICollection<T> GetManyByCondition(Func<T, bool> condition)
         {
             return GetAll().Where(condition).ToList();
         }
 
-        public T? GetOneById(string id)
+        public virtual T? GetOneById(string id)
         {
             return _memoryData.Get<T>(id);
         }

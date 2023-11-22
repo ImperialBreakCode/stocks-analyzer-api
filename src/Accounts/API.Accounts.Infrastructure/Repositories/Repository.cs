@@ -30,8 +30,8 @@ namespace API.Accounts.Infrastructure.Repositories
 
         protected string InsertQuery => _insertQuery;
         protected string UpdateQuery => _updateQuery;
-        protected string GetByIdQuery => _getByIdQuery;
-        protected string GetAllQuery => _getAllQuery;
+        protected virtual string GetByIdQuery => _getByIdQuery;
+        protected virtual string GetAllQuery => _getAllQuery;
         protected string DeleteByIdQuery => _deleteByIdQuery;
 
         public void Delete(string id)

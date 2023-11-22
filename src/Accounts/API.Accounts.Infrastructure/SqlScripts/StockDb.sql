@@ -8,7 +8,8 @@ CREATE TABLE [User] (
 	PasswordHash text NOT NULL,
 	Salt text NOT NULL,
 	FirstName varchar(50),
-	LastName varchar(50)
+	LastName varchar(50),
+	IsConfirmed bit NOT NULL,
 );
 
 CREATE TABLE Wallet (

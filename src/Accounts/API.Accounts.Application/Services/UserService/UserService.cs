@@ -67,6 +67,7 @@ namespace API.Accounts.Application.Services.UserService
 
                 User user = new()
                 {
+                    IsConfirmed = true,
                     FirstName = registerDTO.FirstName,
                     LastName = registerDTO.LastName,
                     UserName = registerDTO.Username,
