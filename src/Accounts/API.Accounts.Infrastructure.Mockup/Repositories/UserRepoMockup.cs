@@ -10,33 +10,16 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
         {
         }
 
-        public override User? GetOneById(string id)
-        {
-            User? user = base.GetOneById(id);
-
-            if (user is not null && !user.IsConfirmed)
-            {
-                return null;
-            }
-
-            return user;
-        }
-
-        public override ICollection<User> GetAll()
-        {
-            return MemoryData.GetAll<User>().Where(u => u.IsConfirmed).ToList();
-        }
-
-        public override ICollection<User> GetManyByCondition(Func<User, bool> condition)
-        {
-            return MemoryData.GetAll<User>().Where(u => u.IsConfirmed).Where(condition).ToList();
-        }
-
         public override void Insert(User entity)
         {
             if (GetOneByUserName(entity.UserName) is not null)
             {
                 throw new ArgumentException("Username is unique");
+            }
+
+            if (GetOneByEmail(entity.Email) is not null)
+            {
+                throw new ArgumentException("Email is unique");
             }
 
             base.Insert(entity);
@@ -79,6 +62,18 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
         public User? GetOneByEmail(string email)
         {
             return GetManyByCondition(u => u.Email == email).FirstOrDefault();
+        }
+
+        public User? GetConfirmedByUserName(string username)
+        {
+            User? user = GetOneByUserName(username);
+
+            if (user is not null && !user.IsConfirmed)
+            {
+                return null;
+            }
+
+            return user;
         }
     }
 }

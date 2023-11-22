@@ -8,5 +8,6 @@ namespace API.Accounts.Domain.Interfaces
         void DeleteByUserName(string userName);
         User? GetOneByUserName(string username);
         User? GetOneByEmail(string email);
+        User? GetConfirmedByUserName(string username);
     }
 }

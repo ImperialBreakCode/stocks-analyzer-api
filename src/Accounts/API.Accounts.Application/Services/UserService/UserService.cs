@@ -29,7 +29,7 @@ namespace API.Accounts.Application.Services.UserService
 
             using(var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetOneByUserName(loginDTO.Username);
+                User? user = context.Users.GetConfirmedByUserName(loginDTO.Username);
 
                 if (user is null)
                 {
@@ -98,7 +98,7 @@ namespace API.Accounts.Application.Services.UserService
 
             using (var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetOneByUserName(username);
+                User? user = context.Users.GetConfirmedByUserName(username);
 
                 if (user is not null)
                 {
@@ -124,7 +124,7 @@ namespace API.Accounts.Application.Services.UserService
         {
             using (var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetOneByUserName(username);
+                User? user = context.Users.GetConfirmedByUserName(username);
                 if (user is null)
                 {
                     return ResponseMessages.UserNotFound;
