@@ -11,7 +11,7 @@ namespace API.Settlement.Domain.DTOs.Request
 		public bool IsSale { get; set; }
 
 		[JsonConverter(typeof(JsonStringEnumConverter))]
-		public UserType UserRank { get; set; }
+		public UserRank UserRank { get; set; }
 		public IEnumerable<StockInfoRequestDTO> StockInfoRequestDTOs { get; set; }
 	}
 }
