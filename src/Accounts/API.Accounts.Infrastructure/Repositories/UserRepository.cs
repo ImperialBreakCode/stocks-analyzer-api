@@ -11,8 +11,8 @@ namespace API.Accounts.Infrastructure.Repositories
         {
         }
 
-        protected override string GetByIdQuery => base.GetByIdQuery + " && IsConfirmed=true";
-        protected override string GetAllQuery => base.GetAllQuery + " WHERE IsConfirmed=true";
+        protected override string GetByIdQuery => base.GetByIdQuery + " AND IsConfirmed=1";
+        protected override string GetAllQuery => base.GetAllQuery + " WHERE IsConfirmed=1";
 
         public void DeleteByUserName(string userName)
         {
@@ -23,14 +23,14 @@ namespace API.Accounts.Infrastructure.Repositories
 
         public User? GetOneByEmail(string email)
         {
-            var command = CreateCommand($"SELECT * FROM [User] WHERE [Email] = @email && IsConfirmed=true");
+            var command = CreateCommand($"SELECT * FROM [User] WHERE [Email] = @email AND IsConfirmed=1");
             command.Parameters.AddWithValue("@email", email);
             return EntityConverterHelper.ToEntityCollection<User>(command).FirstOrDefault();
         }
 
         public User? GetOneByUserName(string username)
         {
-            var command = CreateCommand($"SELECT * FROM [User] WHERE UserName = @userName && IsConfirmed=true");
+            var command = CreateCommand($"SELECT * FROM [User] WHERE UserName = @userName AND IsConfirmed=1");
             command.Parameters.AddWithValue("@userName", username);
             return EntityConverterHelper.ToEntityCollection<User>(command).FirstOrDefault();
         }
