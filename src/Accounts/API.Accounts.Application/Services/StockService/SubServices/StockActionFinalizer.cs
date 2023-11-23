@@ -3,7 +3,7 @@ using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.ExternalRequestDTOs;
 using API.Accounts.Application.DTOs.ExternalResponseDTOs;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
-using API.Accounts.Application.Services.UserService;
+using API.Accounts.Application.Services.UserService.UserRankService;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.DbContext;
 

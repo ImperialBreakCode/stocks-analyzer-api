@@ -17,11 +17,11 @@ namespace API.Accounts.Application.Auth.TokenManager
         {
             string token = JwtBuilder.Create()
                 .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(_settingsManager.GetSecretKey)
+                .WithSecret(_settingsManager.SecretKey)
                 .AddClaim("user", username)
                 .AddClaim("exp", DateTimeOffset.UtcNow.AddSeconds(secondsValid).ToUnixTimeSeconds())
-                .AddClaim("iss", _settingsManager.GetAuthSettings.Issuer)
-                .AddClaim("aud", _settingsManager.GetAuthSettings.Audience)
+                .AddClaim("iss", _settingsManager.AuthSettings.Issuer)
+                .AddClaim("aud", _settingsManager.AuthSettings.Audience)
                 .Encode();
 
             return token;

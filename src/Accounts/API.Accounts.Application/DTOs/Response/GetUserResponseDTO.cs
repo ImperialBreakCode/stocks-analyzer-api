@@ -1,4 +1,4 @@
-﻿using API.Accounts.Application.Services.UserService;
+﻿using API.Accounts.Application.Services.UserService.UserRankService;
 
 namespace API.Accounts.Application.DTOs.Response
 {

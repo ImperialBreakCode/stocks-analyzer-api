@@ -4,7 +4,10 @@ using API.Accounts.Application.Data;
 using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
+using API.Accounts.Application.Services.UserService.EmailService;
+using API.Accounts.Application.Services.UserService.UserRankService;
 using API.Accounts.Domain.Entities;
+using API.Accounts.Domain.Interfaces.RepositoryBase;
 
 namespace API.Accounts.Application.Services.UserService
 {
@@ -14,13 +17,21 @@ namespace API.Accounts.Application.Services.UserService
         private readonly IPasswordManager _passwordManager;
         private readonly ITokenManager _tokenManager;
         private readonly IUserRankManager _userRankManager;
+        private readonly IEmailConfirmation _emailConfirmation;
 
-        public UserService(IAccountsData data, IPasswordManager passwordManager, ITokenManager tokenManager, IUserRankManager userRankManager)
+        public UserService(
+            IAccountsData data, 
+            IPasswordManager passwordManager, 
+            ITokenManager tokenManager, 
+            IUserRankManager userRankManager,
+            IEmailConfirmation emailConfirmation
+            )
         {
             _data = data;
             _passwordManager = passwordManager;
             _tokenManager = tokenManager;
             _userRankManager = userRankManager;
+            _emailConfirmation = emailConfirmation;
         }
 
         public LoginResponseDTO LoginUser(LoginUserDTO loginDTO)
@@ -67,7 +78,7 @@ namespace API.Accounts.Application.Services.UserService
 
                 User user = new()
                 {
-                    IsConfirmed = true,
+                    IsConfirmed = false,
                     FirstName = registerDTO.FirstName,
                     LastName = registerDTO.LastName,
                     UserName = registerDTO.Username,
@@ -76,17 +87,10 @@ namespace API.Accounts.Application.Services.UserService
                     Salt = salt
                 };
 
-                Wallet wallet = new()
-                {
-                    Balance = 10000,
-                    IsDemo = true,
-                    UserId = user.Id
-                };
-
                 context.Users.Insert(user);
-                context.Wallets.Insert(wallet);
-
                 context.Commit();
+
+                _emailConfirmation.SendEmail(user.Email, user.Id);
             }
 
             return result;
@@ -173,6 +177,35 @@ namespace API.Accounts.Application.Services.UserService
 
                 context.Users.DeleteByUserName(username);
                 context.Commit();
+            }
+        }
+
+        public bool ConfirmUser(string userId)
+        {
+            using (var context = _data.CreateDbContext())
+            {
+                var userRead = (IRepoRead<User>)context.Users;
+                User? userForConfirmation = userRead.GetOneById(userId);
+
+                bool confirmPass = userForConfirmation is not null && !userForConfirmation.IsConfirmed;
+
+                if (confirmPass)
+                {
+                    userForConfirmation.IsConfirmed = true;
+
+                    Wallet wallet = new Wallet()
+                    {
+                        Balance = 10000,
+                        IsDemo = true,
+                        UserId = userId,
+                    };
+
+                    context.Wallets.Insert(wallet);
+                    context.Users.Update(userForConfirmation); 
+                    context.Commit();
+                }
+
+                return confirmPass;
             }
         }
     }

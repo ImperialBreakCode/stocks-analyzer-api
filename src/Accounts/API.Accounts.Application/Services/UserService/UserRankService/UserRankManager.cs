@@ -1,6 +1,6 @@
 ﻿using API.Accounts.Domain.Entities;
 
-namespace API.Accounts.Application.Services.UserService
+namespace API.Accounts.Application.Services.UserService.UserRankService
 {
     internal class UserRankManager : IUserRankManager
     {

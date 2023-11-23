@@ -1,4 +1,4 @@
-﻿namespace API.Accounts.Application.Services.UserService
+﻿namespace API.Accounts.Application.Services.UserService.UserRankService
 {
     public enum UserRank
     {

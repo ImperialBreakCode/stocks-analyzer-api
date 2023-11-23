@@ -16,6 +16,8 @@ using API.Accounts.Application.Settings.GatewaySettingsSender;
 using API.Accounts.Application.Settings;
 using API.Accounts.Application.Settings.UpdateHandlers;
 using Microsoft.Extensions.DependencyInjection;
+using API.Accounts.Application.Services.UserService.UserRankService;
+using API.Accounts.Application.Services.UserService.EmailService;
 
 namespace API.Accounts.Application
 {
@@ -100,6 +102,7 @@ namespace API.Accounts.Application
         {
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IUserRankManager, UserRankManager>();
+            services.AddTransient<IEmailConfirmation, EmailConfirmation>();
         }
     }
 }

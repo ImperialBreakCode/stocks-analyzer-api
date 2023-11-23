@@ -17,18 +17,20 @@ namespace API.Accounts.Implementations
             _secretKeyGatewayNotifyer = secretKeyGatewayNotifyer;
         }
 
-        public ICollection<string> GetAllowedHosts
+        public ICollection<string> AllowedHosts
             => _settings.CurrentValue.AllowedHosts;
 
-        public ExternalMicroservicesHosts GetExternalHosts
+        public ExternalMicroservicesHosts ExternalHosts
             => _settings.CurrentValue.ExternalMicroservicesHosts;
 
-        public string GetSecretKey
+        public string SecretKey
             => _settings.CurrentValue.Auth.SecretKey;
 
-        public AuthValues GetAuthSettings
+        public AuthValues AuthSettings
             => _settings.CurrentValue.Auth;
 
+        public EmailConfiguration EmailConfiguration 
+            => _settings.CurrentValue.EmailConfig;
 
         public void Dispose()
         {
@@ -37,22 +39,22 @@ namespace API.Accounts.Implementations
 
         public void SetupOnChangeHandlers()
         {
-            _secretKeyGatewayNotifyer.NotifyGateway(GetAuthSettings, GetExternalHosts.GatewaySocket);
+            _secretKeyGatewayNotifyer.NotifyGateway(AuthSettings, ExternalHosts.GatewaySocket);
 
             _onChangeListenerDisposable = _settings.OnChange(accountSettings =>
             {
                 if (CheckIfAuthSettingsAreChanged(accountSettings.Auth))
                 {
-                    _secretKeyGatewayNotifyer.NotifyGateway(accountSettings.Auth, GetExternalHosts.GatewaySocket);
+                    _secretKeyGatewayNotifyer.NotifyGateway(accountSettings.Auth, ExternalHosts.GatewaySocket);
                 }
             });
         }
 
         private bool CheckIfAuthSettingsAreChanged(AuthValues updatedValues)
         {
-            return GetAuthSettings.Issuer != updatedValues.Issuer 
-                || GetAuthSettings.Audience != updatedValues.Audience
-                || GetSecretKey != updatedValues.SecretKey;
+            return AuthSettings.Issuer != updatedValues.Issuer 
+                || AuthSettings.Audience != updatedValues.Audience
+                || SecretKey != updatedValues.SecretKey;
         }
     }
 }

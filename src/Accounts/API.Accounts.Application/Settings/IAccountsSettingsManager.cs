@@ -4,10 +4,11 @@ namespace API.Accounts.Application.Settings
 {
     public interface IAccountsSettingsManager : IDisposable
     {
-        ExternalMicroservicesHosts GetExternalHosts { get; }
-        ICollection<string> GetAllowedHosts { get; }
-        string GetSecretKey { get; }
-        AuthValues GetAuthSettings { get; }
+        ExternalMicroservicesHosts ExternalHosts { get; }
+        ICollection<string> AllowedHosts { get; }
+        string SecretKey { get; }
+        AuthValues AuthSettings { get; }
+        EmailConfiguration EmailConfiguration { get; }
         void SetupOnChangeHandlers();
     }
 }
