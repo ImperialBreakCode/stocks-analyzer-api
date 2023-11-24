@@ -85,7 +85,7 @@ namespace API.Accounts.Application
             where TSettingsAdapter : class, IAccountsSettingsManager
         {
             services.AddSingleton<IAccountsSettingsManager, TSettingsAdapter>();
-            services.AddTransient<IGatewaySettingsSender, SocketGatewaySettingsSender>();
+            services.AddTransient<ISocketGatewaySettingsSender, SocketGatewaySettingsSender>();
 
             return services;
         }

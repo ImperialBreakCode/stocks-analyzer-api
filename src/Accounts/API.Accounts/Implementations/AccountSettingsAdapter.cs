@@ -9,12 +9,12 @@ namespace API.Accounts.Implementations
     {
         private readonly IOptionsMonitor<AccountSettings> _settings;
         private IDisposable? _onChangeListenerDisposable;
-        private readonly IAuthTokenGatewayNotifyer _secretKeyGatewayNotifyer;
+        private readonly IAuthTokenGatewayNotifyer _authTokenGatewayNotifyer;
 
-        public AccountSettingsAdapter(IOptionsMonitor<AccountSettings> settings, IAuthTokenGatewayNotifyer secretKeyGatewayNotifyer)
+        public AccountSettingsAdapter(IOptionsMonitor<AccountSettings> settings, IAuthTokenGatewayNotifyer authTokenGatewayNotifyer)
         {
             _settings = settings;
-            _secretKeyGatewayNotifyer = secretKeyGatewayNotifyer;
+            _authTokenGatewayNotifyer = authTokenGatewayNotifyer;
         }
 
         public ICollection<string> AllowedHosts
@@ -39,13 +39,13 @@ namespace API.Accounts.Implementations
 
         public void SetupOnChangeHandlers()
         {
-            _secretKeyGatewayNotifyer.NotifyGateway(AuthSettings, ExternalHosts.GatewaySocket);
+            _authTokenGatewayNotifyer.NotifyGateway(AuthSettings, ExternalHosts.GatewaySocket);
 
             _onChangeListenerDisposable = _settings.OnChange(accountSettings =>
             {
                 if (CheckIfAuthSettingsAreChanged(accountSettings.Auth))
                 {
-                    _secretKeyGatewayNotifyer.NotifyGateway(accountSettings.Auth, ExternalHosts.GatewaySocket);
+                    _authTokenGatewayNotifyer.NotifyGateway(accountSettings.Auth, ExternalHosts.GatewaySocket);
                 }
             });
         }
