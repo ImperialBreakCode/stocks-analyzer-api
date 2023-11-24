@@ -2,7 +2,7 @@
 
 namespace API.Accounts.Application.Settings.GatewayAuthSettingsSender
 {
-    public interface ISocketGatewaySettingsSender : IDisposable
+    public interface ISocketGatewaySettingsSender
     {
         Task<bool> SendAuthTokenSettingsToGateway(AuthValues gatewayAuthValues, string gatewaySocketHost);
     }

@@ -8,22 +8,24 @@ namespace API.Accounts.Application.Settings.GatewaySettingsSender
 {
     internal class SocketGatewaySettingsSender : ISocketGatewaySettingsSender
     {
-        private readonly ClientWebSocket _clientWebSocket;
-
-        public SocketGatewaySettingsSender()
-        {
-            _clientWebSocket = new ClientWebSocket();
-        }
+        private ClientWebSocket _clientWebSocket;
 
         public async Task<bool> SendAuthTokenSettingsToGateway(AuthValues gatewayAuthValues, string gatewaySocketHost)
         {
             string dataJson = JsonConvert.SerializeObject(gatewayAuthValues);
 
-            bool operationIsSuccessful = await ConnectAsync(gatewaySocketHost);
-            await SendAuthDataToGateway(dataJson);
-            await Complete();
+            _clientWebSocket = new();
 
-            return operationIsSuccessful;
+            bool connectionSuccessfull = await ConnectAsync(gatewaySocketHost);
+            if (connectionSuccessfull)
+            {
+                await SendAuthDataToGateway(dataJson);
+                await Complete();
+            }
+
+            _clientWebSocket.Dispose();
+
+            return connectionSuccessfull;
         }
 
         private async Task Complete()
@@ -56,11 +58,6 @@ namespace API.Accounts.Application.Settings.GatewaySettingsSender
             {
                 return false;
             }
-        }
-
-        public void Dispose()
-        {
-            _clientWebSocket.Dispose();
         }
     }
 }
