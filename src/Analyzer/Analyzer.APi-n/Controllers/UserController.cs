@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API.Analyzer.Domain.Interfaces;
-using API.Analyzer.Domain.DTOs;
+using API.Accounts.Application.DTOs.Response;
 
 namespace Analyzer.APi_n.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IApiService service;
-        public TestController(IApiService service)
+        public UserController(IApiService service)
         {
             this.service = service;
         }
@@ -20,18 +20,19 @@ namespace Analyzer.APi_n.Controllers
             return Ok();
         }
 
-        //[HttpGet("get-info/{userName}")]
-        //public async Task<IActionResult> GetInfo(string userName)
-        //{
-        //    GetWalletResponseDTO jsonContent = await service.UserProfilInfo(userName);
-        //    if (jsonContent != null)
-        //    {
-        //        return Ok(jsonContent);
-        //    }
-        //    return StatusCode(500, "User profile not found");
-        //}
+        [HttpGet("PortfolioSummmary/{walletId}")]
+        public async Task<ActionResult> GetPortfilioSummary(string walletId)
+        {
+            GetWalletResponseDTO jsonContent = await service.PortfolioSummary(walletId);
+            if (jsonContent != null)
+            {
+                return Ok(jsonContent);
+            }
+            return StatusCode(500, "User profile not found");
+        }
+    
 
-        [HttpGet("currentProfitability/{walletId}")]
+        [HttpGet("CurrentProfitability/{walletId}")]
         public async Task<ActionResult<decimal>> GetCurrentProfitability(string walletId)
         {
             try

@@ -20,27 +20,27 @@ namespace API.Analyzer.Infrastructure.Services
             stocksClient.BaseAddress = new Uri("https://localhost:5031");
         }
 
-        //Connection with AccountsAPI
-        //public async Task<GetWalletResponseDTO> UserProfilInfo(string userName)
-        //{
-        //    string getUrl = $"/api/accounts/{userName}";
+        // Connection with AccountsAPI
+        public async Task<GetWalletResponseDTO> PortfolioSummary(string walletId)
+        {
+            string getUrl = $"/api/Wallet/GetWallet/{walletId}";
 
-        //    HttpResponseMessage response = await accountsClient.GetAsync(getUrl);
+            HttpResponseMessage response = await accountsClient.GetAsync(getUrl);
 
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        string jsonContent = await response.Content.ReadAsStringAsync();
-        //        var result = JsonConvert.DeserializeObject<GetWalletResponseDTO>(jsonContent);
-        //        return result;
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonContent = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<GetWalletResponseDTO>(jsonContent);
+                return result;
 
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine($"HTTP Error: {response.StatusCode}");
-        //        throw new Exception($"HTTP Error: {response.StatusCode}");
-        //    }
+            }
+            else
+            {
+                Console.WriteLine($"HTTP Error: {response.StatusCode}");
+                throw new Exception($"HTTP Error: {response.StatusCode}");
+            }
 
-        //}
+        }
 
         public async Task<decimal> CurrentProfitability(string walletId)
         {
