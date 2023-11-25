@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using API.Analyzer.Domain.Interfaces;
 using API.Accounts.Application.DTOs.Response;
 
-namespace Analyzer.APi_n.Controllers
+namespace Analyzer.APi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
