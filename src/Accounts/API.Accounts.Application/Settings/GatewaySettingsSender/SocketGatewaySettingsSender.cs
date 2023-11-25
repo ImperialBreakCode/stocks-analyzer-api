@@ -47,7 +47,7 @@ namespace API.Accounts.Application.Settings.GatewaySettingsSender
 
         private async Task<bool> ConnectAsync(string gatewaySocketHost)
         {
-            Uri uri = new(gatewaySocketHost + "/someRoute");
+            Uri uri = new(gatewaySocketHost + "/ws");
 
             try
             {

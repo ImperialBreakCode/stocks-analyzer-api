@@ -22,7 +22,7 @@
                 _timeChangedEvent?.Invoke();
             }
             while (await _periodicTimer.WaitForNextTickAsync() && !cancellationToken.IsCancellationRequested);
-            
+
         }
 
         public void Dispose()

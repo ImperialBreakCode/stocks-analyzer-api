@@ -43,18 +43,8 @@ namespace API.Accounts.Implementations
 
             _onChangeListenerDisposable = _settings.OnChange(accountSettings =>
             {
-                if (CheckIfAuthSettingsAreChanged(accountSettings.Auth))
-                {
-                    _authTokenGatewayNotifyer.NotifyGateway(accountSettings.Auth, ExternalHosts.GatewaySocket);
-                }
+                _authTokenGatewayNotifyer.NotifyGateway(accountSettings.Auth, ExternalHosts.GatewaySocket);
             });
-        }
-
-        private bool CheckIfAuthSettingsAreChanged(AuthValues updatedValues)
-        {
-            return AuthSettings.Issuer != updatedValues.Issuer 
-                || AuthSettings.Audience != updatedValues.Audience
-                || SecretKey != updatedValues.SecretKey;
         }
     }
 }
