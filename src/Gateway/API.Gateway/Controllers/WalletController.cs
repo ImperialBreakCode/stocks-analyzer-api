@@ -18,19 +18,35 @@ namespace API.Gateway.Controllers
 		}
 
 		[Authorize]
-		[HttpPost]
-		[Route("CreateWallet/{username}")]
-		public async Task<IActionResult> CreateWallet(string username)
+		[HttpPut]
+		[Route("Deposit")]
+		public async Task<IActionResult> Deposit(DepositWalletDTO dto)
 		{
-			return await _walletService.CreateWallet(username);
+			return await _walletService.Deposit(dto);
 		}
 
 		[Authorize]
-		[HttpGet]
-		[Route("GetWallet/{walletId}")]
-		public async Task<IActionResult> GetWallet(string walletId)
+		[HttpPost]
+		[Route("CreateWallet")]
+		public async Task<IActionResult> CreateWallet()
 		{
-			return await _walletService.GetWallet(walletId);
+			return await _walletService.CreateWallet();
 		}
+
+		[Authorize]
+		[HttpDelete]
+		[Route("DeleteWallet")]
+		public async Task<IActionResult> DeleteWallet()
+		{
+			return await _walletService.DeleteWallet();
+		}
+
+		//[Authorize]
+		//[HttpGet]
+		//[Route("GetWallet/{walletId}")]
+		//public async Task<IActionResult> GetWallet(string walletId)
+		//{
+		//	return await _walletService.GetWallet(walletId);
+		//}
 	}
 }

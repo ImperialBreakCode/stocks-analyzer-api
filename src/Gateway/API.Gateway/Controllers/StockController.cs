@@ -51,18 +51,18 @@ namespace API.Gateway.Controllers
 
 		[Authorize]
 		[HttpPost]
-		[Route("ConfirmPurchase/{walletId}")]
-		public async Task<IActionResult> ConfirmPurchase(string walletId)
+		[Route("ConfirmPurchase")]
+		public async Task<IActionResult> ConfirmPurchase()
 		{
-			return await _stockService.ConfirmPurchase(walletId);
+			return await _stockService.ConfirmPurchase();
 		}
 
 		[Authorize]
 		[HttpPost]
-		[Route("ConfirmSale/{walletId}")]
-		public async Task<IActionResult> ConfirmSale(string walletId)
+		[Route("ConfirmSale")]
+		public async Task<IActionResult> ConfirmSale()
 		{
-			return await _stockService.ConfirmSale(walletId);
+			return await _stockService.ConfirmSale();
 		}
 	}
 }

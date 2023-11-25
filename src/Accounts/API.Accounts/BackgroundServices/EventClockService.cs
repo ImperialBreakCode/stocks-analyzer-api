@@ -1,5 +1,6 @@
 ﻿using API.Accounts.Application.EventClocks;
 using API.Accounts.Application.Services.WalletService;
+using API.Accounts.Application.Settings.UpdateHandlers;
 
 namespace API.Accounts.BackgroundServices
 {
@@ -7,11 +8,17 @@ namespace API.Accounts.BackgroundServices
     {
         private readonly IEventClock _eventClock;
         private readonly IDemoWalletDeleteHandler _deleteDemoWalletHandler;
+        private readonly IAuthTokenGatewayNotifyer _secretKeyGatewayNotifyer;
 
-        public EventClockService(IEventClock eventClock, IDemoWalletDeleteHandler deleteDemoWalletHandler)
+        public EventClockService(
+            IEventClock eventClock, 
+            IDemoWalletDeleteHandler deleteDemoWalletHandler, 
+            IAuthTokenGatewayNotifyer secretKeyGatewayNotifyer
+            )
         {
             _eventClock = eventClock;
             _deleteDemoWalletHandler = deleteDemoWalletHandler;
+            _secretKeyGatewayNotifyer = secretKeyGatewayNotifyer;
 
             RegisterHandlers();
         }
@@ -24,6 +31,7 @@ namespace API.Accounts.BackgroundServices
         private void RegisterHandlers()
         {
             _eventClock.RegisterClockHandler(_deleteDemoWalletHandler.DeleteWallet);
+            _eventClock.RegisterClockHandler(_secretKeyGatewayNotifyer.NotifyGateway);
         }
     }
 }

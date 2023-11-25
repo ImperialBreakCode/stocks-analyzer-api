@@ -1,9 +1,12 @@
-﻿namespace API.Accounts.Application.DTOs.Response
+﻿using API.Accounts.Application.Services.UserService;
+
+namespace API.Accounts.Application.DTOs.Response
 {
     public class GetUserResponseDTO
     {
         public string UserId { get; set; }
         public string UserName { get; set; }
+        public UserType? UserRank { get; set; }
         public string UserEmail { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

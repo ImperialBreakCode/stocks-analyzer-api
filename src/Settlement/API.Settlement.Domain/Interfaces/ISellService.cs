@@ -1,10 +1,10 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
-using API.Settlement.Domain.DTOs.Response;
+using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 
 namespace API.Settlement.Domain.Interfaces
 {
-    public interface ISellService
+	public interface ISellService
 	{
-		Task<FinalizeTransactionResponseDTO> SellStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
+		Task<AvailabilityResponseDTO> SellStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

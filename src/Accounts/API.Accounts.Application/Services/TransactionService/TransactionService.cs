@@ -4,7 +4,7 @@ using API.Accounts.Domain.Entities;
 
 namespace API.Accounts.Application.Services.TransactionService
 {
-    public class TransactionService : ITransactionService
+    internal class TransactionService : ITransactionService
     {
         private readonly IAccountsData _accountsData;
 
@@ -13,7 +13,7 @@ namespace API.Accounts.Application.Services.TransactionService
             _accountsData = accountsData;
         }
 
-        public void CompleteTransactions(FinalizeTransactionDTO finalizeTransactionDTO)
+        public bool CompleteTransactions(FinalizeTransactionDTO finalizeTransactionDTO)
         {
             using (var context = _accountsData.CreateDbContext())
             {
@@ -21,7 +21,7 @@ namespace API.Accounts.Application.Services.TransactionService
 
                 if (wallet is null)
                 {
-                    return;
+                    return false;
                 }
 
                 foreach (var stockInfo in finalizeTransactionDTO.StockInfoResponseDTOs)
@@ -32,8 +32,9 @@ namespace API.Accounts.Application.Services.TransactionService
                         ? stock.Quantity + stockInfo.Quantity
                         : stock.Quantity;
 
-                    Transaction transaction = new Transaction()
+                    Transaction transaction = new()
                     {
+                        Id = stockInfo.TransactionId,
                         StockId = stockInfo.StockId,
                         Quantity = stockInfo.Quantity,
                         TotalAmount = CalculateTotalAmount(stockInfo, finalizeTransactionDTO.IsSale),
@@ -55,6 +56,8 @@ namespace API.Accounts.Application.Services.TransactionService
 
                 context.Commit();
             }
+
+            return true;
         }
 
         private decimal CalculateTotalAmount(TransactionStockInfo stockInfo, bool isSale)

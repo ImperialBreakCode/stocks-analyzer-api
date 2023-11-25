@@ -27,7 +27,7 @@ namespace API.Gateway.Controllers
 		}
 		[HttpPost]
 		[Route("Login")]
-		public async Task<IActionResult> Login(UserDTO userDTO)
+		public async Task<IActionResult> Login(LoginUserDTO userDTO)
 		{
 			return await _accountService.Login(userDTO);
 		}
@@ -38,6 +38,22 @@ namespace API.Gateway.Controllers
 		public async Task<IActionResult> UserInformation(string username)
 		{
 			return await _accountService.UserInformation(username);
+		}
+
+		[Authorize]
+		[HttpPut]
+		[Route("UpdateUser")]
+		public async Task<IActionResult> UpdateUser(UpdateUserDTO dto)
+		{
+			return await _accountService.UpdateUser(dto);
+		}
+
+		[Authorize]
+		[HttpDelete]
+		[Route("DeleteUser")]
+		public async Task<IActionResult> DeleteUser()
+		{
+			return await _accountService.DeleteUser();
 		}
 	}
 }

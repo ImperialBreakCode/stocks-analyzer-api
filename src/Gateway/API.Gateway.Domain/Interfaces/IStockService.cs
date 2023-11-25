@@ -14,7 +14,7 @@ namespace API.Gateway.Domain.Interfaces
 		Task<IActionResult> GetStocksInWallet(string walletId);
 		Task<IActionResult> AddStockForPurchase(StockDTO dto);
 		Task<IActionResult> AddStockForSale(StockDTO dto);
-		Task<IActionResult> ConfirmPurchase(string walletId);
-		Task<IActionResult> ConfirmSale(string walletId);
+		Task<IActionResult> ConfirmPurchase();
+		Task<IActionResult> ConfirmSale();
 	}
 }

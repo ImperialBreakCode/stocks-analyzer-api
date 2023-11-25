@@ -34,6 +34,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Gateway", "src\Gateway\API.Gateway\API.Gateway.csproj", "{9B697D67-91D1-4464-8862-F8F8597EF99B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Gateway.Infrastructure", "src\Gateway\API.Gateway.Infrastructure\API.Gateway.Infrastructure.csproj", "{A900CAE4-2905-43E6-93D3-2E708A3BCED8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DD35D6CF-11B8-4389-9FB0-962EA4CC8EC2} = {DD35D6CF-11B8-4389-9FB0-962EA4CC8EC2}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Gateway.Domain", "src\Gateway\API.Gateway.Domain\API.Gateway.Domain.csproj", "{DD35D6CF-11B8-4389-9FB0-962EA4CC8EC2}"
 EndProject
