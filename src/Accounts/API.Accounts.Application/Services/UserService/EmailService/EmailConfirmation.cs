@@ -14,7 +14,7 @@ namespace API.Accounts.Application.Services.UserService.EmailService
             _settingsManager = settingsManager;
         }
 
-        public bool SendEmail(string email, string userId)
+        public void SendEmail(string email, string userId)
         {
             var mimeMessage = CreateMimeMessage(email, userId);
             CreateSmtpAndSendMail(mimeMessage);
