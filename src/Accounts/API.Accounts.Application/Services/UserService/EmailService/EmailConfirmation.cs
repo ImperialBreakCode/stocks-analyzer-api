@@ -18,8 +18,6 @@ namespace API.Accounts.Application.Services.UserService.EmailService
         {
             var mimeMessage = CreateMimeMessage(email, userId);
             CreateSmtpAndSendMail(mimeMessage);
-            
-            return true;
         }
 
         private void CreateSmtpAndSendMail(MimeMessage mimeMessage)
