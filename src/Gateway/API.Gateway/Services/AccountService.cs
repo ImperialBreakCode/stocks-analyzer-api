@@ -88,7 +88,20 @@ namespace API.Gateway.Services
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			return await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
+			ObjectResult res = (ObjectResult)await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
+
+			if (res is OkObjectResult && dto.Email != null)
+			{
+				string email = _jwtTokenParser.GetEmailFromToken();
+				await _emailService.Delete(email);
+				Email mail = new Email
+				{
+					Mail = dto.Email
+				};
+				await _emailService.Create(mail);
+			}
+
+			return res;
 		}
 
 		public async Task<IActionResult> DeleteUser()
@@ -97,10 +110,10 @@ namespace API.Gateway.Services
 
 			ObjectResult res = (ObjectResult)await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
 
-			if (res is OkObjectResult okObjectResult) 
+			if (res is OkObjectResult) 
 			{
-				//TODO
-				//_emailService.Delete();
+				string email = _jwtTokenParser.GetEmailFromToken();
+				await _emailService.Delete(email);
 			}
 
 			return res;

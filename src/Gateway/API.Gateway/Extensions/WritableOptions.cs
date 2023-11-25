@@ -7,13 +7,13 @@ namespace API.Gateway.Extensions
 {
 	public class WritableOptions<T> : IWritableOptions<T> where T : class, new()
 	{
-		private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _environment;
+		private readonly IWebHostEnvironment _environment;
 		private readonly IOptionsMonitor<T> _options;
 		private readonly string _section;
 		private readonly string _file;
 
 		public WritableOptions(
-            Microsoft.AspNetCore.Hosting.IHostingEnvironment environment,
+            IWebHostEnvironment environment,
 			IOptionsMonitor<T> options,
 			string section,
 			string file)

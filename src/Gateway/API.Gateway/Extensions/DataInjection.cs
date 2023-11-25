@@ -24,6 +24,7 @@ namespace API.Gateway.Extensions
 			services.AddSingleton<Context>();
 			services.AddTransient<IEmailService, EmailService>();
 			services.AddTransient<IDatabaseInit, DatabaseInit>();
+			services.AddTransient<IWebSocketService, WebSocketService>();
 
 			services.AddHttpContextAccessor();
 			services.AddMemoryCache();

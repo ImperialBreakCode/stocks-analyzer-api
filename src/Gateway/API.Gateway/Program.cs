@@ -13,12 +13,10 @@ builder.Services.AddControllers();
 builder.Services.AddOptions();
 
 builder.Services.Configure<MicroserviceHostsConfiguration>(
-builder.Configuration.GetSection("MicroserviceHosts"));
+	builder.Configuration.GetSection("MicroserviceHosts"));
 
-//builder.Services.Configure<JwtOptionsConfiguration>(
-//builder.Configuration.GetSection("Jwtoptions"));
 builder.Services.ConfigureWritable<JwtOptionsConfiguration>(
-	builder.Configuration.GetSection("MySection"));
+	builder.Configuration.GetSection("Jwtoptions"));
 
 builder.Services.AddServices().InjectAuthentication(builder.Configuration);
 
