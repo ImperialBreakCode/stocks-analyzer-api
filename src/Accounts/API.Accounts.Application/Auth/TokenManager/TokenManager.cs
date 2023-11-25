@@ -13,12 +13,13 @@ namespace API.Accounts.Application.Auth.TokenManager
             _settingsManager = settingsManager;
         }
 
-        public string CreateToken(string username, int secondsValid)
+        public string CreateToken(string username, string email, int secondsValid)
         {
             string token = JwtBuilder.Create()
                 .WithAlgorithm(new HMACSHA256Algorithm())
                 .WithSecret(_settingsManager.SecretKey)
                 .AddClaim("user", username)
+                .AddClaim("email", email)
                 .AddClaim("exp", DateTimeOffset.UtcNow.AddSeconds(secondsValid).ToUnixTimeSeconds())
                 .AddClaim("iss", _settingsManager.AuthSettings.Issuer)
                 .AddClaim("aud", _settingsManager.AuthSettings.Audience)

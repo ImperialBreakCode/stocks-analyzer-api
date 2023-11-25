@@ -53,7 +53,7 @@ namespace API.Accounts.Application.Services.UserService
                 else
                 {
                     responseDTO.Message = ResponseMessages.AuthSuccess;
-                    responseDTO.Token = _tokenManager.CreateToken(loginDTO.Username, 60);
+                    responseDTO.Token = _tokenManager.CreateToken(loginDTO.Username, user.Email, 60);
                 }
             }
 
