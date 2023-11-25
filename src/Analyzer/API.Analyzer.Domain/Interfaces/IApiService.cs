@@ -4,7 +4,7 @@ namespace API.Analyzer.Domain.Interfaces
 
     public interface IApiService
     {
-        public Task<GetWalletResponseDTO> PortfolioSummary(string userName);
+        public Task<GetWalletResponseDTO> PortfolioSummary(string walletId);
 
         public Task<decimal> CurrentProfitability(string walletId);
 

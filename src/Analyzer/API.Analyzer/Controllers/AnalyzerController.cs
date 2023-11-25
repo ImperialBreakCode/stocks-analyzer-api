@@ -15,14 +15,21 @@ namespace API.Analyzer.Controllers
         {
             this.service = service;
         }
-<<<<<<< HEAD
-        [HttpGet]
-        public IActionResult Get()
-=======
+
+
+        //[HttpGet("check-profitability/{username")]
+        //public async Task<IActionResult> CheckProfitability(string userName,decimal balance)
+        //{
+        //    decimal? result = await service.ProfitablenessAccountCheck(userName);
+        //    if (result.HasValue && result.Value >= balance)
+        //    {
+        //        return Ok(true);
+        //    }
+        //    return BadRequest(false);
+        //}
 
         [HttpGet("get-info/{userName}")]
         public async Task<IActionResult> GetInfo(string userName)
->>>>>>> 682d569c34552675f8606ad5b870853480b56f05
         {
             return Ok();
         }
@@ -38,57 +45,21 @@ namespace API.Analyzer.Controllers
     //        return StatusCode(500, "User profile not found");
     //    }
 
-<<<<<<< HEAD
-    //    [HttpGet("check-profitability/{userName}")]
-    //    public async Task<IActionResult> GetCurrentProfitability(string userName, decimal? balance)
-    //    {
-    //        decimal? result = await service.CurrentProfitability(userName);
-    //        if (result.HasValue && result.Value >= balance)
-    //        {
-    //            return Ok();
-    //        }
-    //        return BadRequest();
-    //    }
+        //[HttpGet("profit-change-per-day/{id}")]
+        //public async Task<IActionResult> CalculateProfitChangePerDay(string userName)
+        //{
+        //    decimal? todayprofitability = await service.GetProfitabilityForDate(userName, DateTime.Today);
+        //    decimal? yesterdayprofitability = await service.GetProfitabilityForDate(userName, DateTime.Today.AddDays(-1));
+        //    if (todayprofitability.HasValue && yesterdayprofitability.HasValue && yesterdayprofitability.Value != 0)
+        //    {
+        //        decimal percentagechange = ((todayprofitability.Value - yesterdayprofitability.Value) / yesterdayprofitability.Value) * 100;
 
-    //    [HttpGet("percentage-change/{symbol}")]
-    //    public async Task<IActionResult> PercentageChange(string symbol)
-    //    {
-    //        try
-    //        {
-    //            decimal percentageChange = await service.PercentageChange(symbol);
-    //            return Ok(percentageChange);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            return StatusCode(500, $"Server error: {ex.Message}");
-    //        }
-    //    }
-    //}
-=======
-        [HttpGet("check-profitability/{userName}")]
-        public async Task<IActionResult> GetCurrentProfitability(string userName, decimal? balance)
-        {
-            decimal? result = await service.CurrentProfitability(userName);
-            if (result.HasValue && result.Value >= balance)
-            {
-                return Ok();
-            }
-            return BadRequest();
-        }
-
-        [HttpGet("percentage-change/{symbol}")]
-        public async Task<IActionResult> PercentageChange(string symbol)
-        {
-            try
-            {
-                decimal percentageChange = await service.PercentageChange(symbol);
-                return Ok(percentageChange);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Server error: {ex.Message}");
-            }
-        }
-    }
->>>>>>> 682d569c34552675f8606ad5b870853480b56f05
+        //        return Ok(percentagechange);
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("unable to calculate percentage change");
+        //    }
+        //}
+    } 
 }

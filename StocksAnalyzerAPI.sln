@@ -50,7 +50,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Settlement", "src\Settl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Accounts.Infrastructure.Mockup", "src\Accounts\API.Accounts.Infrastructure.Mockup\API.Accounts.Infrastructure.Mockup.csproj", "{C420D963-9F95-4C31-B347-AE3553DCEBE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzer.APi-n", "src\Analyzer\Analyzer.APi-n\Analyzer.APi-n.csproj", "{84076617-43B2-4166-A6E2-63568F13E98C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Analyzer", "src\Analyzer\Analyzer.APi-n\API.Analyzer.csproj", "{84076617-43B2-4166-A6E2-63568F13E98C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
