@@ -11,6 +11,7 @@ namespace API.Gateway.Services
 		{
 			_httpClient = httpClient;
 			_httpClient.DefaultRequestHeaders.Add("ApiSender", "API.Gateway");
+			_httpClient.Timeout = TimeSpan.FromMinutes(2);
 		}
 
 		public async Task<IActionResult> Post(string url, object obj)

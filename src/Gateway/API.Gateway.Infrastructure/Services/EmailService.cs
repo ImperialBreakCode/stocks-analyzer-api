@@ -1,8 +1,9 @@
 ﻿using API.Gateway.Infrastructure.Contexts;
-using API.Gateway.Infrastructure.Models;
+using API.Gateway.Domain.DTOs;
 using Dapper;
 using Serilog;
 using System.Data;
+using API.Gateway.Domain.Interfaces;
 
 namespace API.Gateway.Infrastructure.Provider
 {

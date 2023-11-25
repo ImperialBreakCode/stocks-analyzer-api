@@ -1,5 +1,7 @@
 ﻿using API.Gateway.Domain.DTOs;
+using API.Gateway.Domain.Interfaces;
 using API.Gateway.Settings;
+using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -13,12 +15,12 @@ namespace API.Gateway.Controllers
 	[ApiController]
 	public class WebSocketController : Controller
 	{
-		private readonly IOptionsMonitor<JwtOptionsConfiguration> _optionsMonitor;
-        public WebSocketController(IOptionsMonitor<JwtOptionsConfiguration> monitor)
+		private readonly IWritableOptions<JwtOptionsConfiguration> _options;
+		public WebSocketController(IWritableOptions<JwtOptionsConfiguration> options)
         {
-            _optionsMonitor = monitor;
+            _options = options;
         }
-        [Route("/ws")]
+        [HttpGet("/ws")]
 		public async Task Get()
 		{
 			if (HttpContext.WebSockets.IsWebSocketRequest)
@@ -31,9 +33,9 @@ namespace API.Gateway.Controllers
 				var jsonData = Encoding.UTF8.GetString(buffer);
 				AuthValues values = JsonConvert.DeserializeObject<AuthValues>(jsonData);
 
-				_optionsMonitor.CurrentValue.Issuer = values.Issuer;
-				_optionsMonitor.CurrentValue.Audience = values.Audience;
-				_optionsMonitor.CurrentValue.SigningKey = values.SecretKey;
+				_options.Value.Issuer = values.Issuer;
+				_options.Value.Audience = values.Audience;
+				_options.Value.SigningKey = values.SecretKey;
 
 				await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
 			}

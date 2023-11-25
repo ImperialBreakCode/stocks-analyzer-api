@@ -2,6 +2,7 @@ using API.Gateway.Extensions;
 using API.Gateway.Middleware;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -14,8 +15,10 @@ builder.Services.AddOptions();
 builder.Services.Configure<MicroserviceHostsConfiguration>(
 builder.Configuration.GetSection("MicroserviceHosts"));
 
-builder.Services.Configure<JwtOptionsConfiguration>(
-builder.Configuration.GetSection("Jwtoptions"));
+//builder.Services.Configure<JwtOptionsConfiguration>(
+//builder.Configuration.GetSection("Jwtoptions"));
+builder.Services.ConfigureWritable<JwtOptionsConfiguration>(
+	builder.Configuration.GetSection("MySection"));
 
 builder.Services.AddServices().InjectAuthentication(builder.Configuration);
 
@@ -78,7 +81,7 @@ app.UseDatabaseInit();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.UseWebSockets();
+app.UseWebSockets();
 
 app.MapControllers();
 

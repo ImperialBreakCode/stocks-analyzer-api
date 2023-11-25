@@ -13,7 +13,7 @@ namespace API.Gateway.Extensions
 	{
 		public static IServiceCollection AddServices(this IServiceCollection services)
 		{
-			services.AddTransient<IHttpClient, GwHttpClient>();
+			services.AddSingleton<IHttpClient, GwHttpClient>();
 			services.AddTransient<IAccountService, AccountService>();
 			services.AddTransient<IStockInfoService, StockInfoService>();
 			services.AddTransient<IAnalyzerService, AnalyzerService>();

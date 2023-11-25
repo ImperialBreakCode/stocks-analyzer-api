@@ -1,5 +1,6 @@
 ﻿using API.Gateway.Domain.DTOs;
 using API.Gateway.Domain.Interfaces;
+using API.Gateway.Infrastructure.Provider;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,21 +14,38 @@ namespace API.Gateway.Services
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
 		private readonly IJwtTokenParser _jwtTokenParser;
 		private readonly IMemoryCache _memoryCache;
+		private readonly IEmailService _emailService;
 		public AccountService(
 			IHttpClient httpClient,
 			IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts,
 			IJwtTokenParser jwtTokenParser,
-			IMemoryCache memoryCache)
+			IMemoryCache memoryCache,
+			IEmailService emailService)
 		{
 			_httpClient = httpClient;
 			_microserviceHosts = microserviceHosts.CurrentValue;
 			_jwtTokenParser = jwtTokenParser;
 			_memoryCache = memoryCache;
+			_emailService = emailService;
 		}
 
 		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
 		{
-			return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Register", regUserDTO);
+			if (!_emailService.Exists(regUserDTO.Email))
+			{
+				return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Register", regUserDTO);
+			}
+			else
+			{
+				ResponseDTO responseDTO = new ResponseDTO()
+				{
+					Message = $"The email '{regUserDTO.Email}' has already been used or is blacklisted!"
+				};
+				return new ObjectResult(responseDTO)
+				{
+					StatusCode = 403
+				};
+			}
 		}
 
 		public async Task<IActionResult> Login(LoginUserDTO userDTO)
@@ -77,7 +95,16 @@ namespace API.Gateway.Services
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			return await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
+			ObjectResult res = (ObjectResult)await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
+
+			if (res is OkObjectResult okObjectResult) 
+			{
+				//TODO
+				//_emailService.Delete();
+			}
+
+			return res;
+
 		}
 
 	}

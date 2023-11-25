@@ -1,6 +1,6 @@
-﻿using API.Gateway.Infrastructure.Models;
+﻿using API.Gateway.Domain.DTOs;
 
-namespace API.Gateway.Infrastructure.Provider
+namespace API.Gateway.Domain.Interfaces
 {
 	public interface IEmailService
 	{
