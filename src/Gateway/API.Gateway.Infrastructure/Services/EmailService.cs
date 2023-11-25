@@ -1,6 +1,7 @@
 ﻿using API.Gateway.Infrastructure.Contexts;
 using API.Gateway.Infrastructure.Models;
 using Dapper;
+using Serilog;
 using System.Data;
 
 namespace API.Gateway.Infrastructure.Provider
@@ -14,29 +15,68 @@ namespace API.Gateway.Infrastructure.Provider
 			_context = context;
 		}
 
-		public async Task<Email> Get()
+		public async Task Create(Email email)
 		{
-			var query = "SELECT rowid as Id, Email FROM Email;";
-
-			using (var connection = _context.CreateConnection())
+			try
 			{
-				var email = await connection.QuerySingleOrDefaultAsync<Email>(query);
-				return email;
+				var query = "INSERT INTO emails (email) VALUES (@Mail);";
+
+				var parameters = new DynamicParameters();
+
+				parameters.Add("@Mail", email.Mail, DbType.String);
+
+				using (var connection = _context.CreateConnection())
+				{
+					connection.Open();
+					await connection.ExecuteAsync(query, parameters);
+					connection.Close();
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Information($"Error creating email: {ex.Message}");
 			}
 		}
 
-		public async Task Create(Email email)
+		public bool Exists(string email)
 		{
-			var query = "INSERT INTO emails (email) VALUES (@Mail);";
-
-			var parameters = new DynamicParameters();
-
-			parameters.Add("email", email.Mail, DbType.String);
-
-			using (var connection = _context.CreateConnection())
+			try
 			{
-				Console.WriteLine("in");
-				await connection.ExecuteAsync(query, parameters);
+				using (var connection = _context.CreateConnection())
+				{
+					connection.Open();
+
+					var query = "SELECT COUNT(1) FROM emails WHERE email = @Email";
+					var count = connection.ExecuteScalar<int>(query, new { Email = email });
+
+					connection.Close();
+					return count > 0;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Information($"Error checking if email exists: {ex.Message}");
+				return false;
+			}
+		}
+
+		public async Task Delete(string email)
+		{
+			try
+			{
+				using (var connection = _context.CreateConnection())
+				{
+					connection.Open();
+
+					var query = "DELETE FROM emails WHERE email = @Email";
+					await connection.ExecuteAsync(query, new { Email = email });
+
+					connection.Close();
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Information($"Error deleting email: {ex.Message}");
 			}
 		}
 	}

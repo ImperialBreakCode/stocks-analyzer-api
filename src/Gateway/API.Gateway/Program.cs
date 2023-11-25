@@ -4,7 +4,6 @@ using API.Gateway.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using API.Gateway.Infrastructure.Init;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +13,9 @@ builder.Services.AddOptions();
 
 builder.Services.Configure<MicroserviceHostsConfiguration>(
 builder.Configuration.GetSection("MicroserviceHosts"));
+
+builder.Services.Configure<JwtOptionsConfiguration>(
+builder.Configuration.GetSection("Jwtoptions"));
 
 builder.Services.AddServices().InjectAuthentication(builder.Configuration);
 
@@ -67,16 +69,18 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseMiddleware<RequestLoggingMiddleware>();
+
+app.UseDatabaseInit();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+//app.UseWebSockets();
 
 app.MapControllers();
-
-app.Services.GetService<IDatabaseInit>().PopulateDB();
 
 app.Run();
 

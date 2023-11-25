@@ -55,5 +55,13 @@ namespace API.Gateway.Extensions
 
 			return services;
 		}
+		public static void UseDatabaseInit(this IApplicationBuilder app)
+		{
+			using (var scope = app.ApplicationServices.CreateScope())
+			{
+				var _databaseInit = scope.ServiceProvider.GetRequiredService<IDatabaseInit>();
+				_databaseInit.Initialize();
+			}
+		}
 	}
 }

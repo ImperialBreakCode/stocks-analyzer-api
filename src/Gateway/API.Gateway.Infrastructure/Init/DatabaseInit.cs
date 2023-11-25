@@ -1,8 +1,11 @@
 ﻿using API.Gateway.Domain.Interfaces;
+using API.Gateway.Infrastructure.Contexts;
 using API.Gateway.Infrastructure.Models;
 using API.Gateway.Infrastructure.Provider;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace API.Gateway.Infrastructure.Init
 {
@@ -10,25 +13,53 @@ namespace API.Gateway.Infrastructure.Init
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly IEmailService _service;
-		public DatabaseInit(IHttpClient httpClient, IEmailService emailService)
+		private readonly Context _context;
+		public DatabaseInit(IHttpClient httpClient, IEmailService emailService, Context context)
 		{
 			_httpClient = httpClient;
 			_service = emailService;
+			_context = context;
 		}
 
+		public async Task Initialize()
+		{
+			if (!DatabaseExists())
+			{
+				await CreateTables();
+			}
+		}
 
-		public async Task PopulateDB()
+		private async Task CreateTables()
 		{
 			try
 			{
-				int numberOfUsers = 100;
+				using (var connection = _context.CreateConnection())
+				{
+					connection.Open();
+
+					var createTableSql = "CREATE TABLE IF NOT EXISTS emails (email TEXT PRIMARY KEY NOT NULL);";
+					connection.Execute(createTableSql);
+
+					connection.Close();
+				}
+				await PopulateDB();
+			}
+			catch (Exception ex)
+			{
+				Log.Information($"Error creating database: {ex.Message}");
+			}
+		}
+		private async Task PopulateDB()
+		{
+			try
+			{
+				int numberOfUsers = 10;
 				string url = $"https://random-data-api.com/api/v2/users?size={numberOfUsers}";
 
-				ObjectResult response = (ObjectResult)await _httpClient.Get(url);
+				var res = await _httpClient.Get(url);
+				ObjectResult response = (ObjectResult)res;
 
 				var stringResult = response.Value.ToString();
-				Console.WriteLine("Actual JSON Response:");
-				Console.WriteLine(stringResult);
 				var users = JsonConvert.DeserializeObject<List<User>>(stringResult);
 
 				foreach (var x in users)
@@ -39,15 +70,37 @@ namespace API.Gateway.Infrastructure.Init
 					};
 
 					_service.Create(email);
+
 				}
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex.Message);
+				Log.Information($"Error populating db: {ex.Message}");
 			}
+		}
+		private bool DatabaseExists()
+		{
+			try
+			{
+				using (var connection = _context.CreateConnection())
+				{
+					connection.Open();
+
+					var tableName = "emails";
+					var tableExistsSql = $"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}';";
+
+					var result = connection.Query<string>(tableExistsSql).FirstOrDefault();
+					connection.Close();
+					return result != null && result == tableName;
+				}
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+
 		}
 
 	}
-
 }
 
