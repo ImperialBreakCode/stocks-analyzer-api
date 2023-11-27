@@ -66,6 +66,8 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
 
 
+
+
 		}
 	}
 }
