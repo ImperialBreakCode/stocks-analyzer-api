@@ -1,4 +1,5 @@
 using API.Gateway.Extensions;
+using API.Gateway.Infrastructure.Services.MongoDB;
 using API.Gateway.Middleware;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +18,9 @@ builder.Services.Configure<MicroserviceHostsConfiguration>(
 
 builder.Services.ConfigureWritable<JwtOptionsConfiguration>(
 	builder.Configuration.GetSection("Jwtoptions"));
+
+builder.Services.Configure<MongoDBSettings>(
+	builder.Configuration.GetSection("MongoDB"));
 
 builder.Services.AddServices().InjectAuthentication(builder.Configuration);
 
