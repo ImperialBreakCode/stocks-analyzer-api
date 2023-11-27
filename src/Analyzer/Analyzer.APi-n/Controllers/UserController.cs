@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using API.Analyzer.Domain.Interfaces;
 using API.Accounts.Application.DTOs.Response;
+using API.Analyzer.Infrastructure.Services;
 
 namespace Analyzer.APi.Controllers
 {
@@ -9,19 +10,14 @@ namespace Analyzer.APi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IApiService service;
-        public UserController(IApiService service)
+        private readonly IAnalyzerUserService service;
+        public UserController(IAnalyzerUserService service)
         {
             this.service = service;
         }
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok();
-        }
 
-        [HttpGet("PortfolioSummmary/{walletId}")]
-        public async Task<ActionResult> GetPortfilioSummary(string walletId)
+        [HttpGet("PortfolioSummary/{walletId}")]
+        public async Task<IActionResult> GetPortfilioSummary(string walletId)
         {
             GetWalletResponseDTO jsonContent = await service.PortfolioSummary(walletId);
             if (jsonContent != null)
@@ -53,25 +49,6 @@ namespace Analyzer.APi.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
-
-
-        //[HttpGet("percentage-change/{symbol}")]
-        //public async Task<IActionResult> PercentageChange(string symbol)
-        //{
-        //    try
-        //    {
-        //        decimal percentageChange = await service.PercentageChange(symbol);
-        //        return Ok(percentageChange);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Server error: {ex.Message}");
-        //    }
-        //}
-
-        //[HttpGet("portfolio-risk")]
-
-        //[HttpGet("daily-profitability-changes")]
     }
 }
 
