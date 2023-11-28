@@ -24,8 +24,7 @@ namespace API.Settlement.Infrastructure.Services
 			var clonedAvailabilityResponseDTO = _transactionMapperService.CloneAvailabilityResponseDTO(availabilityResponseDTO);
 			var filteredAvailabilityResponseDTO = _transactionMapperService.FilterSuccessfulAvailabilityStockInfoDTOs(clonedAvailabilityResponseDTO);
 
-			var userRank = finalizeTransactionRequestDTO.UserRank;
-			_hangfireService.ScheduleStockProcessingJob(filteredAvailabilityResponseDTO, userRank);
+			_hangfireService.ScheduleStockProcessingJob(filteredAvailabilityResponseDTO);
 			_hangfireService.InitializeRecurringFailedTransactionsJob();
 			_hangfireService.InitializeRecurringCapitalLossJobCheck();
 
