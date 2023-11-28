@@ -15,6 +15,16 @@ namespace API.Gateway.Extensions
 
 		public string GetUsernameFromToken()
 		{
+			return GetClaimValueFromToken("user");
+		}
+
+		public string GetEmailFromToken()
+		{
+			return GetClaimValueFromToken("email");
+		}
+
+		private string GetClaimValueFromToken(string claimType)
+		{
 			var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
 			if (string.IsNullOrEmpty(jwtToken))
@@ -25,8 +35,8 @@ namespace API.Gateway.Extensions
 			var handler = new JwtSecurityTokenHandler();
 			var jsonToken = handler.ReadToken(jwtToken) as JwtSecurityToken;
 
-			string username = jsonToken?.Claims.FirstOrDefault(c => c.Type == "user")?.Value;
-			return username;
+			string claimValue = jsonToken?.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
+			return claimValue;
 		}
 	}
 }

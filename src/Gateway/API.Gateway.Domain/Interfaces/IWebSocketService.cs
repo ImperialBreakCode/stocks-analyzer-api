@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace API.Gateway.Domain.Interfaces
 {
-	public interface IJwtTokenParser
+	public interface IWebSocketService
 	{
-		string GetUsernameFromToken();
-		string GetEmailFromToken();
+		Task ProcessWebSocketRequest(HttpContext httpContext);
 	}
 }
