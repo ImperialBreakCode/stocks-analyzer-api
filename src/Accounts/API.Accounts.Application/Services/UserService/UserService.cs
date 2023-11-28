@@ -4,7 +4,10 @@ using API.Accounts.Application.Data;
 using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
+using API.Accounts.Application.Services.UserService.EmailService;
+using API.Accounts.Application.Services.UserService.UserRankService;
 using API.Accounts.Domain.Entities;
+using API.Accounts.Domain.Interfaces.RepositoryBase;
 
 namespace API.Accounts.Application.Services.UserService
 {
@@ -13,14 +16,22 @@ namespace API.Accounts.Application.Services.UserService
         private readonly IAccountsData _data;
         private readonly IPasswordManager _passwordManager;
         private readonly ITokenManager _tokenManager;
-        private readonly IUserTypeManager _userTypeManager;
+        private readonly IUserRankManager _userRankManager;
+        private readonly IEmailConfirmation _emailConfirmation;
 
-        public UserService(IAccountsData data, IPasswordManager passwordManager, ITokenManager tokenManager, IUserTypeManager userTypeManager)
+        public UserService(
+            IAccountsData data, 
+            IPasswordManager passwordManager, 
+            ITokenManager tokenManager, 
+            IUserRankManager userRankManager,
+            IEmailConfirmation emailConfirmation
+            )
         {
             _data = data;
             _passwordManager = passwordManager;
             _tokenManager = tokenManager;
-            _userTypeManager = userTypeManager;
+            _userRankManager = userRankManager;
+            _emailConfirmation = emailConfirmation;
         }
 
         public LoginResponseDTO LoginUser(LoginUserDTO loginDTO)
@@ -29,7 +40,7 @@ namespace API.Accounts.Application.Services.UserService
 
             using(var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetOneByUserName(loginDTO.Username);
+                User? user = context.Users.GetConfirmedByUserName(loginDTO.Username);
 
                 if (user is null)
                 {
@@ -42,7 +53,7 @@ namespace API.Accounts.Application.Services.UserService
                 else
                 {
                     responseDTO.Message = ResponseMessages.AuthSuccess;
-                    responseDTO.Token = _tokenManager.CreateToken(loginDTO.Username, 60);
+                    responseDTO.Token = _tokenManager.CreateToken(loginDTO.Username, user.Email, 60);
                 }
             }
 
@@ -57,11 +68,17 @@ namespace API.Accounts.Application.Services.UserService
             {
                 if (context.Users.GetOneByUserName(registerDTO.Username) is not null)
                 {
-                    return ResponseMessages.UserAlreadyExists;
+                    return ResponseMessages.UserNameAlreadyExists;
+                }
+
+                if (context.Users.GetOneByEmail(registerDTO.Email) is not null)
+                {
+                    return ResponseMessages.UserEmailAlreadyExists;
                 }
 
                 User user = new()
                 {
+                    IsConfirmed = false,
                     FirstName = registerDTO.FirstName,
                     LastName = registerDTO.LastName,
                     UserName = registerDTO.Username,
@@ -70,17 +87,10 @@ namespace API.Accounts.Application.Services.UserService
                     Salt = salt
                 };
 
-                Wallet wallet = new()
-                {
-                    Balance = 10000,
-                    IsDemo = true,
-                    UserId = user.Id
-                };
-
                 context.Users.Insert(user);
-                context.Wallets.Insert(wallet);
-
                 context.Commit();
+
+                _emailConfirmation.SendEmail(user.Email, user.Id);
             }
 
             return result;
@@ -92,7 +102,7 @@ namespace API.Accounts.Application.Services.UserService
 
             using (var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetOneByUserName(username);
+                User? user = context.Users.GetConfirmedByUserName(username);
 
                 if (user is not null)
                 {
@@ -102,7 +112,7 @@ namespace API.Accounts.Application.Services.UserService
                     {
                         UserId = user.Id,
                         UserName = username,
-                        UserRank = _userTypeManager.GetUserType(wallet),
+                        UserRank = _userRankManager.GetUserType(wallet),
                         FirstName = user.FirstName,
                         UserEmail = user.Email,
                         LastName = user.LastName,
@@ -118,22 +128,21 @@ namespace API.Accounts.Application.Services.UserService
         {
             using (var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetOneByUserName(username);
+                User? user = context.Users.GetConfirmedByUserName(username);
                 if (user is null)
                 {
                     return ResponseMessages.UserNotFound;
                 }
 
-                bool newUserNameExists = updateDTO.UserName != null
-                    && user.UserName != updateDTO.UserName
-                    && context.Users.GetOneByUserName(updateDTO.UserName) is not null;
+                bool newEmailExists = updateDTO.Email != null
+                    && user.Email != updateDTO.Email
+                    && context.Users.GetOneByEmail(updateDTO.Email) is not null;
 
-                if (newUserNameExists)
+                if (newEmailExists)
                 {
-                    return ResponseMessages.UserAlreadyExists;
+                    return ResponseMessages.UserEmailAlreadyExists;
                 }
 
-                user.UserName = updateDTO.UserName ?? user.UserName;
                 user.FirstName = updateDTO.FirstName ?? user.FirstName;
                 user.LastName = updateDTO.LastName ?? user.LastName;
                 user.Email = updateDTO.Email ?? user.Email;
@@ -158,6 +167,35 @@ namespace API.Accounts.Application.Services.UserService
 
                 context.Users.DeleteByUserName(username);
                 context.Commit();
+            }
+        }
+
+        public bool ConfirmUser(string userId)
+        {
+            using (var context = _data.CreateDbContext())
+            {
+                var userRead = (IRepoRead<User>)context.Users;
+                User? userForConfirmation = userRead.GetOneById(userId);
+
+                bool confirmPass = userForConfirmation is not null && !userForConfirmation.IsConfirmed;
+
+                if (confirmPass)
+                {
+                    userForConfirmation.IsConfirmed = true;
+
+                    Wallet wallet = new Wallet()
+                    {
+                        Balance = 10000,
+                        IsDemo = true,
+                        UserId = userId,
+                    };
+
+                    context.Wallets.Insert(wallet);
+                    context.Users.Update(userForConfirmation); 
+                    context.Commit();
+                }
+
+                return confirmPass;
             }
         }
     }

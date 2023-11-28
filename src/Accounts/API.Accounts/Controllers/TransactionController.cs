@@ -26,5 +26,21 @@ namespace API.Accounts.Controllers
 
             return NotFound("Wallet not found");
         }
+
+        [HttpGet]
+        [Route("GetTransactionsByUsername/{username}")]
+        public IActionResult GetTransactionsByUsername(string username)
+        {
+            var response = _transactionService.GetTransactionsByUsername(username);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("GetTransactionsByWallet/{walletId}")]
+        public IActionResult GetTransactionsByWallet(string walletId)
+        {
+            var response = _transactionService.GetTransactionsByWalletId(walletId);
+            return Ok(response);
+        }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using API.Accounts.Domain.Entities;
 
-namespace API.Accounts.Application.Services.UserService
+namespace API.Accounts.Application.Services.UserService.UserRankService
 {
-    internal class UserTypeManager : IUserTypeManager
+    internal class UserRankManager : IUserRankManager
     {
         private decimal _specialTraderMin = 10000;
         private decimal _vipTraderMin = 100000;
 
-        public UserType? GetUserType(Wallet? userWallet)
+        public UserRank? GetUserType(Wallet? userWallet)
         {
             if (userWallet is null)
             {
@@ -16,18 +16,18 @@ namespace API.Accounts.Application.Services.UserService
 
             if (userWallet.IsDemo)
             {
-                return UserType.Demo;
+                return UserRank.Demo;
             }
             else if (userWallet.Balance >= _specialTraderMin)
             {
-                return UserType.SpecialTrader;
+                return UserRank.SpecialTrader;
             }
             else if (userWallet.Balance >= _vipTraderMin)
             {
-                return UserType.VipTrader;
+                return UserRank.VipTrader;
             }
 
-            return UserType.RegularTrader;
+            return UserRank.RegularTrader;
         }
     }
 }

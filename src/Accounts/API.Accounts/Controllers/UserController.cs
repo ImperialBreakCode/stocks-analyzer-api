@@ -46,6 +46,17 @@ namespace API.Accounts.Controllers
         }
 
         [HttpGet]
+        [Route("ConfirmUser/{userId}")]
+        public IActionResult ConfirmUser(string userId)
+        {
+            if (!_userService.ConfirmUser(userId))
+            {
+                return BadRequest();
+            }
+            return Ok("Account is confirmed");
+        }
+
+        [HttpGet]
         [Route("UserInformation/{username}")]
         public IActionResult UserInformation(string username)
         {
