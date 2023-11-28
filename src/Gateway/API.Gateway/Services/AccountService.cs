@@ -1,5 +1,6 @@
 ﻿using API.Gateway.Domain.DTOs;
 using API.Gateway.Domain.Interfaces;
+using API.Gateway.Infrastructure.Provider;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,21 +14,38 @@ namespace API.Gateway.Services
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
 		private readonly IJwtTokenParser _jwtTokenParser;
 		private readonly IMemoryCache _memoryCache;
+		private readonly IEmailService _emailService;
 		public AccountService(
 			IHttpClient httpClient,
 			IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts,
 			IJwtTokenParser jwtTokenParser,
-			IMemoryCache memoryCache)
+			IMemoryCache memoryCache,
+			IEmailService emailService)
 		{
 			_httpClient = httpClient;
 			_microserviceHosts = microserviceHosts.CurrentValue;
 			_jwtTokenParser = jwtTokenParser;
 			_memoryCache = memoryCache;
+			_emailService = emailService;
 		}
 
 		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
 		{
-			return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Register", regUserDTO);
+			if (!_emailService.Exists(regUserDTO.Email))
+			{
+				return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Register", regUserDTO);
+			}
+			else
+			{
+				ResponseDTO responseDTO = new ResponseDTO()
+				{
+					Message = $"The email '{regUserDTO.Email}' has already been used or is blacklisted!"
+				};
+				return new ObjectResult(responseDTO)
+				{
+					StatusCode = 403
+				};
+			}
 		}
 
 		public async Task<IActionResult> Login(LoginUserDTO userDTO)
@@ -70,14 +88,36 @@ namespace API.Gateway.Services
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			return await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
+			ObjectResult res = (ObjectResult)await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
+
+			if (res is OkObjectResult && dto.Email != null)
+			{
+				string email = _jwtTokenParser.GetEmailFromToken();
+				await _emailService.Delete(email);
+				Email mail = new Email
+				{
+					Mail = dto.Email
+				};
+				await _emailService.Create(mail);
+			}
+
+			return res;
 		}
 
 		public async Task<IActionResult> DeleteUser()
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			return await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
+			ObjectResult res = (ObjectResult)await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
+
+			if (res is OkObjectResult) 
+			{
+				string email = _jwtTokenParser.GetEmailFromToken();
+				await _emailService.Delete(email);
+			}
+
+			return res;
+
 		}
 
 	}

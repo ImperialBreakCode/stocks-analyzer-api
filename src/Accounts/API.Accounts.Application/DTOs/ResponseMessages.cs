@@ -2,12 +2,16 @@
 {
     public static class ResponseMessages
     {
+        // Auth
         public const string AuthSuccess = "Authentication is successful";
         public const string AuthPassIncorrect = "Incorrect password.";
 
-        public const string UserAlreadyExists = "User with such username already exists.";
+        // User
+        public const string UserNameAlreadyExists = "User with such username already exists.";
+        public const string UserEmailAlreadyExists = "User with such email already exists.";
         public const string UserNotFound = "User not found";
 
+        // Wallet
         public const string CannotDepositWithCurrencyType = "Cannot deposit with the given currency type";
         public const string WalletNotFound = "Wallet does not exist.";
         public const string WalletRestricted = "Wallet restricted for actions such as purchasing or saling stocks";
@@ -15,6 +19,7 @@
         public const string WalletAlreadyExists = "The user already has a wallet.";
         public const string NotEnoughBalance = "Not enough balance.";
 
+        // Stocks
         public const string NoStocksAddedForPurchaseSale = "No stocks added for transaction processing";
         public const string StockNotFoundInWallet = "This wallet does not contain the desired stock.";
         public const string StockActionSuccessfull = "Stock added for transaction processing successfully.";

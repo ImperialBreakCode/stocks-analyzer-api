@@ -5,11 +5,11 @@ namespace API.Accounts.Application.Settings.UpdateHandlers
 {
     internal class AuthTokenGatewayNotifyer : IAuthTokenGatewayNotifyer
     {
-        private readonly IGatewaySettingsSender _settingsSender;
+        private readonly ISocketGatewaySettingsSender _settingsSender;
         private AuthValues? _waitingAuthTokenData;
         private string _gatwaySocketHost; 
 
-        public AuthTokenGatewayNotifyer(IGatewaySettingsSender gatewaySettings)
+        public AuthTokenGatewayNotifyer(ISocketGatewaySettingsSender gatewaySettings)
         {
             _settingsSender = gatewaySettings;
         }

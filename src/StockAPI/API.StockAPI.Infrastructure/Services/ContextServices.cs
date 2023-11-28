@@ -19,49 +19,66 @@ namespace API.StockAPI.Infrastructure.Services
             _context = context;
         }
 
-        public async Task<StockData> GetWeeklyStock(string symbol)
+        public async Task<StockData> Get(string symbol, string type)
         {
-            var query = "SELECT TOP 1 * FROM Weekly WHERE Symbol = @Symbol";
+            var date = DateTime.Now.AddDays(-21).ToString("yyyy-MM-dd") + " 00:00:00";
+
+            var table = "";
+            switch (type)
+            {
+                case "weekly":
+                    table = "Weekly";
+                    break;
+                case "monthly":
+                    table = "Monthly";
+                    break;
+                default:
+                    return null;
+            }
+
+            var query = $"SELECT * FROM {table} WHERE Symbol = @Symbol AND Date = @Date LIMIT 5";
+
+            var parameters = new DynamicParameters();
+
+            parameters.Add("Symbol", symbol, DbType.String);
+            parameters.Add("Date", date, DbType.String);
 
             using (var connection = _context.CreateConnection())
             {
-                var stock = await connection.QuerySingleOrDefaultAsync<StockData>(query);
+                connection.Open();
+                var stock = await connection.QueryFirstOrDefaultAsync<StockData>(query, parameters);
+                connection.Close();
                 return stock;
             }
         }
 
-        public async Task<StockData> GetMonthlyStock(string symbol)
+        public async Task<StockData> Create(StockData data, string type)
         {
-            var query = "SELECT TOP 1 * FROM Monthly WHERE Symbol = @Symbol";
-
-            using (var connection = _context.CreateConnection())
+            var table = "";
+            switch (type)
             {
-                var stock = await connection.QuerySingleOrDefaultAsync<StockData>(query);
-                return stock;
+                case "weekly":
+                    table = "Weekly";
+                    break;
+                case "monthly":
+                    table = "Monthly";
+                    break;
+                default:
+                    return null;
             }
-        }
 
-        public async Task CreateWeeklyStock(StockData data)
-        {
-            var query = "INSERT INTO Weekly (Symbol, Date, Open, High, Low, Close, Volume) VALUES (@Symbol, @Date, @Open, @High, @Low, @Close, @Volume)";
+            var query = $"INSERT INTO {table} (Symbol, Date, Open, High, Low, Close, Volume) VALUES (@Symbol, @Date, @Open, @High, @Low, @Close, @Volume)";
 
             var parameters = AssignParameters(data);
 
             using (var connection = _context.CreateConnection())
             {
+                connection.Open();
                 await connection.ExecuteAsync(query, parameters);
+                connection.Close();
             }
-        }
-        public async Task CreateMonthlyStock(StockData data)
-        {
-            var query = "INSERT INTO Weekly (Symbol, Date, Open, High, Low, Close, Volume) VALUES (@Symbol, @Date, @Open, @High, @Low, @Close, @Volume)";
 
-            var parameters = AssignParameters(data);
-
-            using (var connection = _context.CreateConnection())
-            {
-                await connection.ExecuteAsync(query, parameters);
-            }
+            return data;
         }
 
         public DynamicParameters AssignParameters(StockData data)

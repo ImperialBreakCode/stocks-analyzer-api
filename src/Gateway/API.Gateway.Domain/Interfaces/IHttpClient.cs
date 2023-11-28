@@ -11,7 +11,6 @@ namespace API.Gateway.Domain.Interfaces
 	{
 		Task<IActionResult> Post(string url, object obj);
 		Task<IActionResult> Get(string url);
-		//Task<IActionResult> Post(string url, string message);
 		Task<IActionResult> Put(string url, object obj);
 		Task<IActionResult> Delete(string url);
 	}

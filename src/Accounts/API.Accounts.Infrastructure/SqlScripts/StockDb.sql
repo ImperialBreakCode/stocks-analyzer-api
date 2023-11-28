@@ -4,11 +4,12 @@ USE StockAccounts;
 CREATE TABLE [User] (
 	Id varchar(36) NOT NULL PRIMARY KEY,
 	UserName varchar(50) NOT NULL UNIQUE,
-	Email varchar(50) NOT NULL,
+	Email varchar(50) NOT NULL UNIQUE,
 	PasswordHash text NOT NULL,
 	Salt text NOT NULL,
 	FirstName varchar(50),
-	LastName varchar(50)
+	LastName varchar(50),
+	IsConfirmed bit NOT NULL,
 );
 
 CREATE TABLE Wallet (
