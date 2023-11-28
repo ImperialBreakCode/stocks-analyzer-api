@@ -19,12 +19,14 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
 				.ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))
+				.ForMember(dest => dest.UserRank, opt => opt.MapFrom(src => src.UserRank))
 				.ForMember(dest => dest.IsSale, opt => opt.MapFrom(src => src.IsSale));
 
 			CreateMap<AvailabilityResponseDTO, FinalizeTransactionResponseDTO>()
 				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
 				.ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))
+				.ForMember(dest => dest.UserRank, opt => opt.MapFrom(src => src.UserRank))
 				.ForMember(dest => dest.IsSale, opt => opt.MapFrom(src => src.IsSale));
 
 			CreateMap<AvailabilityResponseDTO, AvailabilityResponseDTO>()
@@ -62,6 +64,8 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.InvestedAmount, opt => opt.MapFrom(src => src.TotalPriceIncludingCommission))
 				.ForMember(dest => dest.AverageSingleStockPrice, opt => opt.MapFrom(src => src.SinglePriceIncludingCommission))
 				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
+
 
 
 		}

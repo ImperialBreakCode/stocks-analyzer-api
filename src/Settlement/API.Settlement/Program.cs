@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container
-builder.Services.AddSQLiteConfiguration(configuration);
+builder.Services.AddSQLiteTransactionDatabaseConfiguration(configuration);
 builder.Services.AddCustomServices();
 builder.Services.AddHangfireConfiguration(configuration);
 builder.Services.AddWalletDatabaseConfiguration(configuration);

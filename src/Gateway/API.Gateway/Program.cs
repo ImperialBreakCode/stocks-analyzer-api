@@ -1,10 +1,11 @@
 using API.Gateway.Extensions;
+using API.Gateway.Infrastructure.Services.MongoDB;
 using API.Gateway.Middleware;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using API.Gateway.Infrastructure.Init;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,13 @@ builder.Services.AddControllers();
 builder.Services.AddOptions();
 
 builder.Services.Configure<MicroserviceHostsConfiguration>(
-builder.Configuration.GetSection("MicroserviceHosts"));
+	builder.Configuration.GetSection("MicroserviceHosts"));
+
+builder.Services.ConfigureWritable<JwtOptionsConfiguration>(
+	builder.Configuration.GetSection("Jwtoptions"));
+
+builder.Services.Configure<MongoDBSettings>(
+	builder.Configuration.GetSection("MongoDB"));
 
 builder.Services.AddServices().InjectAuthentication(builder.Configuration);
 
@@ -67,16 +74,18 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseMiddleware<RequestLoggingMiddleware>();
+
+app.UseDatabaseInit();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+app.UseWebSockets();
 
 app.MapControllers();
-
-app.Services.GetService<IDatabaseInit>().PopulateDB();
 
 app.Run();
 

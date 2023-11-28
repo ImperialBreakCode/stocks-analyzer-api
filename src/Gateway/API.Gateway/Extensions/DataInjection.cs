@@ -2,6 +2,7 @@
 using API.Gateway.Infrastructure.Contexts;
 using API.Gateway.Infrastructure.Init;
 using API.Gateway.Infrastructure.Provider;
+using API.Gateway.Infrastructure.Services.MongoDB;
 using API.Gateway.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -13,17 +14,19 @@ namespace API.Gateway.Extensions
 	{
 		public static IServiceCollection AddServices(this IServiceCollection services)
 		{
-			services.AddTransient<IHttpClient, GwHttpClient>();
+			services.AddSingleton<IHttpClient, GwHttpClient>();
 			services.AddTransient<IAccountService, AccountService>();
 			services.AddTransient<IStockInfoService, StockInfoService>();
 			services.AddTransient<IAnalyzerService, AnalyzerService>();
 			services.AddTransient<IWalletService, WalletService>();
 			services.AddTransient<IStockService, StockService>();
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-			services.AddScoped<IJwtTokenParser, JwtTokenParser>();
+			services.AddSingleton<IJwtTokenParser, JwtTokenParser>();
 			services.AddSingleton<Context>();
 			services.AddTransient<IEmailService, EmailService>();
 			services.AddTransient<IDatabaseInit, DatabaseInit>();
+			services.AddTransient<IWebSocketService, WebSocketService>();
+			services.AddTransient<IRequestService, RequestService>();
 
 			services.AddHttpContextAccessor();
 			services.AddMemoryCache();
@@ -54,6 +57,14 @@ namespace API.Gateway.Extensions
 			services.AddAuthorization();
 
 			return services;
+		}
+		public static void UseDatabaseInit(this IApplicationBuilder app)
+		{
+			using (var scope = app.ApplicationServices.CreateScope())
+			{
+				var _databaseInit = scope.ServiceProvider.GetRequiredService<IDatabaseInit>();
+				_databaseInit.Initialize();
+			}
 		}
 	}
 }
