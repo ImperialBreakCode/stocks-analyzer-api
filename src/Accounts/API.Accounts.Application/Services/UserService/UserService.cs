@@ -134,15 +134,6 @@ namespace API.Accounts.Application.Services.UserService
                     return ResponseMessages.UserNotFound;
                 }
 
-                bool newUserNameExists = updateDTO.UserName != null
-                    && user.UserName != updateDTO.UserName
-                    && context.Users.GetOneByUserName(updateDTO.UserName) is not null;
-
-                if (newUserNameExists)
-                {
-                    return ResponseMessages.UserNameAlreadyExists;
-                }
-
                 bool newEmailExists = updateDTO.Email != null
                     && user.Email != updateDTO.Email
                     && context.Users.GetOneByEmail(updateDTO.Email) is not null;
@@ -152,7 +143,6 @@ namespace API.Accounts.Application.Services.UserService
                     return ResponseMessages.UserEmailAlreadyExists;
                 }
 
-                user.UserName = updateDTO.UserName ?? user.UserName;
                 user.FirstName = updateDTO.FirstName ?? user.FirstName;
                 user.LastName = updateDTO.LastName ?? user.LastName;
                 user.Email = updateDTO.Email ?? user.Email;
