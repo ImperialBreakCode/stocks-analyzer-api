@@ -36,14 +36,14 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 		public string GETStockPriceRoute(string stockName)
 			=> $"{BaseStockAPIHost}/api/StockAPI/Stock/Price/{stockName}";
 
-		public decimal GetCommissionBasedOnUserType(UserType userRank)
+		public decimal GetCommissionBasedOnUserType(UserRank userRank)
 		{
 			switch (userRank)
 			{
-				case UserType.Demo:
-				case UserType.RegularTrader: return _baseCommission;
-				case UserType.SpecialTrader: return _specialTraderCommission;
-				case UserType.VipTrader: return _vipTraderCommission;
+				case UserRank.Demo:
+				case UserRank.RegularTrader: return _baseCommission;
+				case UserRank.SpecialTrader: return _specialTraderCommission;
+				case UserRank.VipTrader: return _vipTraderCommission;
 				default: throw new Exception("Invalid user type!");
 			}
 		}

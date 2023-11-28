@@ -9,9 +9,7 @@ namespace API.StockAPI.Infrastructure.Interfaces
 {
     public interface IContextServices
     {
-        public Task<StockData> GetWeeklyStock(string symbol);
-        public Task<StockData> GetMonthlyStock(string symbol);
-        public Task CreateWeeklyStock(StockData data);
-        public Task CreateMonthlyStock(StockData data);
+        public Task<StockData> Get(string symbol, string type);
+        public Task<StockData> Create(StockData data, string type);
     }
 }

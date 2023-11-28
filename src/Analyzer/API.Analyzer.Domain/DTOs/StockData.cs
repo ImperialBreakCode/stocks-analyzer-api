@@ -15,7 +15,6 @@ namespace API.Analyzer.Domain.DTOs
         public double Low { get; set; }
         public double Close { get; set; }
         public int Volume { get; set; }
-        public decimal NetIncome { get; set; }
-        public decimal CommonSharesOutstanding { get; set; }
+
     }
 }

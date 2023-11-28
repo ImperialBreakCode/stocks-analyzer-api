@@ -5,7 +5,7 @@
     {
         public string Id { get; set; }
         public decimal Balance { get; set; }
-        public string UserName { get; set; }
+        public bool IsDemo { get; set; }
         public DateTime Date { get; set; }
     }
 }

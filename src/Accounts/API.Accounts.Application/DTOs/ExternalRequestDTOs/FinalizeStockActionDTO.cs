@@ -1,4 +1,4 @@
-﻿using API.Accounts.Application.Services.UserService;
+﻿using API.Accounts.Application.Services.UserService.UserRankService;
 
 namespace API.Accounts.Application.DTOs.ExternalRequestDTOs
 {
@@ -7,7 +7,7 @@ namespace API.Accounts.Application.DTOs.ExternalRequestDTOs
         public string WalletId { get; set; }
         public string UserId { get; set; }
         public bool IsSale { get; set; }
-        public UserType UserRank { get; set; }
+        public UserRank UserRank { get; set; }
         public ICollection<StockActionInfo> StockInfoRequestDTOs { get; set; }
     }
 }

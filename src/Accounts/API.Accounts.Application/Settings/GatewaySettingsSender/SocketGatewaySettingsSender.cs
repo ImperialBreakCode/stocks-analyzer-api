@@ -6,43 +6,57 @@ using System.Text;
 
 namespace API.Accounts.Application.Settings.GatewaySettingsSender
 {
-    internal class SocketGatewaySettingsSender : IGatewaySettingsSender
+    internal class SocketGatewaySettingsSender : ISocketGatewaySettingsSender
     {
-        public async Task<bool> SendAuthTokenSettingsToGateway(AuthValues gatewayKey, string gatewaySocketHost)
+        private ClientWebSocket _clientWebSocket;
+
+        public async Task<bool> SendAuthTokenSettingsToGateway(AuthValues gatewayAuthValues, string gatewaySocketHost)
         {
-            string dataJson = JsonConvert.SerializeObject(gatewayKey);
+            string dataJson = JsonConvert.SerializeObject(gatewayAuthValues);
 
-            using (var webSocketClient = new ClientWebSocket())
+            _clientWebSocket = new();
+
+            bool connectionSuccessfull = await ConnectAsync(gatewaySocketHost);
+            if (connectionSuccessfull)
             {
-                Uri uri = new(gatewaySocketHost + "/someRoute");
+                await SendAuthDataToGateway(dataJson);
+                await Complete();
+            }
 
-                try
-                {
-                    await webSocketClient.ConnectAsync(uri, CancellationToken.None);
-                }
-                catch (WebSocketException)
-                {
-                    return false;
-                }
+            _clientWebSocket.Dispose();
 
-                byte[] buffer = Encoding.UTF8.GetBytes(dataJson);
-                await webSocketClient.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+            return connectionSuccessfull;
+        }
 
-                try
-                {
-                    buffer = new byte[1024];
-                    var timeOut = new CancellationTokenSource(10000).Token;
-                    var result = await webSocketClient.ReceiveAsync(new ArraySegment<byte>(buffer), timeOut);
+        private async Task Complete()
+        {
+            byte[] buffer = new byte[1024];
+            var result = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
-                    await Task.Delay(1000);
-                    await webSocketClient.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
+            if (result.MessageType == WebSocketMessageType.Close)
+            {
+                await _clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
+            }
+        }
 
-                    return true;
-                }
-                catch (OperationCanceledException)
-                {
-                    return false;
-                }
+        private async Task SendAuthDataToGateway(string jsonData)
+        {
+            byte[] buffer = Encoding.UTF8.GetBytes(jsonData);
+            await _clientWebSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+
+        private async Task<bool> ConnectAsync(string gatewaySocketHost)
+        {
+            Uri uri = new(gatewaySocketHost + "/ws");
+
+            try
+            {
+                await _clientWebSocket.ConnectAsync(uri, CancellationToken.None);
+                return true;
+            }
+            catch (WebSocketException)
+            {
+                return false;
             }
         }
     }

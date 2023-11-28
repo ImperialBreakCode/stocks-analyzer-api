@@ -1,5 +1,6 @@
 ﻿using API.Accounts.Application.Data;
 using API.Accounts.Application.DTOs.Request;
+using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Domain.Entities;
 
 namespace API.Accounts.Application.Services.TransactionService
@@ -58,6 +59,41 @@ namespace API.Accounts.Application.Services.TransactionService
             }
 
             return true;
+        }
+
+        public ICollection<GetTransactionResponseDTO> GetTransactionsByUsername(string username)
+        {
+            ICollection<GetTransactionResponseDTO> transactions = new List<GetTransactionResponseDTO>();
+
+            using (var context = _accountsData.CreateDbContext())
+            {
+                ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
+
+                if (wallet is not null)
+                {
+                    transactions = GetTransactionsByWalletId(wallet.Id);
+                }
+            }
+
+            return transactions;
+        }
+
+        public ICollection<GetTransactionResponseDTO> GetTransactionsByWalletId(string walletId)
+        {
+            using (var context = _accountsData.CreateDbContext())
+            {
+                return context.Transactions
+                    .GetManyByCondition(t => t.Walletid == walletId)
+                    .Select(t => new GetTransactionResponseDTO()
+                    {
+                        Date = t.Date,
+                        Quantity = t.Quantity,
+                        TotalAmount = t.TotalAmount,
+                        Walletid = walletId,
+                        StockId = t.StockId
+                    })
+                    .ToList();
+            }
         }
 
         private decimal CalculateTotalAmount(TransactionStockInfo stockInfo, bool isSale)

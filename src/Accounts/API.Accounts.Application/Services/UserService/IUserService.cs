@@ -10,5 +10,6 @@ namespace API.Accounts.Application.Services.UserService
         GetUserResponseDTO? GetUserByUserName(string username);
         string? UpdateUser(UpdateUserDTO updateDTO, string username);
         void DeleteUser(string username);
+        bool ConfirmUser(string userId);
     }
 }

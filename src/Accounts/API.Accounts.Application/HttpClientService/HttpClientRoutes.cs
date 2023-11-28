@@ -12,11 +12,11 @@ namespace API.Accounts.Application.HttpClientService
         }
 
         public string FinalizeStockActionRoute
-            => $"{_settingsManager.GetExternalHosts.SettlementHost}/api/Settlement/processTransactions";
+            => $"{_settingsManager.ExternalHosts.SettlementHost}/api/Settlement/processTransactions";
 
         public string GetCurrentStockInfoRoute(string stockName)
         {
-            return $"{_settingsManager.GetExternalHosts.StockApiHost}/api/Stock/Current/{stockName}";
+            return $"{_settingsManager.ExternalHosts.StockApiHost}/api/Stock/Current/{stockName}";
         }
     }
 }
