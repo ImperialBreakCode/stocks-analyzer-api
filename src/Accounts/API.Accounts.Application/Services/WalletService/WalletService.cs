@@ -23,7 +23,7 @@ namespace API.Accounts.Application.Services.WalletService
         {
             using (var context = _accountData.CreateDbContext())
             {
-                User? user = context.Users.GetOneByUserName(username);
+                User? user = context.Users.GetConfirmedByUserName(username);
 
                 if (user is null)
                 {

@@ -8,27 +8,32 @@ using Hangfire;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Data.SQLite;
-using API.Settlement.Extensions.Middlewares;
 using API.Settlement.Infrastructure.Services.EmailServices;
+using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.DateTimeInterfaces;
+using API.Settlement.Infrastructure.Services.SQLiteServices.TransactionDatabase;
+using API.Settlement.Extensions.Middlewares;
 
 namespace API.Settlement.Extensions.Configuration
 {
     public static class ServiceExtensions
     {
-        public static void AddSQLiteConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static void AddSQLiteTransactionDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped(_ => new SQLiteConnection(configuration.GetConnectionString("SQLiteConnection")));
-            services.AddSingleton<IDatabaseInitializer>(_ => new DatabaseInitializer(configuration.GetConnectionString("SQLiteConnection")));
+            services.AddSingleton<ISQLiteTransactionDatabaseInitializer>(_ => new SQLiteTransactionDatabaseInitializer(configuration.GetConnectionString("SQLiteConnection")));
         }
         public static void AddCustomServices(this IServiceCollection services)
         {
             services.AddHttpClient();
             services.AddAutoMapper(typeof(Infrastructure.Mappings.MappingProfile).Assembly);
 
+            services.AddScoped<IUserCommissionService, UserCommissionService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddScoped<IFailedTransactionRepository, FailedTransactionRepository>();
             services.AddScoped<ISuccessfulTransactionRepository, SuccessfulTransactionRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITransactionDatabaseContext, TransactionDatabaseContext>();
             services.AddTransient<ITransactionResponseHandlerService, TransactionResponseHandlerService>();
             services.AddTransient<IInfrastructureConstants, InfrastructureConstants>();
             services.AddTransient<ITransactionMapperService, TransactionMapperService>();
@@ -36,7 +41,7 @@ namespace API.Settlement.Extensions.Configuration
             services.AddTransient<IBuyService, BuyService>();
             services.AddTransient<ISellService, SellService>();
             services.AddTransient<ITransactionWrapper, TransactionWrapper>();
-            services.AddTransient<IJobService, JobService>();
+            services.AddTransient<IHangfireJobService, HangfireJobService>();
             services.AddScoped<IHangfireService, HangfireService>();
             services.AddScoped<ISettlementService, SettlementService>();
         }
@@ -57,7 +62,7 @@ namespace API.Settlement.Extensions.Configuration
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                var _databaseInitializer = scope.ServiceProvider.GetRequiredService<IDatabaseInitializer>();
+                var _databaseInitializer = scope.ServiceProvider.GetRequiredService<ISQLiteTransactionDatabaseInitializer>();
                 _databaseInitializer.Initialize();
             }
         }
@@ -67,7 +72,7 @@ namespace API.Settlement.Extensions.Configuration
             services.Configure<WalletDatabaseSettings>(
                 configuration.GetSection(nameof(WalletDatabaseSettings)));
 
-            services.AddSingleton<IWalletDbSettings>(w =>
+            services.AddSingleton<IWalletDatabaseSettings>(w =>
                 w.GetRequiredService<IOptions<WalletDatabaseSettings>>().Value);
 
             services.AddSingleton<IMongoClient>(m =>

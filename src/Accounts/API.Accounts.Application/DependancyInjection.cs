@@ -16,6 +16,8 @@ using API.Accounts.Application.Settings.GatewaySettingsSender;
 using API.Accounts.Application.Settings;
 using API.Accounts.Application.Settings.UpdateHandlers;
 using Microsoft.Extensions.DependencyInjection;
+using API.Accounts.Application.Services.UserService.UserRankService;
+using API.Accounts.Application.Services.UserService.EmailService;
 
 namespace API.Accounts.Application
 {
@@ -83,7 +85,7 @@ namespace API.Accounts.Application
             where TSettingsAdapter : class, IAccountsSettingsManager
         {
             services.AddSingleton<IAccountsSettingsManager, TSettingsAdapter>();
-            services.AddTransient<IGatewaySettingsSender, SocketGatewaySettingsSender>();
+            services.AddSingleton<ISocketGatewaySettingsSender, SocketGatewaySettingsSender>();
 
             return services;
         }
@@ -99,7 +101,8 @@ namespace API.Accounts.Application
         private static void AddUserService(IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IUserTypeManager, UserTypeManager>();
+            services.AddTransient<IUserRankManager, UserRankManager>();
+            services.AddTransient<IEmailConfirmation, EmailConfirmation>();
         }
     }
 }

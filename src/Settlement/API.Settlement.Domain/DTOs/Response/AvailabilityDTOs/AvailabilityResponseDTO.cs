@@ -1,4 +1,6 @@
-﻿namespace API.Settlement.Domain.DTOs.Response.AvailabilityDTOs
+﻿using API.Settlement.Domain.Enums;
+
+namespace API.Settlement.Domain.DTOs.Response.AvailabilityDTOs
 {
 	public class AvailabilityResponseDTO
 	{
@@ -6,6 +8,7 @@
 		public string UserId { get; set; }
 		public string UserEmail { get; set; }
 		public bool IsSale { get; set; }
+		public UserRank UserRank { get; set; }
 		public IEnumerable<AvailabilityStockInfoResponseDTO> AvailabilityStockInfoResponseDTOs { get; set; }
 		public decimal TotalSuccessfulPrice => AvailabilityStockInfoResponseDTOs.Where(ь => ь.IsSuccessful).Sum(ь => ь.TotalPriceIncludingCommission);
 	}

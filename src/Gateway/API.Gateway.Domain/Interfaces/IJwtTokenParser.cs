@@ -9,5 +9,6 @@ namespace API.Gateway.Domain.Interfaces
 	public interface IJwtTokenParser
 	{
 		string GetUsernameFromToken();
+		string GetEmailFromToken();
 	}
 }
