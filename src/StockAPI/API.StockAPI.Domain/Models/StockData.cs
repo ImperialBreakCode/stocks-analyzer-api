@@ -16,6 +16,5 @@ namespace API.StockAPI.Domain.Models
         public double High { get; set; }
         public double Close { get; set; }
         public int Volume { get; set; }
-
     }
 }
