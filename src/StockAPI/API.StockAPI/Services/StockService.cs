@@ -16,7 +16,7 @@ namespace API.StockAPI.Services
             throw new NotImplementedException();
         }
 
-        public StockData? GetDataFromCsvResponse(string symbol, string response, string type)
+        public StockData GetDataFromCsvResponse(string symbol, string response, string type)
         {
             //int skipValue;
             //if (type == "current")
