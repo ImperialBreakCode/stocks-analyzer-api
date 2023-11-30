@@ -2,8 +2,10 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Entities.Emails;
 using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
+using API.Settlement.Domain.Interfaces.EmailInterfaces;
 using API.Settlement.Infrastructure.Helpers.Constants;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using AutoMapper;
@@ -15,14 +17,17 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IMapper _mapper;
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly IUserCommissionService _commissionService;
+		private readonly IPDFGenerator _pdfGenerator;
 
 		public TransactionMapperService(IMapper mapper,
 									IInfrastructureConstants infrastructureConstants,
-									IUserCommissionService commissionService)
+									IUserCommissionService commissionService,
+									IPDFGenerator generator)
 		{
 			_mapper = mapper;
 			_infrastructureConstants = infrastructureConstants;
 			_commissionService = commissionService;
+			_pdfGenerator = generator;
 		}
 
 		public AvailabilityStockInfoResponseDTO MapToAvailabilityStockInfoResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
@@ -157,9 +162,9 @@ namespace API.Settlement.Infrastructure.Services
 
 			return stock;
 		}
-		public Email CreateEmailDTO(string userEmail, string subject, string message)
+		public NotifyingEmail CreateEmailDTO(string userEmail, string subject, string message)
 		{
-			return new Email()
+			return new NotifyingEmail()
 			{
 				To = userEmail,
 				Subject = subject,
@@ -167,5 +172,31 @@ namespace API.Settlement.Infrastructure.Services
 			};
 		}
 
+		public Transaction MapToSelllTransactionEntity(Wallet wallet, Stock stock, decimal actualTotalStockPrice)
+		{
+			var transaction = _mapper.Map<Transaction>(wallet);
+			transaction = _mapper.Map(stock, transaction);
+			transaction.TransactionId = new Guid().ToString();
+			transaction.IsSale = true;
+			transaction.Message = _infrastructureConstants.TransactionScheduledMessage;
+			transaction.TotalPriceIncludingCommission = _commissionService.CalculatePriceAfterAddingSaleCommission(actualTotalStockPrice, wallet.UserRank);
+			return transaction;
+		}
+
+		public FinalizingEmail CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject)
+		{
+			var pdfBytes = _pdfGenerator.GenerateTransactionSummaryReportPDF(finalizeTransactionResponseDTO);
+			var finalizingEmail = new FinalizingEmail()
+			{
+				To = finalizeTransactionResponseDTO.UserEmail,
+				Subject = subject,
+				Body = "Body",
+				Attachment = pdfBytes,
+				AttachmentFileName = "TransactionSummary.pdf",
+				AttachmentMimeType = "application/pdf"
+			};
+			return finalizingEmail;
+
+		}
 	}
 }

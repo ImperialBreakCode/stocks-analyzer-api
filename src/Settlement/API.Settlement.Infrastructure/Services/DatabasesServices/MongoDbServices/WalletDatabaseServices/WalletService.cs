@@ -3,7 +3,9 @@ using API.Settlement.Domain.Entities;
 using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.RabbitMQInterfaces;
 using API.Settlement.Infrastructure.Helpers.Constants;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,7 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbServices
+namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabasebServices
 {
     public class WalletService : IWalletService
 	{
@@ -23,12 +25,16 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IEmailService _emailService;
 		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
+		private readonly IRabbitMQSellTransactionProducer _rabbitMQSellTransactionProducer;
+		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
 		public WalletService(IWalletRepository walletRepository,
 							ITransactionMapperService transactionMapperService,
 							IInfrastructureConstants infrastructureConstants,
 							IHttpClientFactory httpClientFactory,
 							IEmailService emailService,
-							ITransactionDatabaseContext transactionDatabaseContext)
+							ITransactionDatabaseContext transactionDatabaseContext,
+							IRabbitMQSellTransactionProducer rabbitMQSellTransactionProducer,
+							IOutboxDatabaseContext outboxDatabaseContext)
 		{
 			_walletRepository = walletRepository;
 			_transactionMapperService = transactionMapperService;
@@ -36,6 +42,8 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 			_httpClientFactory = httpClientFactory;
 			_emailService = emailService;
 			_transactionDatabaseContext = transactionDatabaseContext;
+			_rabbitMQSellTransactionProducer = rabbitMQSellTransactionProducer;
+			_outboxDatabaseContext = outboxDatabaseContext;
 		}
 
 		public void UpdateStocksInWallet(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
@@ -65,33 +73,31 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDbService
 				foreach (var stock in wallet.Stocks)
 				{
 					var actualSingleStockPrice = 900;//await GetActualSingleStockPrice(stock.StockName);
-					var actualTotalStockPrice = stock.Quantity * actualSingleStockPrice;
-					var percentageDifference = (actualTotalStockPrice - stock.InvestedAmount) / stock.InvestedAmount * 100;
+					decimal actualTotalStockPrice = stock.Quantity * actualSingleStockPrice;
+					double percentageDifference = (double)((actualTotalStockPrice - stock.InvestedAmount) / stock.InvestedAmount * 100);
 
 					if (percentageDifference > 0)
 					{
 						var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has increased by {percentageDifference}%!");
-						await _emailService.SendEmail(emailDTO);
+						await _emailService.SendEmailWithoutAttachment(emailDTO);
 					}
 					else if (percentageDifference < 0)
 					{
 						if (percentageDifference <= -15)
 						{
 							_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
-							//TODO: 
-							//var transactionDTO = _transactionMapperService.MapToTransactionDTO(wallet, stock);
-							//give it to the outbox pattern table failed
-							//outbox pattern give it to the rabbidmq;
-							//remove the row from the failed table in OP and add to the Succes table in OP
-							//_transactionDatabaseContext.SuccessfulTransactions.Add(transactionDTO);
+							var transaction = _transactionMapperService.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
+							_transactionDatabaseContext.FailedTransactions.Add(transaction);
+							_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(transaction);
 
+							//for emailDTO to add attachment pdf containing the transaction info
 							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%! It has been automatically sold!");
-							await _emailService.SendEmail(emailDTO);
+							await _emailService.SendEmailWithoutAttachment(emailDTO);
 						}
 						else
 						{
 							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%!");
-							await _emailService.SendEmail(emailDTO);
+							await _emailService.SendEmailWithoutAttachment(emailDTO);
 						}
 					}
 					else

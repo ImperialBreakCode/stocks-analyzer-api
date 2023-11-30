@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DateTimeInterfaces;
 using System;
@@ -20,6 +21,8 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 			_connection = connection;
 			_dateTimeService = dateTimeService;
 		}
+
+
 		public void Add(Transaction transaction)
 		{
 			string commandText = $@"INSERT INTO FailedTransaction
@@ -99,19 +102,28 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 		{
 			bool containsTransaction = false;
 			string commandText = $"SELECT COUNT(*) FROM FailedTransaction WHERE TransactionId = @TransactionId";
-			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
+			try
 			{
-				_connection.Open();
+				using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
+				{
+					_connection.Open();
 
-				command.Parameters.AddWithValue("@TransactionId", transactionId);
+					command.Parameters.AddWithValue("@TransactionId", transactionId);
 
-				int count = Convert.ToInt32(command.ExecuteScalar());
-				containsTransaction = (count > 0);
-				_connection.Close();
+					int count = Convert.ToInt32(command.ExecuteScalar());
+					containsTransaction = (count > 0);
+					_connection.Close();
+
+				}
+				return containsTransaction;
 
 			}
+			catch (Exception ex)
+			{
+                Console.WriteLine(ex.Message);
+            }
+			return false;
 
-			return containsTransaction;
 		}
 	}
 }

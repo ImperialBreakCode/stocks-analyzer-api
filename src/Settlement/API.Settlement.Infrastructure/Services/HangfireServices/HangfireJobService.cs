@@ -21,6 +21,7 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly ITransactionResponseHandlerService _transactionResponseHandlerService;
 		private readonly ITransactionDatabaseContext _unitOfWork;
 		private readonly IWalletService _walletService;
+		private readonly IEmailService _emailService;
 
 
 		public HangfireJobService(IHttpClientFactory httpClientFactory,
@@ -28,7 +29,8 @@ namespace API.Settlement.Infrastructure.Services
 						IInfrastructureConstants infrastructureConstants,
 						ITransactionResponseHandlerService transactionResponseHandlerService,
 						ITransactionDatabaseContext unitOfWork,
-						IWalletService walletService)
+						IWalletService walletService,
+						IEmailService emailService)
 		{
 			_httpClientFactory = httpClientFactory;
 			_transactionMapperService = transactionMapperService;
@@ -36,12 +38,17 @@ namespace API.Settlement.Infrastructure.Services
 			_transactionResponseHandlerService = transactionResponseHandlerService;
 			_unitOfWork = unitOfWork;
 			_walletService = walletService;
+			_emailService = emailService;
 		}
 
 		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO)
 		{
 			var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
 			var finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(availabilityResponseDTO);
+
+			//var emailDTO = _transactionMapperService.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, "Transaction Summary Report");
+			//await _emailService.SendEmailWithAttachment(emailDTO);
+
 			using (var httpClient = _httpClientFactory.CreateClient())
 			{
 				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
@@ -49,8 +56,10 @@ namespace API.Settlement.Infrastructure.Services
 				try
 				{
 					response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
+					//var emailDTO = _transactionMapperService.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, "Transaction Summary Report");
+					//await _emailService.SendEmailWithAttachment(emailDTO);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
                     await Console.Out.WriteLineAsync(ex.Message);
                 }

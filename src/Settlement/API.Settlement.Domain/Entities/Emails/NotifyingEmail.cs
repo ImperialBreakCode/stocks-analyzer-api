@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Settlement.Domain.Entities
+namespace API.Settlement.Domain.Entities.Emails
 {
-	public class Email
-	{
-		public string To { get; set; }
-		public string Subject { get; set; }
+    public class NotifyingEmail
+    {
+        public string To { get; set; }
+        public string Subject { get; set; }
         public string Body { get; set; }
     }
 }

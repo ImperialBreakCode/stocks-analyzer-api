@@ -1,4 +1,5 @@
-﻿using System;
+﻿using API.Settlement.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Interfaces.RabbitMQInterfaces
 {
-	public interface IRabbitMQProducer
+	public interface IRabbitMQSellTransactionProducer
 	{
-		void SendProductMessage<Т>(Т message);
+		void SendMessage(Transaction message);
 	}
 }
