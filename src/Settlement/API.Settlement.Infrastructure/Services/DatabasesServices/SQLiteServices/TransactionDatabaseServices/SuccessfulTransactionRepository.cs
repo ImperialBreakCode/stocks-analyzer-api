@@ -24,15 +24,16 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 		public void Add(Transaction transaction)
 		{
 			string commandText = $@"INSERT INTO SuccessfulTransaction
-                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, IsSale, Message) VALUES 
-                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @IsSale, @Message)";
+                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, UserEmail, IsSale, Message) VALUES 
+                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @UserEmail, @IsSale, @Message)";
 
 			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
 			{
 				_connection.Open();
 				command.Parameters.AddWithValue("@WalletId", transaction.WalletId);
 				command.Parameters.AddWithValue("@UserId", transaction.UserId);
-				command.Parameters.AddWithValue("@IsSale", 0);
+				command.Parameters.AddWithValue("@UserEmail", transaction.UserEmail);
+				command.Parameters.AddWithValue("@IsSale", transaction.IsSale);
 				command.Parameters.AddWithValue("TransactionId", transaction.TransactionId);
 				command.Parameters.AddWithValue("TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
 				command.Parameters.AddWithValue("Quantity", transaction.Quantity);

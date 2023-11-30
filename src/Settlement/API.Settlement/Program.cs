@@ -8,7 +8,7 @@ var configuration = builder.Configuration;
 
 // Add services to the container
 builder.Services.AddSQLiteTransactionDatabaseConfiguration(configuration);
-//builder.Services.AddSQLiteOutboxDatabaseConfiguration(configuration);
+builder.Services.AddMSSQLOutboxDatabaseConfiguration(configuration);
 builder.Services.AddCustomServices();
 builder.Services.AddHangfireConfiguration(configuration);
 builder.Services.AddWalletDatabaseConfiguration(configuration);
@@ -36,7 +36,7 @@ app.UseAuthorization();
 app.UseCustomMiddlewares();
 
 app.UseSQLiteTransactionDatabaseInitialization();
-app.UseSQLiteOutboxDatabaseInitialization();
+//app.UseMSSQLOutboxDatabaseInitialization();
 
 app.UseEndpoints(endpoints =>
 {

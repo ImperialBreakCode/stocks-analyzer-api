@@ -12,6 +12,7 @@ namespace API.Settlement.Domain.Entities
 		public string TransactionId { get; set; }
 		public string WalletId { get; set; }
 		public string UserId { get; set; }
+		public string UserEmail { get; set; }
 		public UserRank UserRank { get; set; }
 		public bool IsSale { get; set; }
 		public string Message { get; set; }

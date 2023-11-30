@@ -50,6 +50,7 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices.TransactionDatab
 					StockId TEXT,
 					UserId TEXT,
 					WalletId TEXT,
+                    UserEmail TEXT,
 					IsSale INTEGER,
 					Message TEXT,
 					PRIMARY KEY(TransactionId)
@@ -67,6 +68,7 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices.TransactionDatab
 					StockId TEXT,
 					UserId TEXT,
 					WalletId TEXT,
+                    UserEmail TEXT,
 					IsSale INTEGER,
 					Message TEXT,
 					PRIMARY KEY(TransactionId)

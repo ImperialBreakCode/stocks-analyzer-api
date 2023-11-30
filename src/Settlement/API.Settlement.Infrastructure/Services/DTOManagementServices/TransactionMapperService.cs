@@ -85,6 +85,7 @@ namespace API.Settlement.Infrastructure.Services
 			{
 				transaction.WalletId = finalizeTransactionResponseDTO.WalletId;
 				transaction.UserId = finalizeTransactionResponseDTO.UserId;
+				transaction.UserEmail = finalizeTransactionResponseDTO.UserEmail;
 				transaction.IsSale = finalizeTransactionResponseDTO.IsSale;
 			}
 
@@ -93,7 +94,7 @@ namespace API.Settlement.Infrastructure.Services
 		public IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> transactions)
 		{
 			var groupedTransactions = transactions
-				.GroupBy(transaction => new { transaction.WalletId, transaction.UserId, transaction.IsSale });
+				.GroupBy(transaction => new { transaction.WalletId, transaction.UserId, transaction.UserEmail, transaction.IsSale });
 
 			var finalizeTransactionResponseDTOs = new List<FinalizeTransactionResponseDTO>();
 			foreach (var currentGroup in groupedTransactions)
@@ -101,6 +102,7 @@ namespace API.Settlement.Infrastructure.Services
 				var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
 				finalizeTransactionResponseDTO.WalletId = currentGroup.Key.WalletId;
 				finalizeTransactionResponseDTO.UserId = currentGroup.Key.UserId;
+				finalizeTransactionResponseDTO.UserEmail = currentGroup.Key.UserEmail;
 				finalizeTransactionResponseDTO.IsSale = currentGroup.Key.IsSale;
 
 				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces
 {
-	public interface ISQLiteOutboxDatabaseInitializer
+	public interface IMSSQLOutboxDatabaseInitializer
 	{
 		void Initialize();
 	}

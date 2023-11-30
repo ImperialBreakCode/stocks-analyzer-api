@@ -26,14 +26,15 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 		public void Add(Transaction transaction)
 		{
 			string commandText = $@"INSERT INTO FailedTransaction
-                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, IsSale, Message) VALUES 
-                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @IsSale, @Message)";
+                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, UserEmail, IsSale, Message) VALUES 
+                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @UserEmail, @IsSale, @Message)";
 
 			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
 			{
 				_connection.Open();
 				command.Parameters.AddWithValue("@WalletId", transaction.WalletId);
 				command.Parameters.AddWithValue("@UserId", transaction.UserId);
+				command.Parameters.AddWithValue("@UserEmail", transaction.UserEmail);
 				command.Parameters.AddWithValue("@IsSale", transaction.IsSale);
 				command.Parameters.AddWithValue("TransactionId", transaction.TransactionId);
 				command.Parameters.AddWithValue("TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
@@ -83,6 +84,7 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 							TransactionId = Convert.ToString(reader["TransactionId"]),
 							WalletId = Convert.ToString(reader["WalletId"]),
 							UserId = Convert.ToString(reader["UserId"]),
+							UserEmail = Convert.ToString(reader["UserEmail"]),
 							IsSale = Convert.ToBoolean(reader["IsSale"]),
 							Message = Convert.ToString(reader["Message"]),
 							StockId = Convert.ToString(reader["StockId"]),

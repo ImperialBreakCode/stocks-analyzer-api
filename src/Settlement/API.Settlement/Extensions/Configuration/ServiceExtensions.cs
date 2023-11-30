@@ -25,6 +25,7 @@ using DinkToPdf.Contracts;
 using DinkToPdf;
 using Microsoft.Extensions.DependencyInjection;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces;
+using Microsoft.Data.SqlClient;
 
 namespace API.Settlement.Extensions.Configuration
 {
@@ -38,11 +39,11 @@ namespace API.Settlement.Extensions.Configuration
 			services.AddSingleton<ISQLiteTransactionDatabaseInitializer>(_ => new SQLiteTransactionDatabaseInitializer(connectionString));
 		}
 
-		public static void AddSQLiteOutboxDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
+		public static void AddMSSQLOutboxDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
 		{
-			var connectionString = configuration.GetConnectionString("SQLiteOutboxConnection");
-			services.AddScoped(_ => new SQLiteConnection(connectionString));
-			services.AddSingleton<ISQLiteOutboxDatabaseInitializer>(_ => new SQLiteOutboxDatabaseInitializer(connectionString));
+			var connectionString = configuration.GetConnectionString("MSSQLOutboxConnection");
+			services.AddScoped(_ => new SqlConnection(connectionString));
+			services.AddSingleton<IMSSQLOutboxDatabaseInitializer>(_ => new MSSQLOutboxDatabaseInitializer(connectionString));
 		}
 		public static void UseSQLiteTransactionDatabaseInitialization(this IApplicationBuilder app)
 		{
@@ -53,11 +54,11 @@ namespace API.Settlement.Extensions.Configuration
 			}
 		}
 
-		public static void UseSQLiteOutboxDatabaseInitialization(this IApplicationBuilder app)
+		public static void UseMSSQLOutboxDatabaseInitialization(this IApplicationBuilder app)
 		{
 			using (var scope = app.ApplicationServices.CreateScope())
 			{
-				var _databaseInitializer = scope.ServiceProvider.GetRequiredService<ISQLiteOutboxDatabaseInitializer>();
+				var _databaseInitializer = scope.ServiceProvider.GetRequiredService<IMSSQLOutboxDatabaseInitializer>();
 				_databaseInitializer.Initialize();
 			}
 		}
