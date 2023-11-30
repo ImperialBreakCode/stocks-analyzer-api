@@ -3,6 +3,7 @@ using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
 using API.Settlement.Domain.Entities.Emails;
+using API.Settlement.Domain.Entities.OutboxEntities;
 using API.Settlement.Domain.Enums;
 using API.Settlement.Infrastructure.Helpers.Enums;
 
@@ -24,5 +25,6 @@ namespace API.Settlement.Domain.Interfaces
 		NotifyingEmail CreateEmailDTO(string userEmail, string subject,string message);
 		Transaction MapToSelllTransactionEntity(Wallet wallet, Stock stock, decimal actualTotalStockPrice);
 		FinalizingEmail CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject);
+		OutboxPendingMessageEntity MapToOutboxPendingMessageEntity(Transaction transaction);
 	}
 }

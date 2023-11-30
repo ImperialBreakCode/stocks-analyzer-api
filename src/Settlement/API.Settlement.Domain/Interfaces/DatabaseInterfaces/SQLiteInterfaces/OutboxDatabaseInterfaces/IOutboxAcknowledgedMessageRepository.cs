@@ -1,4 +1,5 @@
-﻿using System;
+﻿using API.Settlement.Domain.Entities.OutboxEntities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.O
 {
 	public interface IOutboxAcknowledgedMessageRepository
 	{
+		void AddAcknowledgedMessage(OutboxAcknowledgedMessageEntity outboxAcknowledgedMessageEntity);
 	}
 }

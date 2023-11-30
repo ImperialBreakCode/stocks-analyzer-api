@@ -1,10 +1,11 @@
 ﻿using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Entities.OutboxEntities;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DateTimeInterfaces;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,32 +15,43 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 {
 	public class OutboxPendingMessageRepository : IOutboxPendingMessageRepository
 	{
-		private readonly SQLiteConnection _connection;
-		private readonly IDateTimeService _dateTimeService;
+		private readonly SqlConnection _connection;
 
-		public OutboxPendingMessageRepository(SQLiteConnection connection, 
-											IDateTimeService dateTimeService)
+		public OutboxPendingMessageRepository(SqlConnection connection)
 		{
 			_connection = connection;
-			_dateTimeService = dateTimeService;
 		}
 
-		public void AddPendingMessage(Transaction message)
+		public void AddPendingMessage(OutboxPendingMessageEntity outboxPendingMessageEntity)
 		{
 			string commandText = $@"INSERT INTO PendingMessage
 								(Id, MessageType, Body, PendingDateTime) VALUES
-								(@Id, @MessageType, @body, @PendingDateTime)";
+								(@Id, @MessageType, @Body, @PendingDateTime)";
 
-			using(SQLiteCommand command = new SQLiteCommand(commandText, _connection))
+			using (SqlCommand command = new SqlCommand(commandText, _connection))
 			{
 				_connection.Open();
-				command.Parameters.AddWithValue("@Id", new Guid().ToString());
-				command.Parameters.AddWithValue("@MessageType", "transactionSellStock");
-				command.Parameters.AddWithValue("@Body", JsonConvert.SerializeObject(message));
-				command.Parameters.AddWithValue("@PendingDateTime", _dateTimeService.UtcNow);
+				command.Parameters.AddWithValue("@Id", outboxPendingMessageEntity.Id);
+				command.Parameters.AddWithValue("@MessageType", outboxPendingMessageEntity.MessageType);
+				command.Parameters.AddWithValue("@Body", JsonConvert.SerializeObject(outboxPendingMessageEntity.Body));
+				command.Parameters.AddWithValue("@PendingDateTime", outboxPendingMessageEntity.PendingDateTime);
 				command.ExecuteNonQuery();
+				_connection.Close();
 			}
-			_connection.Close();
 		}
+		
+
+		public void DeletePendingMessage(string id)
+		{
+			string commandText = $@"DELETE FROM PendingMessage WHERE TransactionId = @TransactionId";
+			using (SqlCommand command = new SqlCommand(commandText, _connection))
+			{
+				_connection.Open();
+				command.Parameters.AddWithValue("@TransactionId", id);
+				command.ExecuteNonQuery();
+				_connection.Close();
+			}
+		}
+
 	}
 }

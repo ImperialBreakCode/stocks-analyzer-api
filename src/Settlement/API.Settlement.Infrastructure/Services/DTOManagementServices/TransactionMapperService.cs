@@ -3,12 +3,14 @@ using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
 using API.Settlement.Domain.Entities.Emails;
+using API.Settlement.Domain.Entities.OutboxEntities;
 using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Domain.Interfaces.EmailInterfaces;
 using API.Settlement.Infrastructure.Helpers.Constants;
 using API.Settlement.Infrastructure.Helpers.Enums;
 using AutoMapper;
+using Newtonsoft.Json;
 
 namespace API.Settlement.Infrastructure.Services
 {
@@ -178,7 +180,7 @@ namespace API.Settlement.Infrastructure.Services
 		{
 			var transaction = _mapper.Map<Transaction>(wallet);
 			transaction = _mapper.Map(stock, transaction);
-			transaction.TransactionId = new Guid().ToString();
+			transaction.TransactionId = Guid.NewGuid().ToString();
 			transaction.IsSale = true;
 			transaction.Message = _infrastructureConstants.TransactionScheduledMessage;
 			transaction.TotalPriceIncludingCommission = _commissionService.CalculatePriceAfterAddingSaleCommission(actualTotalStockPrice, wallet.UserRank);
@@ -199,6 +201,17 @@ namespace API.Settlement.Infrastructure.Services
 			};
 			return finalizingEmail;
 
+		}
+
+		public OutboxPendingMessageEntity MapToOutboxPendingMessageEntity(Transaction transaction)
+		{
+			return new OutboxPendingMessageEntity()
+			{
+				Id = transaction.TransactionId,
+				MessageType = "transactionSellStock",
+				Body = JsonConvert.SerializeObject(transaction),
+				PendingDateTime = DateTime.UtcNow
+			};
 		}
 	}
 }

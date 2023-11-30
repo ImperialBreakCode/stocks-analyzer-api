@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Entities.OutboxEntities;
 using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces;
@@ -72,7 +73,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 			{
 				foreach (var stock in wallet.Stocks)
 				{
-					var actualSingleStockPrice = 900;//await GetActualSingleStockPrice(stock.StockName);
+					var actualSingleStockPrice = 850;//await GetActualSingleStockPrice(stock.StockName);
 					decimal actualTotalStockPrice = stock.Quantity * actualSingleStockPrice;
 					double percentageDifference = (double)((actualTotalStockPrice - stock.InvestedAmount) / stock.InvestedAmount * 100);
 
@@ -88,9 +89,9 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 							_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
 							var transaction = _transactionMapperService.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
 							_transactionDatabaseContext.FailedTransactions.Add(transaction);
-							_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(transaction);
+							var outboxPendingMessageEntity = _transactionMapperService.MapToOutboxPendingMessageEntity(transaction);
+							_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(outboxPendingMessageEntity);
 
-							//for emailDTO to add attachment pdf containing the transaction info
 							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%! It has been automatically sold!");
 							await _emailService.SendEmailWithoutAttachment(emailDTO);
 						}

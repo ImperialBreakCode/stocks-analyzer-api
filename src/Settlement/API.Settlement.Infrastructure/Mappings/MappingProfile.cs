@@ -2,6 +2,7 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Entities.OutboxEntities;
 using AutoMapper;
 
 namespace API.Settlement.Infrastructure.Mappings
@@ -75,6 +76,9 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.StockId, opt => opt.MapFrom(src => src.StockId))
 				.ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.StockName))
 				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
+
+
 
 
 		}

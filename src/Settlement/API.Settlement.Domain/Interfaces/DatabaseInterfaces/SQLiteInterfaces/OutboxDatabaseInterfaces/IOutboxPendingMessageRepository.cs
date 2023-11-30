@@ -1,4 +1,5 @@
 ﻿using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Entities.OutboxEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.O
 {
 	public interface IOutboxPendingMessageRepository
 	{
-		void AddPendingMessage(Transaction message);
+		void AddPendingMessage(OutboxPendingMessageEntity message);
+		void DeletePendingMessage(string transactionId);
 	}
 }
