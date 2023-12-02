@@ -20,7 +20,7 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly ITransactionResponseHandlerService _transactionResponseHandlerService;
-		private readonly ITransactionDatabaseContext _unitOfWork;
+		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
 		private readonly IWalletService _walletService;
 		private readonly IEmailService _emailService;
 		private readonly IRabbitMQService _rabbitMQService;
@@ -39,7 +39,7 @@ namespace API.Settlement.Infrastructure.Services
 			_transactionMapperService = transactionMapperService;
 			_infrastructureConstants = infrastructureConstants;
 			_transactionResponseHandlerService = transactionResponseHandlerService;
-			_unitOfWork = unitOfWork;
+			_transactionDatabaseContext = unitOfWork;
 			_walletService = walletService;
 			_emailService = emailService;
 			_rabbitMQService = rabbitMQService;
@@ -47,7 +47,7 @@ namespace API.Settlement.Infrastructure.Services
 
 		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO)
 		{
-			var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+			HttpResponseMessage response = null;
 			var finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(availabilityResponseDTO);
 
 			//var emailDTO = _transactionMapperService.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, "Transaction Summary Report");
@@ -81,16 +81,16 @@ namespace API.Settlement.Infrastructure.Services
 		{
 			using (var httpClient = _httpClientFactory.CreateClient())
 			{
-				var failedTransactionEntities = _unitOfWork.FailedTransactions.GetAll();
+				var failedTransactionEntities = _transactionDatabaseContext.FailedTransactions.GetAll();
 				var finalizeTransactionResponseDTOs = _transactionMapperService.MapToFinalizeTransactionResponseDTOs(failedTransactionEntities);
 				foreach (var finalizeTransactionResponseDTO in finalizeTransactionResponseDTOs)
 				{
 					var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
 					var content = new StringContent(json, Encoding.UTF8, "application/json");
-					var response = new HttpResponseMessage(HttpStatusCode.OK);
+					HttpResponseMessage response = null;
 					try
 					{
-						//response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
+						response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
 					}
 					catch (Exception ex)
 					{

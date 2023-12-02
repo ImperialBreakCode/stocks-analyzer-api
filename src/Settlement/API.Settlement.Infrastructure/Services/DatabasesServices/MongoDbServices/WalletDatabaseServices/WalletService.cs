@@ -73,7 +73,8 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 			{
 				foreach (var stock in wallet.Stocks)
 				{
-					var actualSingleStockPrice = 850;//await GetActualSingleStockPrice(stock.StockName);
+					//var actualSingleStockPrice = 850;
+					var actualSingleStockPrice = await GetActualSingleStockPrice(stock.StockName);
 					decimal actualTotalStockPrice = stock.Quantity * actualSingleStockPrice;
 					double percentageDifference = (double)((actualTotalStockPrice - stock.InvestedAmount) / stock.InvestedAmount * 100);
 

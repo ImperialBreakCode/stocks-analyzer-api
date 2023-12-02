@@ -23,8 +23,7 @@ namespace API.Settlement.Infrastructure.Services
 		}
 		public void HandleTransactionResponse(HttpResponseMessage response, IEnumerable<Transaction> transactions)
 		{
-			//if(response.IsSuccessStatusCode)
-			if (response.StatusCode == HttpStatusCode.OK)
+			if(response.IsSuccessStatusCode)
 			{
 				foreach (var transaction in transactions)
 				{
