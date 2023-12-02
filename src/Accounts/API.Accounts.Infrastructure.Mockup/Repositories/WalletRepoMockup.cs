@@ -11,17 +11,6 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
         {
         }
 
-        public override void Insert(Wallet entity)
-        {
-            User? user = MemoryData.Get<User>(entity.UserId);
-            if (user != null && MemoryData.GetAll<Wallet>().Where(w => w.UserId == user.Id).Any())
-            {
-                throw new ArgumentException("User already has a wallet.");
-            }
-
-            base.Insert(entity);
-        }
-
         public void DeleteWalletWithItsChildren(string walletId)
         {
             Wallet? wallet = MemoryData.Get<Wallet>(walletId);

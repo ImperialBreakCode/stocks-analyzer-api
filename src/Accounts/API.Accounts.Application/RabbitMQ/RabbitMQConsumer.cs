@@ -25,7 +25,7 @@ namespace API.Accounts.Application.RabbitMQ
 
         public void StartConsumer()
         {
-            _channel.QueueDeclare(_queueName);
+            _channel.QueueDeclare(_queueName, exclusive: false);
             _channel.BasicConsume(_queueName, true, _consumer);
         }
 
