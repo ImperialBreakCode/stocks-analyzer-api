@@ -33,7 +33,7 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 				_connection.Open();
 				command.Parameters.AddWithValue("@Id", outboxPendingMessageEntity.Id);
 				command.Parameters.AddWithValue("@QueueType", outboxPendingMessageEntity.QueueType);
-				command.Parameters.AddWithValue("@Body", JsonConvert.SerializeObject(outboxPendingMessageEntity.Body));
+				command.Parameters.AddWithValue("@Body", outboxPendingMessageEntity.Body);
 				command.Parameters.AddWithValue("@PendingDateTime", outboxPendingMessageEntity.PendingDateTime);
 				command.ExecuteNonQuery();
 				_connection.Close();
