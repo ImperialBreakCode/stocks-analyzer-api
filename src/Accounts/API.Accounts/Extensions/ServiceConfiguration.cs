@@ -15,8 +15,8 @@ namespace API.Accounts.Extensions
                 .AddSettings<AccountSettingsAdapter>()
                 .AddBackgroundServices()
                 .AddAccountServices()
-                .AddAccountAuthentication();
-
+                .AddAccountAuthentication()
+                .AddRabbitMQConsumer();
         }
 
         public static IServiceCollection InjectData(this IServiceCollection services)
@@ -34,7 +34,7 @@ namespace API.Accounts.Extensions
         {
             services.AddApplicationEventClock();
             services.AddHostedService<EventClockService>();
-            services.AddHostedService<StartupSetupService>();
+            services.AddHostedService<StartupService>();
             return services;
         }
     }
