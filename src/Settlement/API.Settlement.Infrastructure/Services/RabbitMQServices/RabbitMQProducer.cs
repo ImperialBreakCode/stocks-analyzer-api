@@ -20,7 +20,7 @@ namespace API.Settlement.Infrastructure.Services.RabbitMqServices
 			using (var channel = connection.CreateModel())
 			{
 				channel.QueueDeclare(outboxPendingMessageEntity.QueueType, exclusive: false);
-				var json = JsonConvert.SerializeObject(outboxPendingMessageEntity.Body);
+				var json = outboxPendingMessageEntity.Body;
 				var body = Encoding.UTF8.GetBytes(json);
 				channel.BasicPublish(exchange: "", routingKey: outboxPendingMessageEntity.QueueType, body: body);
 			}
