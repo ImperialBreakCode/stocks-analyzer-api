@@ -112,7 +112,7 @@ namespace API.Settlement.Infrastructure.Services
 		}
 		public async Task RecurringRabbitMQMessageSenderJob()
 		{
-			_rabbitMQService.PerformMessageSending();
+			_rabbitMQService.PerformMessageSending(); 
 		}
 	}
 }
