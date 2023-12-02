@@ -1,4 +1,5 @@
 ﻿using API.Accounts.Application.Data;
+using API.Accounts.Application.DTOs.RabbitMQConsumerDTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Domain.Entities;
@@ -39,8 +40,7 @@ namespace API.Accounts.Application.Services.TransactionService
                         StockId = stockInfo.StockId,
                         Quantity = stockInfo.Quantity,
                         TotalAmount = CalculateTotalAmount(stockInfo, finalizeTransactionDTO.IsSale),
-                        Walletid = finalizeTransactionDTO.WalletId,
-                        Date = DateTime.UtcNow
+                        Walletid = finalizeTransactionDTO.WalletId
                     };
 
                     context.Stocks.Update(stock);
@@ -59,6 +59,35 @@ namespace API.Accounts.Application.Services.TransactionService
             }
 
             return true;
+        }
+
+        public void CreateSaleTransaction(TransactionConsumeDTO transactionConsumeDTO)
+        {
+            using (var context = _accountsData.CreateDbContext())
+            {
+                Wallet? wallet = context.Wallets.GetOneById(transactionConsumeDTO.WalletId);
+                Stock? stock = context.Stocks.GetOneById(transactionConsumeDTO.StockId);
+
+                if (wallet is not null && stock is not null)
+                {
+                    context.Transactions.Insert(new()
+                    {
+                        Id = transactionConsumeDTO.TransactionId,
+                        Quantity = transactionConsumeDTO.Quantity,
+                        TotalAmount = transactionConsumeDTO.TotalPriceIncludingCommission,
+                        StockId = transactionConsumeDTO.StockId,
+                        Walletid = transactionConsumeDTO.WalletId
+                    });
+
+                    wallet.Balance += transactionConsumeDTO.TotalPriceIncludingCommission;
+                    stock.Quantity -= transactionConsumeDTO.Quantity;
+
+                    context.Wallets.Update(wallet);
+                    context.Stocks.Update(stock);
+
+                    context.Commit();
+                }
+            }
         }
 
         public ICollection<GetTransactionResponseDTO> GetTransactionsByUsername(string username)
