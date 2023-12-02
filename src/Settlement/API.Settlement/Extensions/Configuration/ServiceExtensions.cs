@@ -114,7 +114,7 @@ namespace API.Settlement.Extensions.Configuration
 
 		
 
-		public static void AddWalletDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
+		public static void AddMongoDBWalletDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
 		{
 			services.Configure<WalletDatabaseSettings>(
 				configuration.GetSection(nameof(WalletDatabaseSettings)));
