@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces
 {
-	public interface IOutboxAcknowledgedMessageRepository
+	public interface IOutboxSuccessfullySentMessageRepository
 	{
-		void AddAcknowledgedMessage(OutboxAcknowledgedMessageEntity outboxAcknowledgedMessageEntity);
+		void AddSuccessfullySentMessage(OutboxSuccessfullySentMessageEntity outboxAcknowledgedMessageEntity);
 	}
 }

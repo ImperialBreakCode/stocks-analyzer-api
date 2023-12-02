@@ -9,6 +9,6 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.O
 	public interface IOutboxDatabaseContext
 	{
 		IOutboxPendingMessageRepository PendingMessageRepository { get; }
-		IOutboxAcknowledgedMessageRepository AcknowledgedMessageRepository { get;}
+		IOutboxSuccessfullySentMessageRepository SuccessfullySentMessageRepository { get;}
 	}
 }

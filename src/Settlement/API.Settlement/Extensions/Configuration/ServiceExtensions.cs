@@ -26,6 +26,7 @@ using DinkToPdf;
 using Microsoft.Extensions.DependencyInjection;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces;
 using Microsoft.Data.SqlClient;
+using API.Settlement.Infrastructure.Services.RabbitMQServices;
 
 namespace API.Settlement.Extensions.Configuration
 {
@@ -80,10 +81,11 @@ namespace API.Settlement.Extensions.Configuration
 			services.AddScoped<ITransactionDatabaseContext, TransactionDatabaseContext>();
 
 			services.AddScoped<IOutboxPendingMessageRepository, OutboxPendingMessageRepository>();
-			services.AddScoped<IOutboxAcknowledgedMessageRepository, OutboxAcknowledgedMessageRepository>();
+			services.AddScoped<IOutboxSuccessfullySentMessageRepository, OutboxSuccessfullySentMessageRepository>();
 			services.AddScoped<IOutboxDatabaseContext, OutboxDatabaseContext>();
 
-			services.AddTransient<IRabbitMQSellTransactionProducer, RabbitMQSellTransactionProducer>();
+			services.AddTransient<IRabbitMQProducer, RabbitMQProducer>();
+			services.AddScoped<IRabbitMQService, RabbitMQService>();
 
 			services.AddTransient<ITransactionResponseHandlerService, TransactionResponseHandlerService>();
 			services.AddTransient<IInfrastructureConstants, InfrastructureConstants>();

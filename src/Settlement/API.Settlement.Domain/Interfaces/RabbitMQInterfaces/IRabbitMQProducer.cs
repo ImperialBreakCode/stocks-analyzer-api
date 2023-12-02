@@ -1,4 +1,5 @@
 ﻿using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Entities.OutboxEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Interfaces.RabbitMQInterfaces
 {
-	public interface IRabbitMQSellTransactionProducer
+	public interface IRabbitMQProducer
 	{
-		void SendMessage(Transaction message);
+		void SendMessage(OutboxPendingMessageEntity outboxPendingMessageEntity);
 	}
 }

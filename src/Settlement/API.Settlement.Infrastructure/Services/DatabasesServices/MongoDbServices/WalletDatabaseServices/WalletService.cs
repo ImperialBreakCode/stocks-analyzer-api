@@ -26,7 +26,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IEmailService _emailService;
 		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
-		private readonly IRabbitMQSellTransactionProducer _rabbitMQSellTransactionProducer;
+		private readonly IRabbitMQProducer _rabbitMQSellTransactionProducer;
 		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
 		public WalletService(IWalletRepository walletRepository,
 							ITransactionMapperService transactionMapperService,
@@ -34,7 +34,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 							IHttpClientFactory httpClientFactory,
 							IEmailService emailService,
 							ITransactionDatabaseContext transactionDatabaseContext,
-							IRabbitMQSellTransactionProducer rabbitMQSellTransactionProducer,
+							IRabbitMQProducer rabbitMQSellTransactionProducer,
 							IOutboxDatabaseContext outboxDatabaseContext)
 		{
 			_walletRepository = walletRepository;

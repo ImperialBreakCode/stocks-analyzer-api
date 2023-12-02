@@ -6,6 +6,7 @@ using API.Settlement.Domain.Entities.Emails;
 using API.Settlement.Domain.Entities.OutboxEntities;
 using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
+using API.Settlement.Domain.Interfaces.DateTimeInterfaces;
 using API.Settlement.Domain.Interfaces.EmailInterfaces;
 using API.Settlement.Infrastructure.Helpers.Constants;
 using API.Settlement.Infrastructure.Helpers.Enums;
@@ -20,16 +21,19 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly IUserCommissionService _commissionService;
 		private readonly IPDFGenerator _pdfGenerator;
+		private readonly IDateTimeService _dateTimeService;
 
 		public TransactionMapperService(IMapper mapper,
 									IInfrastructureConstants infrastructureConstants,
 									IUserCommissionService commissionService,
-									IPDFGenerator generator)
+									IPDFGenerator generator,
+									IDateTimeService dateTimeService)
 		{
 			_mapper = mapper;
 			_infrastructureConstants = infrastructureConstants;
 			_commissionService = commissionService;
 			_pdfGenerator = generator;
+			_dateTimeService = dateTimeService;
 		}
 
 		public AvailabilityStockInfoResponseDTO MapToAvailabilityStockInfoResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
@@ -208,10 +212,17 @@ namespace API.Settlement.Infrastructure.Services
 			return new OutboxPendingMessageEntity()
 			{
 				Id = transaction.TransactionId,
-				MessageType = "transactionSellStock",
+				QueueType = "transactionSellStock",
 				Body = JsonConvert.SerializeObject(transaction),
 				PendingDateTime = DateTime.UtcNow
 			};
+		}
+
+		public OutboxSuccessfullySentMessageEntity MapToOutboxSuccessfullySentMessageEntity(OutboxPendingMessageEntity outboxPendingMessageEntity)
+		{
+			var outboxSuccessfullySentMessageEntity = _mapper.Map<OutboxSuccessfullySentMessageEntity>(outboxPendingMessageEntity);
+			outboxSuccessfullySentMessageEntity.SentDateTime = _dateTimeService.UtcNow;
+			return outboxSuccessfullySentMessageEntity;
 		}
 	}
 }

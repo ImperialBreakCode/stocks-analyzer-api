@@ -27,6 +27,7 @@ namespace API.Settlement.Infrastructure.Services
 			_hangfireService.ScheduleStockProcessingJob(filteredAvailabilityResponseDTO);
 			_hangfireService.InitializeRecurringFailedTransactionsJob();
 			_hangfireService.InitializeRecurringCapitalLossJobCheck();
+			_hangfireService.InitializeRecurringRabbitMQMessageSenderJob();
 
 			return availabilityResponseDTO;
 		}

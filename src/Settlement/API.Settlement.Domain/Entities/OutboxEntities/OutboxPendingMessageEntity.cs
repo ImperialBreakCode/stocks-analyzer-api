@@ -9,7 +9,7 @@ namespace API.Settlement.Domain.Entities.OutboxEntities
 	public class OutboxPendingMessageEntity
 	{
 		public string Id { get; set; }
-		public string MessageType { get; set; }
+		public string QueueType { get; set; }
 		public string Body { get; set; }
 		public DateTime PendingDateTime { get; set; }
 	}

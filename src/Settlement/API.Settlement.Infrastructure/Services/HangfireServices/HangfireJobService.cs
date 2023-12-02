@@ -5,6 +5,7 @@ using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.RabbitMQInterfaces;
 using Azure;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -13,7 +14,7 @@ using System.Text;
 
 namespace API.Settlement.Infrastructure.Services
 {
-    public class HangfireJobService : IHangfireJobService
+	public class HangfireJobService : IHangfireJobService
 	{
 		private readonly ITransactionMapperService _transactionMapperService;
 		private readonly IHttpClientFactory _httpClientFactory;
@@ -22,6 +23,7 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly ITransactionDatabaseContext _unitOfWork;
 		private readonly IWalletService _walletService;
 		private readonly IEmailService _emailService;
+		private readonly IRabbitMQService _rabbitMQService;
 
 
 		public HangfireJobService(IHttpClientFactory httpClientFactory,
@@ -30,7 +32,8 @@ namespace API.Settlement.Infrastructure.Services
 						ITransactionResponseHandlerService transactionResponseHandlerService,
 						ITransactionDatabaseContext unitOfWork,
 						IWalletService walletService,
-						IEmailService emailService)
+						IEmailService emailService,
+						IRabbitMQService rabbitMQService)
 		{
 			_httpClientFactory = httpClientFactory;
 			_transactionMapperService = transactionMapperService;
@@ -39,6 +42,7 @@ namespace API.Settlement.Infrastructure.Services
 			_unitOfWork = unitOfWork;
 			_walletService = walletService;
 			_emailService = emailService;
+			_rabbitMQService = rabbitMQService;
 		}
 
 		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO)
@@ -106,6 +110,9 @@ namespace API.Settlement.Infrastructure.Services
 		{
 			await _walletService.CapitalLossCheck();
 		}
-
+		public async Task RecurringRabbitMQMessageSenderJob()
+		{
+			_rabbitMQService.PerformMessageSending();
+		}
 	}
 }

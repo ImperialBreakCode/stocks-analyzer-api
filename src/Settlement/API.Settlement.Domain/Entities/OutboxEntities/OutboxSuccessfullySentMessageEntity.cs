@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Entities.OutboxEntities
 {
-	public class OutboxAcknowledgedMessageEntity
+	public class OutboxSuccessfullySentMessageEntity
 	{
 		public string Id { get; set; }
-		public string AcknowledgedInfo { get; set; }
-		public DateTime AcknowledgedDateTime { get; set; }
+		public string QueueType { get; set; }
+		public string SentInfo { get; set; }
+		public DateTime SentDateTime { get; set; }
 	}
 }

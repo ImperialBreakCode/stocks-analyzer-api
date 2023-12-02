@@ -36,7 +36,7 @@ app.UseAuthorization();
 app.UseCustomMiddlewares();
 
 app.UseSQLiteTransactionDatabaseInitialization();
-//app.UseMSSQLOutboxDatabaseInitialization();
+app.UseMSSQLOutboxDatabaseInitialization();
 
 app.UseEndpoints(endpoints =>
 {

@@ -26,5 +26,6 @@ namespace API.Settlement.Domain.Interfaces
 		Transaction MapToSelllTransactionEntity(Wallet wallet, Stock stock, decimal actualTotalStockPrice);
 		FinalizingEmail CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject);
 		OutboxPendingMessageEntity MapToOutboxPendingMessageEntity(Transaction transaction);
+		OutboxSuccessfullySentMessageEntity MapToOutboxSuccessfullySentMessageEntity(OutboxPendingMessageEntity outboxPendingMessageEntity);
 	}
 }
