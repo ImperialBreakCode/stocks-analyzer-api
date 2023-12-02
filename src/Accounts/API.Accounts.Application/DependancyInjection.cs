@@ -18,11 +18,26 @@ using API.Accounts.Application.Settings.UpdateHandlers;
 using Microsoft.Extensions.DependencyInjection;
 using API.Accounts.Application.Services.UserService.UserRankService;
 using API.Accounts.Application.Services.UserService.EmailService;
+using API.Accounts.Application.RabbitMQ;
 
 namespace API.Accounts.Application
 {
     public static class DependancyInjection
     {
+        public static IServiceCollection AddRabbitMQConsumer(this IServiceCollection services)
+        {
+            services.AddSingleton<IRabbitMQConsumer, RabbitMQConsumer>(
+                _ => new RabbitMQConsumer(
+                    hostName: "localhost", 
+                    queueName: "transactionSellStock"
+                    )
+                );
+
+            services.AddTransient<ITransactionSaleHandler, TransactionSaleHandler>();
+
+            return services;
+        }
+
         public static IServiceCollection AddApplicationData(this IServiceCollection services)
         {
             services.AddTransient<IStocksData, StocksDataMockup>();
