@@ -19,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 using API.Accounts.Application.Services.UserService.UserRankService;
 using API.Accounts.Application.Services.UserService.EmailService;
 using API.Accounts.Application.RabbitMQ;
+using API.Accounts.Domain.Interfaces.DbManager;
+using API.Accounts.Infrastructure.DbManager;
 
 namespace API.Accounts.Application
 {
@@ -50,6 +52,7 @@ namespace API.Accounts.Application
         {
             services.AddTransient<ISqlContextCreator, SqlContextCreator>();
             services.AddTransient<IAccountsData, TDataAdapter>();
+            services.AddTransient<IAccountsDbManager, AccountsDbManager>();
             return services;
         }
 

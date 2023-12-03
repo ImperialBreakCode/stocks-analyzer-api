@@ -11,12 +11,16 @@ namespace API.Accounts.Application.Data
         public AccountMockupData()
         {
             _data = new Dictionary<string, IDictionary<string, object>>();
-            MemoryDataHelper.AssignMemoryTables(_data);
         }
 
         public IAccountsDbContext CreateDbContext()
         {
             return new AccountMockupDbContext(_data);
+        }
+
+        public void EnsureDatabase()
+        {
+            MemoryDataHelper.AssignMemoryTables(_data);
         }
     }
 }

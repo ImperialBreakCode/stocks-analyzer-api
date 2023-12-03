@@ -4,6 +4,7 @@ namespace API.Accounts.Application.Data
 {
     public interface IAccountsData
     {
+        public void EnsureDatabase();
         public IAccountsDbContext CreateDbContext();
     }
 }

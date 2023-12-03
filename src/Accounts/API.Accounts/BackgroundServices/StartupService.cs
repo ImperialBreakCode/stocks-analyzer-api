@@ -1,4 +1,5 @@
-﻿using API.Accounts.Application.RabbitMQ;
+﻿using API.Accounts.Application.Data;
+using API.Accounts.Application.RabbitMQ;
 using API.Accounts.Application.Services.TransactionService;
 using API.Accounts.Application.Settings;
 
@@ -9,20 +10,24 @@ namespace API.Accounts.BackgroundServices
         private readonly IAccountsSettingsManager _settingsManager;
         private readonly IRabbitMQConsumer _consumer;
         private readonly ITransactionSaleHandler _transactionSaleHandler;
+        private readonly IAccountsData _accountsData;
 
         public StartupService(
             IAccountsSettingsManager accountsSettingsManager,
             IRabbitMQConsumer rabbitMQConsumer,
-            ITransactionSaleHandler transactionSaleHandler
-            )
+            ITransactionSaleHandler transactionSaleHandler,
+            IAccountsData accountsData)
         {
             _consumer = rabbitMQConsumer;
             _transactionSaleHandler = transactionSaleHandler;
             _settingsManager = accountsSettingsManager;
+            _accountsData = accountsData;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _accountsData.EnsureDatabase();
+
             _settingsManager.SetupOnChangeHandlers();
 
             _consumer.RegisterRecievedEvent(_transactionSaleHandler.HandleSale);
