@@ -13,37 +13,31 @@
     {
         public static ResponseType ParseResponseMessage(string message)
         {
-            bool notFound = message == ResponseMessages.UserNotFound
-                || message == ResponseMessages.WalletNotFound
-                || message == ResponseMessages.StockNotFoundInWallet;
-
-            if (notFound)
+            switch (message)
             {
-                return ResponseType.NotFound;
+                case ResponseMessages.UserNotFound:
+                case ResponseMessages.WalletNotFound:
+                case ResponseMessages.StockNotFoundInWallet:
+                    return ResponseType.NotFound;
+
+                case ResponseMessages.AuthPassIncorrect:
+                    return ResponseType.Unauthorized;
+
+                case ResponseMessages.UserNameAlreadyExists:
+                case ResponseMessages.WalletAlreadyExists:
+                case ResponseMessages.UserEmailAlreadyExists:
+                    return ResponseType.Conflict;
+
+                case ResponseMessages.WalletRestricted:
+                case ResponseMessages.CannotDepositWithCurrencyType:
+                case ResponseMessages.NoStocksAddedForPurchaseSale:
+                case ResponseMessages.NotEnoughBalance:
+                case ResponseMessages.StockNotEnoughStocksToSale:
+                    return ResponseType.BadRequest;
+
+                default:
+                    return ResponseType.Success;
             }
-
-            if(message == ResponseMessages.AuthPassIncorrect)
-            {
-                return ResponseType.Unauthorized;
-            }
-
-            if(message == ResponseMessages.UserNameAlreadyExists || message == ResponseMessages.WalletAlreadyExists)
-            {
-                return ResponseType.Conflict;
-            }
-
-            bool badRequest = message == ResponseMessages.WalletRestricted
-                || message == ResponseMessages.CannotDepositWithCurrencyType
-                || message == ResponseMessages.NoStocksAddedForPurchaseSale
-                || message == ResponseMessages.NotEnoughBalance
-                || message == ResponseMessages.StockNotEnoughStocksToSale;
-
-            if (badRequest)
-            {
-                return ResponseType.BadRequest;
-            }
-
-            return ResponseType.Success;
         }
     }
 }
