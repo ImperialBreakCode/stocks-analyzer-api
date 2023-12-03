@@ -35,6 +35,7 @@ namespace API.Accounts.Application
                     )
                 );
 
+            services.AddSingleton<IRabbitMQSetupService, RabbitMQSetupService>();
             services.AddTransient<ITransactionSaleHandler, TransactionSaleHandler>();
 
             return services;
