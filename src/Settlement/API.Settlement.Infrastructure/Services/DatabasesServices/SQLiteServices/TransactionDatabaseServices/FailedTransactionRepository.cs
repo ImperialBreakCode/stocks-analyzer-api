@@ -48,21 +48,54 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 			}
 		}
 
-		public void Delete(string transactionId)
+		public Transaction Delete(string transactionId)
 		{
+			var transaction = GetById(transactionId);
 			string commandText = $"DELETE FROM FailedTransaction WHERE TransactionId = @TransactionId";
 
 			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
 			{
 				_connection.Open();
 
-					command.Parameters.AddWithValue("@TransactionId", transactionId);
-					command.ExecuteNonQuery();
-				
+				command.Parameters.AddWithValue("@TransactionId", transactionId);
+				command.ExecuteNonQuery();
+
 				_connection.Close();
 			}
+			return transaction;
+		}
 
-
+		public Transaction GetById(string transactionId)
+		{
+			string commandText = "SELECT * FROM FailedTransaction WHERE TransactionId = @TransactionId";
+			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
+			{
+				command.Parameters.AddWithValue("@TransactionId", transactionId);
+				var transaction = new Transaction();
+				_connection.Open();
+				using (SQLiteDataReader reader = command.ExecuteReader())
+				{
+					while (reader.Read())
+					{
+						transaction = new Transaction
+						{
+							TransactionId = Convert.ToString(reader["TransactionId"]),
+							WalletId = Convert.ToString(reader["WalletId"]),
+							UserId = Convert.ToString(reader["UserId"]),
+							UserEmail = Convert.ToString(reader["UserEmail"]),
+							IsSale = Convert.ToBoolean(reader["IsSale"]),
+							Message = Convert.ToString(reader["Message"]),
+							StockId = Convert.ToString(reader["StockId"]),
+							StockName = Convert.ToString(reader["StockName"]),
+							Quantity = Convert.ToInt32(reader["Quantity"]),
+							TotalPriceIncludingCommission = Convert.ToDecimal(reader["TotalPriceIncludingCommission"]),
+						};
+						break;
+					}
+				}
+				_connection.Close();
+				return transaction;
+			}
 		}
 
 		public IEnumerable<Transaction> GetAll()

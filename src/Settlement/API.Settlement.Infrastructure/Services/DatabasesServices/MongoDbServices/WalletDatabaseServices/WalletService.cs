@@ -73,8 +73,8 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 			{
 				foreach (var stock in wallet.Stocks)
 				{
-					//var actualSingleStockPrice = 850;
-					var actualSingleStockPrice = await GetActualSingleStockPrice(stock.StockName);
+					var actualSingleStockPrice = 170;
+					//var actualSingleStockPrice = await GetActualSingleStockPrice(stock.StockName);
 					decimal actualTotalStockPrice = stock.Quantity * actualSingleStockPrice;
 					double percentageDifference = (double)((actualTotalStockPrice - stock.InvestedAmount) / stock.InvestedAmount * 100);
 
@@ -89,7 +89,8 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 						{
 							_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
 							var transaction = _transactionMapperService.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
-							_transactionDatabaseContext.FailedTransactions.Add(transaction);
+							transaction.Message = _infrastructureConstants.TransactionSuccessMessage;
+							_transactionDatabaseContext.SuccessfulTransactions.Add(transaction);
 							var outboxPendingMessageEntity = _transactionMapperService.MapToOutboxPendingMessageEntity(transaction);
 							_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(outboxPendingMessageEntity);
 
