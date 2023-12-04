@@ -50,9 +50,6 @@ namespace API.Settlement.Infrastructure.Services
 			HttpResponseMessage response = null;
 			var finalizeTransactionResponseDTO = _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.MapToFinalizeTransactionResponseDTO(availabilityResponseDTO);
 
-			//var emailDTO = _transactionMapperService.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, "Transaction Summary Report");
-			//await _emailService.SendEmailWithAttachment(emailDTO);
-
 			using (var httpClient = _httpClientFactory.CreateClient())
 			{
 				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
@@ -60,8 +57,6 @@ namespace API.Settlement.Infrastructure.Services
 				try
 				{
 					response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
-					//var emailDTO = _transactionMapperService.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, "Transaction Summary Report");
-					//await _emailService.SendEmailWithAttachment(emailDTO);
 				}
 				catch (Exception ex)
 				{
@@ -69,6 +64,9 @@ namespace API.Settlement.Infrastructure.Services
                 }
 				finally
 				{
+					var emailDTO = _mapperManagementWrapper.FinalizingEmailMapper.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, "Transaction Summary Report");
+					await _emailService.SendEmailWithAttachment(emailDTO);
+
 					_walletService.UpdateStocksInWallet(finalizeTransactionResponseDTO);
 
 					var transactions = _mapperManagementWrapper.TransactionMapper.MapToTransactionEntities(finalizeTransactionResponseDTO);

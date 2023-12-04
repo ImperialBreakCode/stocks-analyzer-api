@@ -88,14 +88,18 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 						if (percentageDifference <= -15)
 						{
 							_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
+
 							var transaction = _mapperManagementWrapper.TransactionMapper.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
 							transaction.Message = _infrastructureConstants.TransactionSuccessMessage;
 							_transactionDatabaseContext.SuccessfulTransactions.Add(transaction);
+
 							var outboxPendingMessageEntity = _mapperManagementWrapper.OutboxPendingMessageMapper.MapToOutboxPendingMessageEntity(transaction);
 							_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(outboxPendingMessageEntity);
 
-							var emailDTO = _mapperManagementWrapper.NotifyingEmailMapper.CreateNotifyingEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%! It has been automatically sold!");
-							await _emailService.SendEmailWithoutAttachment(emailDTO);
+							//TODO: summary pdf - test
+							var finalizeTransactionResponseDTO = _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.MapToFinalizeTransactionResponseDTO(transaction);
+							var emailDTO = _mapperManagementWrapper.FinalizingEmailMapper.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, $"Your stock price has decreased by {percentageDifference}%! It has been automatically sold!");
+							await _emailService.SendEmailWithAttachment(emailDTO);
 						}
 						else
 						{

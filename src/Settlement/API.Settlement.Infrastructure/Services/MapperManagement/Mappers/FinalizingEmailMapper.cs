@@ -27,7 +27,7 @@ namespace API.Settlement.Infrastructure.Services.MapperManagement.Mappers
             {
                 To = finalizeTransactionResponseDTO.UserEmail,
                 Subject = subject,
-                Body = "Body",
+                Body = "Transaction Summary Report - PDF",
                 Attachment = pdfBytes,
                 AttachmentFileName = "TransactionSummary.pdf",
                 AttachmentMimeType = "application/pdf"

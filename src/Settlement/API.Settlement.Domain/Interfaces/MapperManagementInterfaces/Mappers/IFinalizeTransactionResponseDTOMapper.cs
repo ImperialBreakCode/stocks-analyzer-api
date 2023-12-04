@@ -12,7 +12,8 @@ namespace API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers
     public interface IFinalizeTransactionResponseDTOMapper
     {
         FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(AvailabilityResponseDTO availabilityResponseDTO);
-        IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> walletAndIsSaleTransactions);
+        FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(Transaction transaction);
+		IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> walletAndIsSaleTransactions);
 
     }
 }

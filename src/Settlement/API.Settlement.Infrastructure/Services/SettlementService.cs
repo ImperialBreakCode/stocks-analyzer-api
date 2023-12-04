@@ -10,12 +10,10 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IHangfireService _hangfireService;
 
-		public SettlementService(ITransactionWrapper transactionWrapper,
-								IMapperManagementWrapper mapperManagementWrapper,
-								IHangfireService hangfireService)
+		public SettlementService(ITransactionWrapper transactionWrapper, IMapperManagementWrapper mapperManagementWrapper, IHangfireService hangfireService)
 		{
-			_transactionWrapper = transactionWrapper;
-			_hangfireService = hangfireService;
+			_transactionWrapper = transactionWrapper; 
+			_hangfireService = hangfireService; 
 			_mapperManagementWrapper = mapperManagementWrapper;
 		}
 		public async Task<AvailabilityResponseDTO> ProcessTransactions(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)

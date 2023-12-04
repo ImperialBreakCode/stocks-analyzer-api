@@ -27,7 +27,31 @@ namespace API.Settlement.Infrastructure.Services.MapperManagement.Mappers
 
             return finalizeTransactionResponseDTO;
         }
-        public IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> transactions)
+
+		public FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(Transaction transaction)
+		{
+			var finalizeTransactionResponseDTO = new FinalizeTransactionResponseDTO();
+			finalizeTransactionResponseDTO.WalletId = transaction.WalletId;
+			finalizeTransactionResponseDTO.UserId = transaction.UserId;
+			finalizeTransactionResponseDTO.UserEmail = transaction.UserEmail;
+			finalizeTransactionResponseDTO.IsSale = transaction.IsSale;
+			finalizeTransactionResponseDTO.StockInfoResponseDTOs = new List<StockInfoResponseDTO>();
+            var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
+			var stockInfoResponseDTO = new StockInfoResponseDTO()
+			{
+				TransactionId = transaction.TransactionId,
+				Message = transaction.Message,
+				StockId = transaction.StockId,
+				StockName = transaction.StockName,
+				Quantity = transaction.Quantity,
+				SinglePriceIncludingCommission = transaction.SinglePriceIncludingCommission
+			};
+            stockInfoResponseDTOs.Add(stockInfoResponseDTO);
+            finalizeTransactionResponseDTO.StockInfoResponseDTOs = stockInfoResponseDTOs;
+            return finalizeTransactionResponseDTO;
+		}
+
+		public IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> transactions)
         {
             var groupedTransactions = transactions
                 .GroupBy(transaction => new { transaction.WalletId, transaction.UserId, transaction.UserEmail, transaction.IsSale });
