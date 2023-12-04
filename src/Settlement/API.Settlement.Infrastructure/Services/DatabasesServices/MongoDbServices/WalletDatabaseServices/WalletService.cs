@@ -29,7 +29,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 		private readonly IRabbitMQProducer _rabbitMQSellTransactionProducer;
 		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
 		public WalletService(IWalletRepository walletRepository,
-							IMapperManagementWrapper transactionMapperService,
+							IMapperManagementWrapper mapperManagementWrapper,
 							IInfrastructureConstants infrastructureConstants,
 							IHttpClientFactory httpClientFactory,
 							IEmailService emailService,
@@ -38,7 +38,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 							IOutboxDatabaseContext outboxDatabaseContext)
 		{
 			_walletRepository = walletRepository;
-			_mapperManagementWrapper = transactionMapperService;
+			_mapperManagementWrapper = mapperManagementWrapper;
 			_infrastructureConstants = infrastructureConstants;
 			_httpClientFactory = httpClientFactory;
 			_emailService = emailService;

@@ -27,7 +27,7 @@ namespace API.Settlement.Infrastructure.Services
 
 
 		public HangfireJobService(IHttpClientFactory httpClientFactory,
-						IMapperManagementWrapper transactionMapperService,
+						IMapperManagementWrapper mapperManagementWrapper,
 						IInfrastructureConstants infrastructureConstants,
 						ITransactionResponseHandlerService transactionResponseHandlerService,
 						ITransactionDatabaseContext unitOfWork,
@@ -36,7 +36,7 @@ namespace API.Settlement.Infrastructure.Services
 						IRabbitMQService rabbitMQService)
 		{
 			_httpClientFactory = httpClientFactory;
-			_mapperManagementWrapper = transactionMapperService;
+			_mapperManagementWrapper = mapperManagementWrapper;
 			_infrastructureConstants = infrastructureConstants;
 			_transactionResponseHandlerService = transactionResponseHandlerService;
 			_transactionDatabaseContext = unitOfWork;

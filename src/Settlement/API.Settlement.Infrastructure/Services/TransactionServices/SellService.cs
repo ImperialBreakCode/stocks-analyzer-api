@@ -17,12 +17,12 @@ namespace API.Settlement.Infrastructure.Services
 
 		public SellService(IHttpClientFactory httpClientFactory,
 						IInfrastructureConstants infrastructureConstants,
-						IMapperManagementWrapper transactionMapperService,
+						IMapperManagementWrapper mapperManagementWrapper,
 						IUserCommissionService commissionService)
 		{
 			_httpClientFactory = httpClientFactory;
 			_infrastructureConstants = infrastructureConstants;
-			_mapperManagementWrapper = transactionMapperService;
+			_mapperManagementWrapper = mapperManagementWrapper;
 			_commissionService = commissionService;
 		}
 
