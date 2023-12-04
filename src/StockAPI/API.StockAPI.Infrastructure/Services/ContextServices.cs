@@ -19,18 +19,19 @@ namespace API.StockAPI.Infrastructure.Services
             _context = context;
         }
 
-        public async Task<StockData> Get(string symbol, string type)
+        public async Task<StockData> GetStockFromDB(string symbol, string type)
         {
-            var date = DateTime.Now.AddDays(-21).ToString("yyyy-MM-dd") + " 00:00:00";
-
+            var date = "";
             var table = "";
             switch (type)
             {
                 case "weekly":
                     table = "Weekly";
+                    date = GetLastBusinessDayOfLastWeek();
                     break;
                 case "monthly":
                     table = "Monthly";
+                    date = GetLastBusinessDayOfLastMonth();
                     break;
                 default:
                     return null;
@@ -52,9 +53,10 @@ namespace API.StockAPI.Infrastructure.Services
             }
         }
 
-        public async Task<StockData> Create(StockData data, string type)
+        public async Task<StockData> InsertStockInDB(StockData data, string type)
         {
             var table = "";
+
             switch (type)
             {
                 case "weekly":
@@ -94,6 +96,32 @@ namespace API.StockAPI.Infrastructure.Services
             parameters.Add("Volume", data.Volume, DbType.Int32);
 
             return parameters;
+        }
+
+        private string GetLastBusinessDayOfLastWeek()
+        {
+            var currentDate = DateTime.Now;
+
+            DateTime lastWeekEndDate = currentDate.AddDays(-((int)currentDate.DayOfWeek + 1));
+
+            DateTime lastFriday = lastWeekEndDate.AddDays(-1);
+
+            return lastFriday.ToString("yyyy-MM-dd") + " 00:00:00";
+        }
+        private string GetLastBusinessDayOfLastMonth()
+        {
+            var lastDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month-1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+
+            if (lastDayOfMonth.DayOfWeek == DayOfWeek.Sunday)
+            {
+                lastDayOfMonth = lastDayOfMonth.AddDays(-2);
+            }   
+            else if (lastDayOfMonth.DayOfWeek == DayOfWeek.Saturday)
+            {
+                lastDayOfMonth = lastDayOfMonth.AddDays(-1);
+            }
+
+            return lastDayOfMonth.ToString("yyyy-MM-dd") + " 00:00:00";
         }
     }
 }

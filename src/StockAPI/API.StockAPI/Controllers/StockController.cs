@@ -1,4 +1,5 @@
 ﻿using API.StockAPI.Domain.InterFaces;
+using API.StockAPI.Infrastructure.Interfaces;
 using API.StockAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,13 @@ namespace API.StockAPI.Controllers
     {
         private readonly IExternalRequestService _externalRequestServices;
         private readonly IStockService _stockServices;
+        private readonly IContextServices _contextServices;
 
-        public StockController(IStockService services, IExternalRequestService externalServices)
+        public StockController(IStockService services, IExternalRequestService externalServices, IContextServices contextServices)
         {
             _stockServices = services;
             _externalRequestServices = externalServices;
+            _contextServices = contextServices;
         }
 
         [HttpGet]
@@ -27,15 +30,34 @@ namespace API.StockAPI.Controllers
                 return BadRequest();
             }
 
+            var dbResult = await _contextServices.GetStockFromDB(symbol, type);
+
+            if (dbResult is not null)
+            {
+                return Ok(dbResult);
+            }
+
             try
             {
-                var data = await _externalRequestServices.GetData(symbol, type);
-                var result = await _stockServices.GetStockFromRequest(symbol, data, type);
+                var query = _externalRequestServices.QueryStringGenerator(symbol, type);
+                if (query == null)
+                {
+                    return BadRequest();
+                }
 
+                var data = await _externalRequestServices.GetDataFromQuery(query);
+                if (data == null)
+                {
+                    return BadRequest();
+                }
+
+                var result = await _stockServices.GetStockFromResponse(symbol, data, type);
                 if (result == null)
                 {
                     return NotFound();
                 }
+
+                await _contextServices.InsertStockInDB(result, type);
 
                 return Ok(result);
             }

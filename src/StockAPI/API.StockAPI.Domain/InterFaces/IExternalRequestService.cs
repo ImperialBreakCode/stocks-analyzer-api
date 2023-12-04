@@ -11,6 +11,5 @@ namespace API.StockAPI.Domain.InterFaces
     {
         string QueryStringGenerator(string symbol, string function);
         Task<string?> GetDataFromQuery(string query);
-        Task<string?> GetData(string symbol, string type);
     }
 }
