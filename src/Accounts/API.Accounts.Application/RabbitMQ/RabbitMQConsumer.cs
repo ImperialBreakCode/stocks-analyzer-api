@@ -14,8 +14,11 @@ namespace API.Accounts.Application.RabbitMQ
 
         public RabbitMQConsumer(string hostName, string queueName)
         {
-            _connectionFactory = new ConnectionFactory();
-            _connectionFactory.HostName = hostName;
+            _connectionFactory = new()
+            {
+                HostName = hostName
+            };
+
             _queueName = queueName;
         }
 

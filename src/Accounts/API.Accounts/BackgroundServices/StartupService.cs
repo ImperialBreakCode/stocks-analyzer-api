@@ -23,6 +23,7 @@ namespace API.Accounts.BackgroundServices
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _accountsData.EnsureDatabase();
+            _accountsData.SeedData();
 
             _settingsManager.SetupOnChangeHandlers();
 

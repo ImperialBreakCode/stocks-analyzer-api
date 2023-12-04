@@ -24,7 +24,6 @@ namespace API.Accounts.BackgroundServices
             _rabbitMQSetupService = rabbitMQSetupService;
 
             RegisterHandlers();
-            
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

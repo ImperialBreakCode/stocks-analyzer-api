@@ -21,6 +21,7 @@ using API.Accounts.Application.Services.UserService.EmailService;
 using API.Accounts.Application.RabbitMQ;
 using API.Accounts.Domain.Interfaces.DbManager;
 using API.Accounts.Infrastructure.DbManager;
+using API.Accounts.Application.Data.AccountsDataSeeder;
 
 namespace API.Accounts.Application
 {
@@ -45,6 +46,9 @@ namespace API.Accounts.Application
         {
             services.AddTransient<IStocksData, StocksDataMockup>();
             services.AddTransient<IExchangeRatesData, ExchangeRateDataMockup>();
+
+            services.AddTransient<IAccountsDataSeeder, AccountDataSeeder>();
+
             return services;
         }
 
