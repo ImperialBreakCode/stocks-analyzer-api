@@ -13,7 +13,7 @@ namespace API.Settlement.Infrastructure.Services.RabbitMqServices
 {
 	public class RabbitMQProducer : IRabbitMQProducer
 	{
-		public void SendMessage(OutboxPendingMessageEntity outboxPendingMessageEntity)
+		public void SendMessage(OutboxPendingMessage outboxPendingMessageEntity)
 		{
 			var factory = new ConnectionFactory { HostName = "localHost" };
 			var connection = factory.CreateConnection();

@@ -16,7 +16,7 @@ namespace API.Settlement.Infrastructure.Services
 {
 	public class HangfireJobService : IHangfireJobService
 	{
-		private readonly ITransactionMapperService _transactionMapperService;
+		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly ITransactionResponseHandlerService _transactionResponseHandlerService;
@@ -27,7 +27,7 @@ namespace API.Settlement.Infrastructure.Services
 
 
 		public HangfireJobService(IHttpClientFactory httpClientFactory,
-						ITransactionMapperService transactionMapperService,
+						IMapperManagementWrapper transactionMapperService,
 						IInfrastructureConstants infrastructureConstants,
 						ITransactionResponseHandlerService transactionResponseHandlerService,
 						ITransactionDatabaseContext unitOfWork,
@@ -36,7 +36,7 @@ namespace API.Settlement.Infrastructure.Services
 						IRabbitMQService rabbitMQService)
 		{
 			_httpClientFactory = httpClientFactory;
-			_transactionMapperService = transactionMapperService;
+			_mapperManagementWrapper = transactionMapperService;
 			_infrastructureConstants = infrastructureConstants;
 			_transactionResponseHandlerService = transactionResponseHandlerService;
 			_transactionDatabaseContext = unitOfWork;
@@ -48,7 +48,7 @@ namespace API.Settlement.Infrastructure.Services
 		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO)
 		{
 			HttpResponseMessage response = null;
-			var finalizeTransactionResponseDTO = _transactionMapperService.MapToFinalizeTransactionResponseDTO(availabilityResponseDTO);
+			var finalizeTransactionResponseDTO = _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.MapToFinalizeTransactionResponseDTO(availabilityResponseDTO);
 
 			//var emailDTO = _transactionMapperService.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, "Transaction Summary Report");
 			//await _emailService.SendEmailWithAttachment(emailDTO);
@@ -71,7 +71,7 @@ namespace API.Settlement.Infrastructure.Services
 				{
 					_walletService.UpdateStocksInWallet(finalizeTransactionResponseDTO);
 
-					var transactions = _transactionMapperService.MapToTransactionEntities(finalizeTransactionResponseDTO);
+					var transactions = _mapperManagementWrapper.TransactionMapper.MapToTransactionEntities(finalizeTransactionResponseDTO);
 					_transactionResponseHandlerService.HandleTransactionResponse(response, transactions);
 				}
 			}
@@ -82,7 +82,7 @@ namespace API.Settlement.Infrastructure.Services
 			using (var httpClient = _httpClientFactory.CreateClient())
 			{
 				var failedTransactionEntities = _transactionDatabaseContext.FailedTransactions.GetAll();
-				var finalizeTransactionResponseDTOs = _transactionMapperService.MapToFinalizeTransactionResponseDTOs(failedTransactionEntities);
+				var finalizeTransactionResponseDTOs = _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.MapToFinalizeTransactionResponseDTOs(failedTransactionEntities);
 				foreach (var finalizeTransactionResponseDTO in finalizeTransactionResponseDTOs)
 				{
 					var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
@@ -98,7 +98,7 @@ namespace API.Settlement.Infrastructure.Services
 					}
 					finally
 					{
-						var transactions = _transactionMapperService.MapToTransactionEntities(finalizeTransactionResponseDTO);
+						var transactions = _mapperManagementWrapper.TransactionMapper.MapToTransactionEntities(finalizeTransactionResponseDTO);
 						_transactionResponseHandlerService.HandleTransactionResponse(response, transactions);
 					}
 					

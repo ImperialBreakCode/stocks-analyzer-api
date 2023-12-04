@@ -7,22 +7,22 @@ namespace API.Settlement.Infrastructure.Services
 	public class SettlementService : ISettlementService
 	{
 		private readonly ITransactionWrapper _transactionWrapper;
-		private readonly ITransactionMapperService _transactionMapperService;
+		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IHangfireService _hangfireService;
 
 		public SettlementService(ITransactionWrapper transactionWrapper,
-								ITransactionMapperService transactionMapperService,
+								IMapperManagementWrapper transactionMapperService,
 								IHangfireService hangfireService)
 		{
 			_transactionWrapper = transactionWrapper;
 			_hangfireService = hangfireService;
-			_transactionMapperService = transactionMapperService;
+			_mapperManagementWrapper = transactionMapperService;
 		}
 		public async Task<AvailabilityResponseDTO> ProcessTransactions(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
 			var availabilityResponseDTO = await _transactionWrapper.CheckAvailability(finalizeTransactionRequestDTO);
-			var clonedAvailabilityResponseDTO = _transactionMapperService.CloneAvailabilityResponseDTO(availabilityResponseDTO);
-			var filteredAvailabilityResponseDTO = _transactionMapperService.FilterSuccessfulAvailabilityStockInfoDTOs(clonedAvailabilityResponseDTO);
+			var clonedAvailabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.CloneAvailabilityResponseDTO(availabilityResponseDTO);
+			var filteredAvailabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.FilterSuccessfulAvailabilityStockInfoDTOs(clonedAvailabilityResponseDTO);
 
 			_hangfireService.ScheduleStockProcessingJob(filteredAvailabilityResponseDTO);
 			_hangfireService.InitializeRecurringFailedTransactionsJob();

@@ -21,7 +21,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
     public class WalletService : IWalletService
 	{
 		private readonly IWalletRepository _walletRepository;
-		private readonly ITransactionMapperService _transactionMapperService;
+		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IEmailService _emailService;
@@ -29,7 +29,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 		private readonly IRabbitMQProducer _rabbitMQSellTransactionProducer;
 		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
 		public WalletService(IWalletRepository walletRepository,
-							ITransactionMapperService transactionMapperService,
+							IMapperManagementWrapper transactionMapperService,
 							IInfrastructureConstants infrastructureConstants,
 							IHttpClientFactory httpClientFactory,
 							IEmailService emailService,
@@ -38,7 +38,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 							IOutboxDatabaseContext outboxDatabaseContext)
 		{
 			_walletRepository = walletRepository;
-			_transactionMapperService = transactionMapperService;
+			_mapperManagementWrapper = transactionMapperService;
 			_infrastructureConstants = infrastructureConstants;
 			_httpClientFactory = httpClientFactory;
 			_emailService = emailService;
@@ -52,7 +52,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 			Wallet? existingWallet = _walletRepository.GetWalletById(finalizeTransactionResponseDTO.WalletId);
 			if (existingWallet == null)
 			{
-				var newWallet = _transactionMapperService.MapToWalletEntity(finalizeTransactionResponseDTO);
+				var newWallet = _mapperManagementWrapper.WalletMapper.MapToWalletEntity(finalizeTransactionResponseDTO);
 				_walletRepository.CreateWallet(newWallet);
 				existingWallet = newWallet;
 			}
@@ -80,7 +80,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 
 					if (percentageDifference > 0)
 					{
-						var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has increased by {percentageDifference}%!");
+						var emailDTO = _mapperManagementWrapper.NotifyingEmailMapper.CreateNotifyingEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has increased by {percentageDifference}%!");
 						await _emailService.SendEmailWithoutAttachment(emailDTO);
 					}
 					else if (percentageDifference < 0)
@@ -88,18 +88,18 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 						if (percentageDifference <= -15)
 						{
 							_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
-							var transaction = _transactionMapperService.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
+							var transaction = _mapperManagementWrapper.TransactionMapper.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
 							transaction.Message = _infrastructureConstants.TransactionSuccessMessage;
 							_transactionDatabaseContext.SuccessfulTransactions.Add(transaction);
-							var outboxPendingMessageEntity = _transactionMapperService.MapToOutboxPendingMessageEntity(transaction);
+							var outboxPendingMessageEntity = _mapperManagementWrapper.OutboxPendingMessageMapper.MapToOutboxPendingMessageEntity(transaction);
 							_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(outboxPendingMessageEntity);
 
-							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%! It has been automatically sold!");
+							var emailDTO = _mapperManagementWrapper.NotifyingEmailMapper.CreateNotifyingEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%! It has been automatically sold!");
 							await _emailService.SendEmailWithoutAttachment(emailDTO);
 						}
 						else
 						{
-							var emailDTO = _transactionMapperService.CreateEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%!");
+							var emailDTO = _mapperManagementWrapper.NotifyingEmailMapper.CreateNotifyingEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%!");
 							await _emailService.SendEmailWithoutAttachment(emailDTO);
 						}
 					}
@@ -118,13 +118,13 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 				Stock? stock = _walletRepository.GetStockFromWallet(wallet.WalletId, stockInfoResponseDTO.StockId);
 				if (stock == null)
 				{
-					stock = _transactionMapperService.MapToStockEntity(stockInfoResponseDTO, finalizeTransactionResponseDTO.UserRank);
+					stock = _mapperManagementWrapper.StockMapper.MapToStockEntity(stockInfoResponseDTO, finalizeTransactionResponseDTO.UserRank);
 					
 					_walletRepository.AddStock(wallet.WalletId, stock);
 				}
 				else
 				{
-					stock = _transactionMapperService.UpdateStockForPurchase(stock, stockInfoResponseDTO, finalizeTransactionResponseDTO.UserRank);
+					stock = _mapperManagementWrapper.StockMapper.UpdateStockForPurchase(stock, stockInfoResponseDTO, finalizeTransactionResponseDTO.UserRank);
 
 					_walletRepository.UpdateStock(wallet.WalletId, stock);
 				}
@@ -140,7 +140,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 				{
 					if (stock != null && stock.Quantity >= stockInfoResponseDTO.Quantity)
 					{
-						stock = _transactionMapperService.UpdateStockForSale(stock, stockInfoResponseDTO, finalizeTransactionResponseDTO.UserRank);
+						stock = _mapperManagementWrapper.StockMapper.UpdateStockForSale(stock, stockInfoResponseDTO, finalizeTransactionResponseDTO.UserRank);
 						
 					}
 					if (stock.Quantity == 0) { _walletRepository.RemoveStock(wallet.WalletId, stock.StockId); }

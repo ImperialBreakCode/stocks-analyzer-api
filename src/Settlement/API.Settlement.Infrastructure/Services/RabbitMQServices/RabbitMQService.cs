@@ -14,11 +14,11 @@ namespace API.Settlement.Infrastructure.Services.RabbitMQServices
 	{
 		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
 		private readonly IRabbitMQProducer _rabbitMQProducer;
-		private readonly ITransactionMapperService _transactionMapperService;
+		private readonly IMapperManagementWrapper _transactionMapperService;
 
 		public RabbitMQService(IOutboxDatabaseContext outboxDatabaseContext,
 							IRabbitMQProducer rabbitMQSellTransactionProducer,
-							ITransactionMapperService transactionMapperService)
+							IMapperManagementWrapper transactionMapperService)
 		{
 			_outboxDatabaseContext = outboxDatabaseContext;
 			_rabbitMQProducer = rabbitMQSellTransactionProducer;
@@ -33,7 +33,7 @@ namespace API.Settlement.Infrastructure.Services.RabbitMQServices
 				_rabbitMQProducer.SendMessage(outboxPendingMessageEntity);
 				_outboxDatabaseContext.PendingMessageRepository.DeletePendingMessage(outboxPendingMessageEntity.Id);
 
-				var outboxSuccessfullySentMessageEntity = _transactionMapperService.MapToOutboxSuccessfullySentMessageEntity(outboxPendingMessageEntity);
+				var outboxSuccessfullySentMessageEntity = _transactionMapperService.OutboxSuccessfullySentMessageMapper.MapToOutboxSuccessfullySentMessageEntity(outboxPendingMessageEntity);
 				_outboxDatabaseContext.SuccessfullySentMessageRepository.AddSuccessfullySentMessage(outboxSuccessfullySentMessageEntity);
 			}
 		}

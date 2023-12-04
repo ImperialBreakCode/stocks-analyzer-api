@@ -27,10 +27,12 @@ using Microsoft.Extensions.DependencyInjection;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces;
 using Microsoft.Data.SqlClient;
 using API.Settlement.Infrastructure.Services.RabbitMQServices;
+using API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers;
+using API.Settlement.Infrastructure.Services.MapperManagement.Mappers;
 
 namespace API.Settlement.Extensions.Configuration
 {
-	public static class ServiceExtensions
+    public static class ServiceExtensions
 	{
 
 		public static void AddSQLiteTransactionDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
@@ -89,7 +91,19 @@ namespace API.Settlement.Extensions.Configuration
 
 			services.AddTransient<ITransactionResponseHandlerService, TransactionResponseHandlerService>();
 			services.AddTransient<IInfrastructureConstants, InfrastructureConstants>();
-			services.AddTransient<ITransactionMapperService, TransactionMapperService>();
+
+			services.AddTransient<IAvailabilityStockInfoResponseDTOMapper, AvailabilityStockInfoResponseDTOMapper>();
+			services.AddTransient<IAvailabilityResponseDTOMapper, AvailabilityResponseDTOMapper>();
+			services.AddTransient<IFinalizeTransactionResponseDTOMapper, FinalizeTransactionResponseDTOMapper>();
+			services.AddTransient<ITransactionMapper, TransactionMapper>();
+			services.AddTransient<IWalletMapper, WalletMapper>();
+			services.AddTransient<IStockMapper, StockMapper>();
+			services.AddTransient<INotifyingEmailMapper, NotifyingEmailMapper>();
+			services.AddTransient<IFinalizingEmailMapper, FinalizingEmailMapper>();
+			services.AddTransient<IOutboxPendingMessageMapper, OutboxPendingMessageMapper>();
+			services.AddTransient<IOutboxSuccessfullySentMessageMapper, OutboxSuccessfullySentMessageMapper>();
+			services.AddTransient<IMapperManagementWrapper, MapperManagementWrapper>();
+
 			services.AddTransient<IDateTimeService, DateTimeService>();
 			services.AddTransient<IBuyService, BuyService>();
 			services.AddTransient<ISellService, SellService>();

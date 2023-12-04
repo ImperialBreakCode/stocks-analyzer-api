@@ -19,7 +19,7 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 			_connection = connection;
 		}
 
-		public void AddSuccessfullySentMessage(OutboxSuccessfullySentMessageEntity outboxAcknowledgedMessageEntity)
+		public void AddSuccessfullySentMessage(OutboxSuccessfullySentMessage outboxAcknowledgedMessageEntity)
 		{
 			string commandText = $@"INSERT INTO SuccessfullySentMessage
 								(Id, QueueType, SentInfo, SentDateTime) VALUES

@@ -22,7 +22,7 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 			_connection = connection;
 		}
 
-		public void AddPendingMessage(OutboxPendingMessageEntity outboxPendingMessageEntity)
+		public void AddPendingMessage(OutboxPendingMessage outboxPendingMessageEntity)
 		{
 			string commandText = $@"INSERT INTO PendingMessage
 								(Id, QueueType, Body, PendingDateTime) VALUES
@@ -53,18 +53,18 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 			}
 		}
 
-		public IEnumerable<OutboxPendingMessageEntity> GetAll()
+		public IEnumerable<OutboxPendingMessage> GetAll()
 		{
 			string commandText = $@"SELECT * FROM PendingMessage";
 			using (SqlCommand command = new SqlCommand(commandText, _connection))
 			{
 				_connection.Open();
-				var pendingMessages = new List<OutboxPendingMessageEntity>();
+				var pendingMessages = new List<OutboxPendingMessage>();
 				using (SqlDataReader reader = command.ExecuteReader())
 				{
 					while (reader.Read())
 					{
-						var pendingMessage = new OutboxPendingMessageEntity()
+						var pendingMessage = new OutboxPendingMessage()
 						{
 							Id = Convert.ToString(reader["Id"]),
 							QueueType = Convert.ToString(reader["QueueType"]),

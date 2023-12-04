@@ -10,6 +10,6 @@ namespace API.Settlement.Domain.Interfaces.RabbitMQInterfaces
 {
 	public interface IRabbitMQProducer
 	{
-		void SendMessage(OutboxPendingMessageEntity outboxPendingMessageEntity);
+		void SendMessage(OutboxPendingMessage outboxPendingMessageEntity);
 	}
 }

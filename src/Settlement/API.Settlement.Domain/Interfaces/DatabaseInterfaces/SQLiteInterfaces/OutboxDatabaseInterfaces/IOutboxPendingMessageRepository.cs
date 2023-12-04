@@ -10,8 +10,8 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.O
 {
 	public interface IOutboxPendingMessageRepository
 	{
-		void AddPendingMessage(OutboxPendingMessageEntity message);
+		void AddPendingMessage(OutboxPendingMessage message);
 		void DeletePendingMessage(string id);
-		IEnumerable<OutboxPendingMessageEntity> GetAll();
+		IEnumerable<OutboxPendingMessage> GetAll();
 	}
 }

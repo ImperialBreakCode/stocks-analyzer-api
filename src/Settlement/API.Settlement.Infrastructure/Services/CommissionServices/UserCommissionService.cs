@@ -34,6 +34,10 @@ namespace API.Settlement.Infrastructure.Services
 		{
 			return price / (1 - _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
 		}
+		public decimal CalculateSinglePriceWithCommission(decimal totalPriceIncludingCommission, decimal quantity)
+		{
+			return totalPriceIncludingCommission / quantity;
+		}
 
 	}
 }

@@ -11,18 +11,18 @@ namespace API.Settlement.Infrastructure.Services
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IInfrastructureConstants _infrastructureConstants;
-		private readonly ITransactionMapperService _transactionMapperService;
+		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IUserCommissionService _commissionService;
 
 
 		public SellService(IHttpClientFactory httpClientFactory,
 						IInfrastructureConstants infrastructureConstants,
-						ITransactionMapperService transactionMapperService,
+						IMapperManagementWrapper transactionMapperService,
 						IUserCommissionService commissionService)
 		{
 			_httpClientFactory = httpClientFactory;
 			_infrastructureConstants = infrastructureConstants;
-			_transactionMapperService = transactionMapperService;
+			_mapperManagementWrapper = transactionMapperService;
 			_commissionService = commissionService;
 		}
 
@@ -39,17 +39,17 @@ namespace API.Settlement.Infrastructure.Services
 				availabilityStockInfoResponseDTOs.Add(availabilityStockInfoResponseDTO);
 			}
 
-			return _transactionMapperService.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
+			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
 		}
 
 		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO, int availableQuantity, decimal totalPriceIncludingCommission)
 		{
 			if (availableQuantity < stockInfoRequestDTO.Quantity)
 			{
-				return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
+				return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
 			}
 
-			return _transactionMapperService.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
+			return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
 		}
 
 		private async Task<StockDTO> GetStockDTO(string uri)

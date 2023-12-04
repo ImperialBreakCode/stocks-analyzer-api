@@ -9,6 +9,6 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.O
 {
 	public interface IOutboxSuccessfullySentMessageRepository
 	{
-		void AddSuccessfullySentMessage(OutboxSuccessfullySentMessageEntity outboxAcknowledgedMessageEntity);
+		void AddSuccessfullySentMessage(OutboxSuccessfullySentMessage outboxAcknowledgedMessageEntity);
 	}
 }
