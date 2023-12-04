@@ -23,7 +23,7 @@ namespace API.Accounts.Extensions
         {
             services.AddApplicationData()
                 // Sql Db
-                //.UseSqlDatabase<AccountDataAdapter>();
+                //.UseSqlDatabase();
                 // memory db
                 .UseMemoryMockupDb();
 

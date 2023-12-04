@@ -52,11 +52,9 @@ namespace API.Accounts.Application
             return services;
         }
 
-        public static IServiceCollection UseSqlDatabase<TDataAdapter>(this IServiceCollection services) 
-            where TDataAdapter : class, IAccountsData
+        public static IServiceCollection UseSqlDatabase(this IServiceCollection services) 
         {
-            services.AddTransient<ISqlContextCreator, SqlContextCreator>();
-            services.AddTransient<IAccountsData, TDataAdapter>();
+            services.AddTransient<IAccountsData, AccountData>();
             services.AddTransient<IAccountsDbManager, AccountsDbManager>();
             return services;
         }

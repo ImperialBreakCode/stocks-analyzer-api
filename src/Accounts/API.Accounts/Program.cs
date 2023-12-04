@@ -1,4 +1,5 @@
-using API.Accounts.Application.Settings.Options;
+using API.Accounts.Application.Settings.Options.AccountOptions;
+using API.Accounts.Application.Settings.Options.DatabaseOptions;
 using API.Accounts.Extensions;
 using System.Text.Json.Serialization;
 
@@ -17,6 +18,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<AccountSettings>(
     builder.Configuration.GetSection("AccountSettings"));
+builder.Services.Configure<DatabaseConnectionsSettings>(
+    builder.Configuration.GetSection("ConnectionStrings"));
 
 builder.Services.AddAccountServicesConfiguration();
 
