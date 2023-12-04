@@ -40,7 +40,7 @@ namespace API.Settlement.Infrastructure.Services
 		{
 			if (!_constants.IsInitializedRecurringCapitalLossCheckJob)
 			{
-				RecurringJob.AddOrUpdate("recurringCapitalLossJobCheck", () => _jobService.RecurringCapitalLossCheckJob(), _dateTimeService.GetCronExpressionForEveryHour());
+				RecurringJob.AddOrUpdate("recurringCapitalLossJobCheck", () => _jobService.RecurringCapitalCheckJob(), _dateTimeService.GetCronExpressionForEveryHour());
 				_constants.IsInitializedRecurringCapitalLossCheckJob = true;
 			}
 		}

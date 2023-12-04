@@ -75,7 +75,7 @@ namespace API.Settlement.Extensions.Configuration
 			services.AddScoped<IHTMLContentGenerator, HTMLContentGenerator>();
 			services.AddScoped<IPDFGenerator, PDFGenerator>();
 
-			services.AddScoped<IUserCommissionService, UserCommissionService>();
+			services.AddTransient<IUserCommissionService, UserCommissionService>();
 			services.AddTransient<IEmailService, EmailService>();
 
 			services.AddScoped<IFailedTransactionRepository, FailedTransactionRepository>();
@@ -87,7 +87,7 @@ namespace API.Settlement.Extensions.Configuration
 			services.AddScoped<IOutboxDatabaseContext, OutboxDatabaseContext>();
 
 			services.AddTransient<IRabbitMQProducer, RabbitMQProducer>();
-			services.AddScoped<IRabbitMQService, RabbitMQService>();
+			services.AddTransient<IRabbitMQService, RabbitMQService>();
 
 			services.AddTransient<ITransactionResponseHandlerService, TransactionResponseHandlerService>();
 			services.AddTransient<IInfrastructureConstants, InfrastructureConstants>();

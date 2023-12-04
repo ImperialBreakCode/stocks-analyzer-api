@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabasebServices
 {
-    public class WalletService : IWalletService
+	public class WalletService : IWalletService
 	{
 		private readonly IWalletRepository _walletRepository;
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
@@ -26,7 +26,6 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IEmailService _emailService;
 		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
-		private readonly IRabbitMQProducer _rabbitMQSellTransactionProducer;
 		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
 		public WalletService(IWalletRepository walletRepository,
 							IMapperManagementWrapper mapperManagementWrapper,
@@ -34,7 +33,6 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 							IHttpClientFactory httpClientFactory,
 							IEmailService emailService,
 							ITransactionDatabaseContext transactionDatabaseContext,
-							IRabbitMQProducer rabbitMQSellTransactionProducer,
 							IOutboxDatabaseContext outboxDatabaseContext)
 		{
 			_walletRepository = walletRepository;
@@ -43,7 +41,6 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 			_httpClientFactory = httpClientFactory;
 			_emailService = emailService;
 			_transactionDatabaseContext = transactionDatabaseContext;
-			_rabbitMQSellTransactionProducer = rabbitMQSellTransactionProducer;
 			_outboxDatabaseContext = outboxDatabaseContext;
 		}
 
@@ -66,45 +63,43 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 			}
 
 		}
-		public async Task CapitalLossCheck()
+		public async Task CapitalCheck()
 		{
 			var wallets = _walletRepository.GetWallets();
 			foreach (var wallet in wallets)
 			{
 				foreach (var stock in wallet.Stocks)
 				{
-					var actualSingleStockPrice = 170;
+					var actualSingleStockPrice = 850;
 					//var actualSingleStockPrice = await GetActualSingleStockPrice(stock.StockName);
 					decimal actualTotalStockPrice = stock.Quantity * actualSingleStockPrice;
 					double percentageDifference = (double)((actualTotalStockPrice - stock.InvestedAmount) / stock.InvestedAmount * 100);
 
 					if (percentageDifference > 0)
 					{
-						var emailDTO = _mapperManagementWrapper.NotifyingEmailMapper.CreateNotifyingEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has increased by {percentageDifference}%!");
-						await _emailService.SendEmailWithoutAttachment(emailDTO);
+						if (percentageDifference >= 20)
+						{
+							var generatedTransaction = await PerformCapitalCheckSale(wallet, stock, actualTotalStockPrice);
+
+							await SendStockAlertEmail(percentageDifference, generatedTransaction);
+						}
+						else
+						{
+							await SendNotifyingEmail(wallet, percentageDifference);
+						}
+
 					}
 					else if (percentageDifference < 0)
 					{
 						if (percentageDifference <= -15)
 						{
-							_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
+							var generatedTransaction = await PerformCapitalCheckSale(wallet, stock, actualTotalStockPrice);
 
-							var transaction = _mapperManagementWrapper.TransactionMapper.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
-							transaction.Message = _infrastructureConstants.TransactionSuccessMessage;
-							_transactionDatabaseContext.SuccessfulTransactions.Add(transaction);
-
-							var outboxPendingMessageEntity = _mapperManagementWrapper.OutboxPendingMessageMapper.MapToOutboxPendingMessageEntity(transaction);
-							_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(outboxPendingMessageEntity);
-
-							//TODO: summary pdf - test
-							var finalizeTransactionResponseDTO = _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.MapToFinalizeTransactionResponseDTO(transaction);
-							var emailDTO = _mapperManagementWrapper.FinalizingEmailMapper.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, $"Your stock price has decreased by {percentageDifference}%! It has been automatically sold!");
-							await _emailService.SendEmailWithAttachment(emailDTO);
+							await SendStockAlertEmail(percentageDifference, generatedTransaction);
 						}
 						else
 						{
-							var emailDTO = _mapperManagementWrapper.NotifyingEmailMapper.CreateNotifyingEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock price has decreased by {percentageDifference}%!");
-							await _emailService.SendEmailWithoutAttachment(emailDTO);
+							await SendNotifyingEmail(wallet, percentageDifference);
 						}
 					}
 					else
@@ -115,6 +110,35 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 			}
 		}
 
+		private async Task SendNotifyingEmail(Wallet wallet, double percentageDifference)
+		{
+			var formattedPercentageDifference = percentageDifference != 0 ? (percentageDifference < 0 ? $"-{Math.Abs(percentageDifference)}" : $"+{percentageDifference}") : "0";
+			var emailDTO = _mapperManagementWrapper.NotifyingEmailMapper.CreateNotifyingEmailDTO(wallet.UserEmail, "Stock Alert", $"Your stock`s price has changed by {formattedPercentageDifference}%!");
+			await _emailService.SendEmailWithoutAttachment(emailDTO);
+		}
+
+		private async Task SendStockAlertEmail(double percentageDifference, Transaction transaction)
+		{
+			var finalizeTransactionResponseDTO = _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.MapToFinalizeTransactionResponseDTO(transaction);
+			var formattedPercentageDifference = percentageDifference != 0 ? (percentageDifference < 0 ? $"-{Math.Abs(percentageDifference)}" : $"+{percentageDifference}") : "0";
+			var emailDTO = _mapperManagementWrapper.FinalizingEmailMapper.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, $"Your stock`s price has changed by {formattedPercentageDifference}%! It has been automatically sold!");
+			await _emailService.SendEmailWithAttachment(emailDTO);
+		}
+
+		private async Task<Transaction> PerformCapitalCheckSale(Wallet wallet, Stock stock, decimal actualTotalStockPrice)
+		{
+			_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
+
+			var transaction = _mapperManagementWrapper.TransactionMapper.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
+			transaction.Message = _infrastructureConstants.TransactionSuccessMessage;
+			_transactionDatabaseContext.SuccessfulTransactions.Add(transaction);
+
+			var outboxPendingMessageEntity = _mapperManagementWrapper.OutboxPendingMessageMapper.MapToOutboxPendingMessageEntity(transaction);
+			_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(outboxPendingMessageEntity);
+
+			return transaction;
+		}
+
 		private void PerformBuyLogic(Wallet wallet, FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
 		{
 			foreach (var stockInfoResponseDTO in finalizeTransactionResponseDTO.StockInfoResponseDTOs)
@@ -123,7 +147,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 				if (stock == null)
 				{
 					stock = _mapperManagementWrapper.StockMapper.MapToStockEntity(stockInfoResponseDTO, finalizeTransactionResponseDTO.UserRank);
-					
+
 					_walletRepository.AddStock(wallet.WalletId, stock);
 				}
 				else
@@ -145,7 +169,7 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 					if (stock != null && stock.Quantity >= stockInfoResponseDTO.Quantity)
 					{
 						stock = _mapperManagementWrapper.StockMapper.UpdateStockForSale(stock, stockInfoResponseDTO, finalizeTransactionResponseDTO.UserRank);
-						
+
 					}
 					if (stock.Quantity == 0) { _walletRepository.RemoveStock(wallet.WalletId, stock.StockId); }
 					else { _walletRepository.UpdateStock(wallet.WalletId, stock); }

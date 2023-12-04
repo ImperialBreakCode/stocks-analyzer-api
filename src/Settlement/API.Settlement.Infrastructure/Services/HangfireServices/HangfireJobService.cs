@@ -56,7 +56,8 @@ namespace API.Settlement.Infrastructure.Services
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 				try
 				{
-					response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
+					response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+					//response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
 				}
 				catch (Exception ex)
 				{
@@ -88,7 +89,8 @@ namespace API.Settlement.Infrastructure.Services
 					HttpResponseMessage response = null;
 					try
 					{
-						response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
+						response = new HttpResponseMessage(HttpStatusCode.OK);
+						//response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
 					}
 					catch (Exception ex)
 					{
@@ -104,9 +106,9 @@ namespace API.Settlement.Infrastructure.Services
 				}
 			}
 		}
-		public async Task RecurringCapitalLossCheckJob()
+		public async Task RecurringCapitalCheckJob()
 		{
-			await _walletService.CapitalLossCheck();
+			await _walletService.CapitalCheck();
 		}
 		public async Task RecurringRabbitMQMessageSenderJob()
 		{
