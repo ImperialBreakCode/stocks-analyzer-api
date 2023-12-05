@@ -7,17 +7,16 @@ namespace API.Settlement.Infrastructure.Services
 	public class TransactionWrapper : ITransactionWrapper
 	{
 		public IBuyService BuyService { get; }
-
 		public ISellService SellService { get; }
 
-		public TransactionWrapper(IBuyService buyService,
-								ISellService sellService)
+		public TransactionWrapper(IBuyService buyService, 
+								  ISellService sellService)
 		{
 			BuyService = buyService;
 			SellService = sellService;
 		}
 
-		public async Task<AvailabilityResponseDTO> CheckAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		public async Task<AvailabilityResponseDTO> CheckWalletAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
 			if (finalizeTransactionRequestDTO.IsSale)
 			{
@@ -26,5 +25,6 @@ namespace API.Settlement.Infrastructure.Services
 
 			return await BuyService.BuyStocks(finalizeTransactionRequestDTO);
 		}
+
 	}
 }

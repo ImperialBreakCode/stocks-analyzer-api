@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Settlement.Domain.Entities
+namespace API.Settlement.Domain.Interfaces.RabbitMQInterfaces
 {
-	public class EntityClass
+	public interface IRabbitMQService
 	{
+		void PerformMessageSending();
 	}
 }

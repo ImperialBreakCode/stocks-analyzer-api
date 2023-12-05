@@ -16,8 +16,8 @@ namespace API.Settlement.Domain.Interfaces
 		string GETStockPriceRoute(string stockName);
 		decimal GetCommissionBasedOnUserType(UserRank userRank);
 		string GetMessageBasedOnStatus(Status status);
-
 		bool IsInitializedRecurringFailedTransactionsJob { get; set; }
 		bool IsInitializedRecurringCapitalLossCheckJob {get;set;}
+		bool IsInitializedRecurringRabbitMQMessageSenderJob { get; set; }
 	}
 }

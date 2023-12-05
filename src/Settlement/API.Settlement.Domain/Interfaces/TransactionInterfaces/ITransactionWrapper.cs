@@ -7,6 +7,6 @@ namespace API.Settlement.Domain.Interfaces
 	{
 		IBuyService BuyService { get; }
 		ISellService SellService { get; }
-		Task<AvailabilityResponseDTO> CheckAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
+		Task<AvailabilityResponseDTO> CheckWalletAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

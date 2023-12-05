@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using API.Settlement.Domain.Enums;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace API.Settlement.Domain.Entities
@@ -14,6 +15,9 @@ namespace API.Settlement.Domain.Entities
 
         [BsonElement("user_email")]
         public string UserEmail { get; set; }
+
+        [BsonElement("user_rank")]
+		public UserRank UserRank { get; set; }
 
 		[BsonElement("stocks")]
 		public IEnumerable<Stock> Stocks { get; set; } = Enumerable.Empty<Stock>();
