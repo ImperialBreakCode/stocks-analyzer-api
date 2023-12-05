@@ -8,6 +8,13 @@ namespace API.Accounts.Application.Data.AccountsDataSeeder
         private const string _username = "dragon";
         private IAccountsDbContext _context;
 
+        private readonly Dictionary<string, List<decimal>> _prices = new()
+        {   //stock   prices: purchase, sale
+            { "TSLA", new(){ 200.50m, 210m } },
+            { "A", new(){ 100m, 50m } },
+            { "AAPL", new(){ 100m, 50m } },
+        };
+
         public void SeedData(IAccountsDbContext context)
         {
             _context = context;
@@ -57,7 +64,7 @@ namespace API.Accounts.Application.Data.AccountsDataSeeder
             Transaction transaction = new()
             {
                 Quantity = quantity,
-                TotalAmount = quantity * (stock.StockName == "TSLA" ? -200.50m : -100m),
+                TotalAmount = quantity * _prices[stock.StockName][0] * -1,
                 StockId = stock.Id,
                 Walletid = stock.WalletId
             };
@@ -74,7 +81,7 @@ namespace API.Accounts.Application.Data.AccountsDataSeeder
             {
                 Quantity = quantity,
                 StockId = stock.Id,
-                TotalAmount = quantity * (stock.StockName == "TSLA" ? 210m : 50m),
+                TotalAmount = quantity * _prices[stock.StockName][1],
                 Walletid = stock.WalletId
             };
 
