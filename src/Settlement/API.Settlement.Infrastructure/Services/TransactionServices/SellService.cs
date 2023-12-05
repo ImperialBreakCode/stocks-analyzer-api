@@ -10,46 +10,40 @@ namespace API.Settlement.Infrastructure.Services
 	public class SellService : ISellService
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
-		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IUserCommissionService _commissionService;
 
 
-		public SellService(IHttpClientFactory httpClientFactory,
-						IInfrastructureConstants infrastructureConstants,
-						IMapperManagementWrapper mapperManagementWrapper,
-						IUserCommissionService commissionService)
+		public SellService(IHttpClientFactory httpClientFactory, 
+						   IMapperManagementWrapper mapperManagementWrapper, 
+						   IUserCommissionService commissionService)
 		{
 			_httpClientFactory = httpClientFactory;
-			_infrastructureConstants = infrastructureConstants;
 			_mapperManagementWrapper = mapperManagementWrapper;
 			_commissionService = commissionService;
 		}
 
 		public async Task<AvailabilityResponseDTO> SellStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
+			var availabilityStockInfoResponseDTOs = await ProcessStockSellRequests(finalizeTransactionRequestDTO);
+
+			return MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
+		}
+
+		private async Task<IEnumerable<AvailabilityStockInfoResponseDTO>> ProcessStockSellRequests(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		{
 			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
-			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
-			{
-				var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" };
+            foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
+            {
 				//var stockDTO = await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
-				decimal totalPriceIncludingCommission = _commissionService.CalculatePriceAfterAddingSaleCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, finalizeTransactionRequestDTO.UserRank);
+				var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" };
+
+				decimal totalPriceIncludingCommission = CalculateTotalPriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, finalizeTransactionRequestDTO.UserRank);
 
 				var availabilityStockInfoResponseDTO = GenerateAvailabilityStockInfoResponse(stockInfoRequestDTO, stockDTO.Quantity, totalPriceIncludingCommission);
 				availabilityStockInfoResponseDTOs.Add(availabilityStockInfoResponseDTO);
 			}
-
-			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
-		}
-
-		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO, int availableQuantity, decimal totalPriceIncludingCommission)
-		{
-			if (availableQuantity < stockInfoRequestDTO.Quantity)
-			{
-				return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
-			}
-
-			return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
+			return availabilityStockInfoResponseDTOs;
 		}
 
 		private async Task<StockDTO> GetStockDTO(string uri)
@@ -66,6 +60,26 @@ namespace API.Settlement.Infrastructure.Services
 				}
 			}
 			return null;
+		}
+
+		private decimal CalculateTotalPriceIncludingCommission(decimal totalPriceExcludingCommission, UserRank userRank)
+		{
+			return _commissionService.CalculatePriceAfterAddingSaleCommission(totalPriceExcludingCommission, userRank);
+		}
+
+		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO, int availableQuantity, decimal totalPriceIncludingCommission)
+		{
+			if (availableQuantity < stockInfoRequestDTO.Quantity)
+			{
+				return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
+			}
+
+			return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
+		}
+
+		private AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)
+		{
+			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
 		}
 
 	}

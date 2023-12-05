@@ -10,14 +10,14 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 	public class OutboxDatabaseContext : IOutboxDatabaseContext
 	{
 		public IOutboxPendingMessageRepository PendingMessageRepository { get; }
-
 		public IOutboxSuccessfullySentMessageRepository SuccessfullySentMessageRepository { get; }
 
 		public OutboxDatabaseContext(IOutboxPendingMessageRepository pendingMessageRepository, 
-									IOutboxSuccessfullySentMessageRepository acknowledgedMessageRepository)
+									 IOutboxSuccessfullySentMessageRepository acknowledgedMessageRepository)
 		{
 			PendingMessageRepository = pendingMessageRepository;
 			SuccessfullySentMessageRepository = acknowledgedMessageRepository;
 		}
+
 	}
 }

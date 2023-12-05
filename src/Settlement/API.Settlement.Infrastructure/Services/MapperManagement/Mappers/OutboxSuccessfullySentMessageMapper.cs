@@ -14,7 +14,8 @@ namespace API.Settlement.Infrastructure.Services.MapperManagement.Mappers
     {
         private readonly IMapper _mapper;
         private readonly IDateTimeService _dateTimeService;
-        public OutboxSuccessfullySentMessageMapper(IMapper mapper, IDateTimeService dateTimeService)
+        public OutboxSuccessfullySentMessageMapper(IMapper mapper, 
+                                                   IDateTimeService dateTimeService)
         {
             _mapper = mapper;
             _dateTimeService = dateTimeService;

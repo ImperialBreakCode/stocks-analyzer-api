@@ -36,5 +36,6 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 				_connection.Close();
 			}
 		}
+
 	}
 }

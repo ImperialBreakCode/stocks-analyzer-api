@@ -29,6 +29,8 @@ using Microsoft.Data.SqlClient;
 using API.Settlement.Infrastructure.Services.RabbitMQServices;
 using API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers;
 using API.Settlement.Infrastructure.Services.MapperManagement.Mappers;
+using API.Settlement.Domain.Interfaces.TransactionInterfaces;
+using API.Settlement.Infrastructure.Services.TransactionServices;
 
 namespace API.Settlement.Extensions.Configuration
 {
@@ -92,6 +94,7 @@ namespace API.Settlement.Extensions.Configuration
 			services.AddTransient<ITransactionResponseHandlerService, TransactionResponseHandlerService>();
 			services.AddTransient<IInfrastructureConstants, InfrastructureConstants>();
 
+			services.AddScoped<ITransactionProcessor, TransactionProcessor>();
 			services.AddTransient<IAvailabilityStockInfoResponseDTOMapper, AvailabilityStockInfoResponseDTOMapper>();
 			services.AddTransient<IAvailabilityResponseDTOMapper, AvailabilityResponseDTOMapper>();
 			services.AddTransient<IFinalizeTransactionResponseDTOMapper, FinalizeTransactionResponseDTOMapper>();

@@ -14,20 +14,20 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IHangfireJobService _jobService;
 		private readonly IInfrastructureConstants _constants;
 
-		public HangfireService(IDateTimeService dateTimeService,
-							IHangfireJobService jobService,
-							IInfrastructureConstants constants)
+		public HangfireService(IDateTimeService dateTimeService, 
+							   IHangfireJobService jobService, 
+							   IInfrastructureConstants constants)
 		{
 			_dateTimeService = dateTimeService;
 			_jobService = jobService;
 			_constants = constants;
 		}
 
-
 		public void ScheduleStockProcessingJob(AvailabilityResponseDTO availabilityResponseDTO)
 		{
 			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(availabilityResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
 		}
+
 		public void InitializeRecurringFailedTransactionsJob()
 		{
 			if (!_constants.IsInitializedRecurringFailedTransactionsJob)
@@ -36,6 +36,7 @@ namespace API.Settlement.Infrastructure.Services
 				_constants.IsInitializedRecurringFailedTransactionsJob = true;
 			}
 		}
+
 		public void InitializeRecurringCapitalLossJobCheck()
 		{
 			if (!_constants.IsInitializedRecurringCapitalLossCheckJob)

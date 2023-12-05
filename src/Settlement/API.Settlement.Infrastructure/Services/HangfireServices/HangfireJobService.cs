@@ -6,6 +6,8 @@ using API.Settlement.Domain.Interfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.RabbitMQInterfaces;
+using API.Settlement.Domain.Interfaces.TransactionInterfaces;
+using API.Settlement.Infrastructure.Services.TransactionServices;
 using Azure;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -16,103 +18,38 @@ namespace API.Settlement.Infrastructure.Services
 {
 	public class HangfireJobService : IHangfireJobService
 	{
-		private readonly IMapperManagementWrapper _mapperManagementWrapper;
-		private readonly IHttpClientFactory _httpClientFactory;
-		private readonly IInfrastructureConstants _infrastructureConstants;
-		private readonly ITransactionResponseHandlerService _transactionResponseHandlerService;
-		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
 		private readonly IWalletService _walletService;
-		private readonly IEmailService _emailService;
 		private readonly IRabbitMQService _rabbitMQService;
+		private readonly ITransactionProcessor _transactionProcessor;
 
-
-		public HangfireJobService(IHttpClientFactory httpClientFactory,
-						IMapperManagementWrapper mapperManagementWrapper,
-						IInfrastructureConstants infrastructureConstants,
-						ITransactionResponseHandlerService transactionResponseHandlerService,
-						ITransactionDatabaseContext unitOfWork,
-						IWalletService walletService,
-						IEmailService emailService,
-						IRabbitMQService rabbitMQService)
+		public HangfireJobService(IWalletService walletService,
+								  IRabbitMQService rabbitMQService,
+								  ITransactionProcessor transactionProcessor)
 		{
-			_httpClientFactory = httpClientFactory;
-			_mapperManagementWrapper = mapperManagementWrapper;
-			_infrastructureConstants = infrastructureConstants;
-			_transactionResponseHandlerService = transactionResponseHandlerService;
-			_transactionDatabaseContext = unitOfWork;
 			_walletService = walletService;
-			_emailService = emailService;
 			_rabbitMQService = rabbitMQService;
+			_transactionProcessor = transactionProcessor;
 		}
 
 		public async Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO)
 		{
-			HttpResponseMessage response = null;
-			var finalizeTransactionResponseDTO = _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.MapToFinalizeTransactionResponseDTO(availabilityResponseDTO);
-
-			using (var httpClient = _httpClientFactory.CreateClient())
-			{
-				var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
-				var content = new StringContent(json, Encoding.UTF8, "application/json");
-				try
-				{
-					response = new HttpResponseMessage(HttpStatusCode.BadRequest);
-					//response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
-				}
-				catch (Exception ex)
-				{
-                    await Console.Out.WriteLineAsync(ex.Message);
-                }
-				finally
-				{
-					var emailDTO = _mapperManagementWrapper.FinalizingEmailMapper.CreateTransactionSummaryEmailDTO(finalizeTransactionResponseDTO, "Transaction Summary Report");
-					await _emailService.SendEmailWithAttachment(emailDTO);
-
-					_walletService.UpdateStocksInWallet(finalizeTransactionResponseDTO);
-
-					var transactions = _mapperManagementWrapper.TransactionMapper.MapToTransactionEntities(finalizeTransactionResponseDTO);
-					_transactionResponseHandlerService.HandleTransactionResponse(response, transactions);
-				}
-			}
+			await _transactionProcessor.FinalizeTransaction(availabilityResponseDTO);
 		}
 
 		public async Task RecurringFailedTransactionsJob()
 		{
-			using (var httpClient = _httpClientFactory.CreateClient())
-			{
-				var failedTransactionEntities = _transactionDatabaseContext.FailedTransactions.GetAll();
-				var finalizeTransactionResponseDTOs = _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.MapToFinalizeTransactionResponseDTOs(failedTransactionEntities);
-				foreach (var finalizeTransactionResponseDTO in finalizeTransactionResponseDTOs)
-				{
-					var json = JsonConvert.SerializeObject(finalizeTransactionResponseDTO);
-					var content = new StringContent(json, Encoding.UTF8, "application/json");
-					HttpResponseMessage response = null;
-					try
-					{
-						response = new HttpResponseMessage(HttpStatusCode.OK);
-						//response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
-					}
-					catch (Exception ex)
-					{
-						await Console.Out.WriteLineAsync(ex.Message);
-					}
-					finally
-					{
-						var transactions = _mapperManagementWrapper.TransactionMapper.MapToTransactionEntities(finalizeTransactionResponseDTO);
-						_transactionResponseHandlerService.HandleTransactionResponse(response, transactions);
-					}
-					
-
-				}
-			}
+			await _transactionProcessor.ProcessFailedTransactions();
 		}
+
 		public async Task RecurringCapitalCheckJob()
 		{
 			await _walletService.CapitalCheck();
 		}
+
 		public async Task RecurringRabbitMQMessageSenderJob()
 		{
-			_rabbitMQService.PerformMessageSending(); 
+			_rabbitMQService.PerformMessageSending();
 		}
+
 	}
 }

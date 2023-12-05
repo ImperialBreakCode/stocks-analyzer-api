@@ -16,9 +16,9 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IUserCommissionService _commissionService;
 
 		public BuyService(IHttpClientFactory httpClientFactory,
-						IInfrastructureConstants constants,
-						IMapperManagementWrapper mapperManagementWrapper,
-						IUserCommissionService commissionService)
+						  IInfrastructureConstants constants,
+						  IMapperManagementWrapper mapperManagementWrapper,
+						  IUserCommissionService commissionService)
 		{
 			_httpClientFactory = httpClientFactory;
 			_infrastructureConstants = constants;
@@ -28,8 +28,14 @@ namespace API.Settlement.Infrastructure.Services
 
 		public async Task<AvailabilityResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			decimal walletBalance = 1000.5M;
+			var availabilityStockInfoResponseDTOs = await ProcessStockBuyRequests(finalizeTransactionRequestDTO);
+			return MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
+		}
+
+		private async Task<IEnumerable<AvailabilityStockInfoResponseDTO>> ProcessStockBuyRequests(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		{
 			//decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
+			decimal walletBalance = 1000.5M;
 			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
 			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 			{
@@ -37,20 +43,7 @@ namespace API.Settlement.Infrastructure.Services
 				availabilityStockInfoResponseDTOs.Add(availabilityStockInfoResponseDTO);
 
 			}
-
-			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
-		}
-
-		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO,UserRank userRank, ref decimal walletBalance)
-		{
-			decimal totalPriceIncludingCommission = _commissionService.CalculatePriceAfterAddingBuyCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, userRank);
-			if (walletBalance < totalPriceIncludingCommission)
-			{
-				return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
-			}
-
-			walletBalance -= totalPriceIncludingCommission;
-			return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
+			return availabilityStockInfoResponseDTOs;
 		}
 		private async Task<decimal> GetWalletBalance(string walletId)
 		{
@@ -65,6 +58,28 @@ namespace API.Settlement.Infrastructure.Services
 				}
 			}
 			return balance;
+		}
+
+		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO,UserRank userRank, ref decimal walletBalance)
+		{
+			decimal totalPriceIncludingCommission = CalculateTotalPriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, userRank);
+			if (walletBalance < totalPriceIncludingCommission)
+			{
+				return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
+			}
+
+			walletBalance -= totalPriceIncludingCommission;
+			return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
+		}
+
+		private decimal CalculateTotalPriceIncludingCommission(decimal totalPriceExcludingCommission, UserRank userRank)
+		{
+			return _commissionService.CalculatePriceAfterAddingBuyCommission(totalPriceExcludingCommission, userRank);
+		}
+		
+		private AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)
+		{
+			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
 		}
 	}
 }

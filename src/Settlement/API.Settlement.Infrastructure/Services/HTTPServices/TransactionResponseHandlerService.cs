@@ -16,11 +16,13 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
 		private readonly IInfrastructureConstants _InfrastructureConstants;
 
-		public TransactionResponseHandlerService(ITransactionDatabaseContext transactionDatabaseContext, IInfrastructureConstants infrastructureConstants)
+		public TransactionResponseHandlerService(ITransactionDatabaseContext transactionDatabaseContext, 
+												 IInfrastructureConstants infrastructureConstants)
 		{
 			_transactionDatabaseContext = transactionDatabaseContext;
 			_InfrastructureConstants = infrastructureConstants;
 		}
+
 		public void HandleTransactionResponse(HttpResponseMessage response, IEnumerable<Transaction> transactions)
 		{
 			if(response.IsSuccessStatusCode)
@@ -52,9 +54,7 @@ namespace API.Settlement.Infrastructure.Services
 
 				}
 			}
-
-
-
 		}
+
 	}
 }

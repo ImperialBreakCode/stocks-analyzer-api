@@ -81,6 +81,7 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
 				.ForMember(dest => dest.QueueType, opt => opt.MapFrom(src => src.QueueType))
 				.ForMember(dest => dest.SentInfo, opt => opt.MapFrom(src => src.Body));
+
 		}
 	}
 }

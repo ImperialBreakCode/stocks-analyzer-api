@@ -17,8 +17,8 @@ namespace API.Settlement.Infrastructure.Services.RabbitMQServices
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 
 		public RabbitMQService(IOutboxDatabaseContext outboxDatabaseContext,
-							IRabbitMQProducer rabbitMQSellTransactionProducer,
-							IMapperManagementWrapper mapperManagementWrapper)
+							   IRabbitMQProducer rabbitMQSellTransactionProducer,
+							   IMapperManagementWrapper mapperManagementWrapper)
 		{
 			_outboxDatabaseContext = outboxDatabaseContext;
 			_rabbitMQProducer = rabbitMQSellTransactionProducer;

@@ -28,12 +28,12 @@ namespace API.Settlement.Infrastructure.Services.MongoDbServices.WalletDatabaseb
 		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
 		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
 		public WalletService(IWalletRepository walletRepository,
-							IMapperManagementWrapper mapperManagementWrapper,
-							IInfrastructureConstants infrastructureConstants,
-							IHttpClientFactory httpClientFactory,
-							IEmailService emailService,
-							ITransactionDatabaseContext transactionDatabaseContext,
-							IOutboxDatabaseContext outboxDatabaseContext)
+							 IMapperManagementWrapper mapperManagementWrapper,
+							 IInfrastructureConstants infrastructureConstants,
+							 IHttpClientFactory httpClientFactory,
+							 IEmailService emailService,
+							 ITransactionDatabaseContext transactionDatabaseContext,
+							 IOutboxDatabaseContext outboxDatabaseContext)
 		{
 			_walletRepository = walletRepository;
 			_mapperManagementWrapper = mapperManagementWrapper;

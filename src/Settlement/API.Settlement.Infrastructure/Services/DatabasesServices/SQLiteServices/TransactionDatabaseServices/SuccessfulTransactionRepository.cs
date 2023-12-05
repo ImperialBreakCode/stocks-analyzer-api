@@ -15,7 +15,8 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 	{
 		private readonly SQLiteConnection _connection;
 		private readonly IDateTimeService _dateTimeService;
-		public SuccessfulTransactionRepository(SQLiteConnection connection, IDateTimeService dateTimeService)
+		public SuccessfulTransactionRepository(SQLiteConnection connection, 
+											   IDateTimeService dateTimeService)
 		{
 			_connection = connection;
 			_dateTimeService = dateTimeService;

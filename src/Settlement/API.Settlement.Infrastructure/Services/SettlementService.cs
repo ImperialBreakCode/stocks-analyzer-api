@@ -10,7 +10,9 @@ namespace API.Settlement.Infrastructure.Services
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IHangfireService _hangfireService;
 
-		public SettlementService(ITransactionWrapper transactionWrapper, IMapperManagementWrapper mapperManagementWrapper, IHangfireService hangfireService)
+		public SettlementService(ITransactionWrapper transactionWrapper, 
+								 IMapperManagementWrapper mapperManagementWrapper, 
+								 IHangfireService hangfireService)
 		{
 			_transactionWrapper = transactionWrapper; 
 			_hangfireService = hangfireService; 
@@ -18,16 +20,40 @@ namespace API.Settlement.Infrastructure.Services
 		}
 		public async Task<AvailabilityResponseDTO> ProcessTransactions(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var availabilityResponseDTO = await _transactionWrapper.CheckAvailability(finalizeTransactionRequestDTO);
-			var clonedAvailabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.CloneAvailabilityResponseDTO(availabilityResponseDTO);
-			var filteredAvailabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.FilterSuccessfulAvailabilityStockInfoDTOs(clonedAvailabilityResponseDTO);
+			var availabilityResponseDTO = await CheckWalletAvailability(finalizeTransactionRequestDTO);
 
-			_hangfireService.ScheduleStockProcessingJob(filteredAvailabilityResponseDTO);
+			var filteredSuccessfulAvailabilityResponseDTO = FilterSuccessfulAvailabilityStockInfo(availabilityResponseDTO);
+
+			ScheduleStockProcessingJobs(filteredSuccessfulAvailabilityResponseDTO);
+			InitializeRecurringJobs();
+
+			return availabilityResponseDTO;
+		}
+
+		private async Task<AvailabilityResponseDTO> CheckWalletAvailability(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
+		{
+			return await _transactionWrapper.CheckWalletAvailability(finalizeTransactionRequestDTO);
+		}
+
+		private AvailabilityResponseDTO FilterSuccessfulAvailabilityStockInfo(AvailabilityResponseDTO availabilityResponseDTO)
+		{
+			var clonedAvailabilityResponseDTO = CreateCopyOfAvailabilityResponseDTO(availabilityResponseDTO);
+			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.FilterSuccessfulAvailabilityStockInfoDTOs(clonedAvailabilityResponseDTO);
+		}
+
+		private AvailabilityResponseDTO CreateCopyOfAvailabilityResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
+		{
+			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.CreateCopyOfAvailabilityResponseDTO(availabilityResponseDTO);
+		}
+		private void ScheduleStockProcessingJobs(AvailabilityResponseDTO filteredSuccessfulAvailabilityResponseDTO)
+		{
+			_hangfireService.ScheduleStockProcessingJob(filteredSuccessfulAvailabilityResponseDTO);
+		}
+		private void InitializeRecurringJobs()
+		{
 			_hangfireService.InitializeRecurringFailedTransactionsJob();
 			_hangfireService.InitializeRecurringCapitalLossJobCheck();
 			_hangfireService.InitializeRecurringRabbitMQMessageSenderJob();
-
-			return availabilityResponseDTO;
 		}
 
 	}

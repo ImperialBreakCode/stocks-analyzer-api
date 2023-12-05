@@ -16,12 +16,13 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 	{
 		private readonly SQLiteConnection _connection;
 		private readonly IDateTimeService _dateTimeService;
-		public FailedTransactionRepository(SQLiteConnection connection, IDateTimeService dateTimeService)
+
+		public FailedTransactionRepository(SQLiteConnection connection, 
+										   IDateTimeService dateTimeService)
 		{
 			_connection = connection;
 			_dateTimeService = dateTimeService;
 		}
-
 
 		public void Add(Transaction transaction)
 		{
@@ -160,5 +161,6 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 			return false;
 
 		}
+
 	}
 }

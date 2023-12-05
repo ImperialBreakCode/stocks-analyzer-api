@@ -12,7 +12,7 @@ namespace API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers
     {
         AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO,
                                                             IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs);
-        AvailabilityResponseDTO CloneAvailabilityResponseDTO(AvailabilityResponseDTO availabilityResponseDTO);
+        AvailabilityResponseDTO CreateCopyOfAvailabilityResponseDTO(AvailabilityResponseDTO availabilityResponseDTO);
         AvailabilityResponseDTO FilterSuccessfulAvailabilityStockInfoDTOs(AvailabilityResponseDTO availabilityResponseDTO);
     }
 }

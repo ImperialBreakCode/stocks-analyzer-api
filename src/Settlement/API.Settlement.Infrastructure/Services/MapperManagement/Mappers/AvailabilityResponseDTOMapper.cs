@@ -17,7 +17,8 @@ namespace API.Settlement.Infrastructure.Services.MapperManagement.Mappers
         {
             _mapper = mapper;
         }
-        public AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)
+        public AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, 
+                                                                    IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)
         {
             var availabilityResponseDTO = _mapper.Map<AvailabilityResponseDTO>(finalizeTransactionRequestDTO);
             availabilityResponseDTO.AvailabilityStockInfoResponseDTOs = availabilityStockInfoResponseDTOs;
@@ -32,7 +33,7 @@ namespace API.Settlement.Infrastructure.Services.MapperManagement.Mappers
 
             return availabilityResponseDTO;
         }
-        public AvailabilityResponseDTO CloneAvailabilityResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
+        public AvailabilityResponseDTO CreateCopyOfAvailabilityResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
         {
             return _mapper.Map<AvailabilityResponseDTO>(availabilityResponseDTO);
         }

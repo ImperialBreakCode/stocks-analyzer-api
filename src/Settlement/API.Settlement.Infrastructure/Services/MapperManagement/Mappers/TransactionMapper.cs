@@ -18,7 +18,9 @@ namespace API.Settlement.Infrastructure.Services.MapperManagement.Mappers
         private readonly IMapper _mapper;
         private readonly IInfrastructureConstants _infrastructureConstants;
         private readonly IUserCommissionService _commissionService;
-        public TransactionMapper(IMapper mapper, IInfrastructureConstants infrastructureConstants, IUserCommissionService commissionService)
+        public TransactionMapper(IMapper mapper, 
+                                 IInfrastructureConstants infrastructureConstants, 
+                                 IUserCommissionService commissionService)
         {
             _mapper = mapper;
             _infrastructureConstants = infrastructureConstants;

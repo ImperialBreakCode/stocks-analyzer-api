@@ -17,7 +17,8 @@ namespace API.Settlement.Infrastructure.Services.MapperManagement.Mappers
         private readonly IMapper _mapper;
         private readonly IUserCommissionService _commissionService;
 
-        public StockMapper(IMapper mapper, IUserCommissionService commissionService)
+        public StockMapper(IMapper mapper, 
+                           IUserCommissionService commissionService)
         {
             _mapper = mapper;
             _commissionService = commissionService;

@@ -40,7 +40,6 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 			}
 		}
 
-
 		public void DeletePendingMessage(string id)
 		{
 			string commandText = $@"DELETE FROM PendingMessage WHERE Id = @Id";
@@ -78,5 +77,6 @@ namespace API.Settlement.Infrastructure.Services.DatabasesServices.SQLiteService
 				return pendingMessages;
 			}
 		}
+
 	}
 }

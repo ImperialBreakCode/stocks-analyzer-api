@@ -23,5 +23,6 @@ namespace API.Settlement.Infrastructure.Services.MapperManagement.Mappers
         {
             return _mapper.Map<Wallet>(finalizeTransactionResponseDTO);
         }
+
     }
 }

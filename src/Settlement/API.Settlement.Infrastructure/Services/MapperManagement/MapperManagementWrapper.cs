@@ -31,15 +31,15 @@ namespace API.Settlement.Infrastructure.Services
 
 
 		public MapperManagementWrapper(IAvailabilityStockInfoResponseDTOMapper availabilityStockInfoResponseDTOMapper, 
-										IAvailabilityResponseDTOMapper availabilityResponseDTOMapper,
-										IFinalizeTransactionResponseDTOMapper finalizeTransactionResponseDTOMapper,
-										ITransactionMapper transactionMapper,
-										IWalletMapper walletMapper,
-										IStockMapper stockMapper,
-										INotifyingEmailMapper notifyingEmailMapper,
-										IFinalizingEmailMapper finalizingEmailMapper,
-										IOutboxPendingMessageMapper outboxPendingMessageMapper,
-										IOutboxSuccessfullySentMessageMapper outboxSuccessfullySentMessageMapper)
+									   IAvailabilityResponseDTOMapper availabilityResponseDTOMapper,
+									   IFinalizeTransactionResponseDTOMapper finalizeTransactionResponseDTOMapper,
+									   ITransactionMapper transactionMapper,
+									   IWalletMapper walletMapper,
+									   IStockMapper stockMapper,
+									   INotifyingEmailMapper notifyingEmailMapper,
+									   IFinalizingEmailMapper finalizingEmailMapper,
+									   IOutboxPendingMessageMapper outboxPendingMessageMapper,
+									   IOutboxSuccessfullySentMessageMapper outboxSuccessfullySentMessageMapper)
 		{
 			AvailabilityStockInfoResponseDTOMapper = availabilityStockInfoResponseDTOMapper;
 			AvailabilityResponseDTOMapper = availabilityResponseDTOMapper;
