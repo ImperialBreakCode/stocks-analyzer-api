@@ -106,11 +106,11 @@ namespace API.StockAPI.Infrastructure.Services
 
             DateTime lastFriday = lastWeekEndDate.AddDays(-1);
 
-            return lastFriday.ToString("yyyy-MM-dd") + " 00:00:00";
+            return lastFriday.ToString("yyyy-MM-dd");
         }
         private string GetLastBusinessDayOfLastMonth()
         {
-            var lastDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month-1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+            var lastDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month-1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month-1));
 
             if (lastDayOfMonth.DayOfWeek == DayOfWeek.Sunday)
             {
@@ -121,7 +121,7 @@ namespace API.StockAPI.Infrastructure.Services
                 lastDayOfMonth = lastDayOfMonth.AddDays(-1);
             }
 
-            return lastDayOfMonth.ToString("yyyy-MM-dd") + " 00:00:00";
+            return lastDayOfMonth.ToString("yyyy-MM-dd");
         }
     }
 }
