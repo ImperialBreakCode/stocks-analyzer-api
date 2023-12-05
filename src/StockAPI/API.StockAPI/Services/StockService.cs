@@ -8,7 +8,13 @@ namespace API.StockAPI.Services
     {
         public async Task<StockData> GetStockFromResponse(string symbol, string response, string type)
         {
-            var csvLine = response.Split(Environment.NewLine).Skip(1).ToList().First();
+            int skipValue = 2;
+            if(type == "current")
+            {
+                skipValue = 1;
+            }
+
+            var csvLine = response.Split(Environment.NewLine).Skip(skipValue).ToList().First();
 
             var result = FromCsv(csvLine, symbol);
 

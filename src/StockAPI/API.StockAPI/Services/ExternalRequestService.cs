@@ -21,7 +21,7 @@ namespace API.StockAPI.Services
         {
             return type switch
             {
-                "current" => $"https://www.alphavantage.co/query?functionTIME_SERIES_INTRADAY&interval=60min=&symbol={symbol}&datatype=csv&apikey={apiKey}",
+                "current" => $"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&interval=60min=&symbol={symbol}&datatype=csv&apikey={apiKey}",
                 "daily" => $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&datatype=csv&apikey={apiKey}",
                 "weekly" => $"https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol={symbol}&datatype=csv&apikey={apiKey}",
                 "monthly" => $"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol={symbol}&datatype=csv&apikey={apiKey}",
