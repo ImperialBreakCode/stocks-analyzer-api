@@ -1,8 +1,7 @@
-﻿using API.Gateway.Domain.Entities;
+﻿using API.Gateway.Domain.Entities.MongoDBEntities;
 using API.Gateway.Domain.Interfaces;
-using Microsoft.AspNetCore.Routing;
+using API.Gateway.Infrastructure.Helpers;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Serilog;
 
@@ -10,25 +9,16 @@ namespace API.Gateway.Infrastructure.Services.MongoDB
 {
 	public class RequestService : IRequestService
 	{
-		private readonly IMongoCollection<Request> _requestCollection;
+		private readonly IRequestServiceHelper _helper;
 
-		public RequestService(IOptions<MongoDBSettings> mongoDbSettings)
+		public RequestService(IRequestServiceHelper helper)
 		{
-			MongoClient client = new MongoClient(mongoDbSettings.Value.ConnectionURI);
-			IMongoDatabase database = client.GetDatabase(mongoDbSettings.Value.DatabaseName);
-			_requestCollection = database.GetCollection<Request>(mongoDbSettings.Value.CollectionName);
+			_helper = helper;
 		}
 
 		public async Task Create(Request request)
 		{
-			try
-			{
-				await _requestCollection.InsertOneAsync(request);;
-			}
-			catch (Exception ex)
-			{
-				Log.Information($"Error inserting data in mongoDB: {ex.Message}");
-			}
+			_helper.Create(request);
 		}
 
 		public async Task<string> GetRouteStatisticsLast24Hours(string route)
@@ -37,18 +27,22 @@ namespace API.Gateway.Infrastructure.Services.MongoDB
 			var query = filter.Gte(r => r.DateTime, DateTime.UtcNow.AddDays(-1))
 						 & filter.Eq(r => r.Route, route);
 
-			var requests = await _requestCollection.Find(query).ToListAsync();
+			var requests = await _helper.FindByQuery(query);
+			if (requests == null)
+			{
+				return "There wasn an error fetching the required data from the database. Please try again.";
+			}
 
-			var loggedInUserRequests = requests.Where(r => !string.IsNullOrEmpty(r.Username));
+			var totalLoggedInUserRequests = requests.Where(r => !string.IsNullOrEmpty(r.Username));
 
-			var usernameCounts = loggedInUserRequests.GroupBy(r => r.Username)
+			var usernameCounts = totalLoggedInUserRequests.GroupBy(r => r.Username)
 										 .Select(g => new { Username = g.Key, Count = g.Count() })
 										 .OrderByDescending(g => g.Count);
 
 			var mostFrequentUsername = usernameCounts.FirstOrDefault()?.Username ?? "No data found";
-			var totalLoggedInUserRequests = loggedInUserRequests.Count();
+			var totalRequests = requests.Count();
 
-			string answer = $"The number of requests made to this route in the last 24 hours is {totalLoggedInUserRequests}. " +
+			string answer = $"The number of requests made to this route in the last 24 hours is {totalRequests}. " +
 							 $"The user who has made the most requests is '{mostFrequentUsername}'.";
 
 			return answer;
@@ -59,16 +53,20 @@ namespace API.Gateway.Infrastructure.Services.MongoDB
 			var filter = Builders<Request>.Filter;
 			var query = filter.Gte(r => r.DateTime, DateTime.UtcNow.AddDays(-1));
 
-			var requests = await _requestCollection.Find(query).ToListAsync();
+			var requests = await _helper.FindByQuery(query);
+			if (requests == null)
+			{
+				return "There wasn an error fetching the required data from the database. Please try again.";
+			}
 
-			var loggedInUserRequests = requests.Where(r => !string.IsNullOrEmpty(r.Username));
+			var totalLoggedInUserRequests = requests.Where(r => !string.IsNullOrEmpty(r.Username));
 
-			var usernameCounts = loggedInUserRequests.GroupBy(r => r.Username)
+			var usernameCounts = totalLoggedInUserRequests.GroupBy(r => r.Username)
 										 .Select(g => new { Username = g.Key, Count = g.Count() })
 										 .OrderByDescending(g => g.Count);
 
 			var mostFrequentUsername = usernameCounts.FirstOrDefault()?.Username ?? "No data found";
-			var totalLoggedInUserRequests = loggedInUserRequests.Count();
+			var mostFrequentUsernameRequests = totalLoggedInUserRequests.Where(r => r.Username == mostFrequentUsername).Count();
 
 			var routeCounts = requests.GroupBy(r => r.Route)
 									 .Select(g => new { Route = g.Key, Count = g.Count() })
@@ -86,8 +84,8 @@ namespace API.Gateway.Infrastructure.Services.MongoDB
 			var requestsInMostUsedHour = hourCounts.FirstOrDefault()?.Count ?? 0;
 
 			string answer = $"The number of requests made to the API in the past 24 hours is {requests.Count}. " +
-							 $"The user who has made the most requests is '{mostFrequentUsername}' with {totalLoggedInUserRequests} requests. " +
-							 $"The hour with the most usage was between '{mostUsedHour}' and '{mostUsedHour+1}', with {requestsInMostUsedHour} requests. " +
+							 $"The user who has made the most requests is '{mostFrequentUsername}' with {mostFrequentUsernameRequests} requests. " +
+							 $"The hour with the most usage was between '{mostUsedHour}' and '{mostUsedHour + 1}', with {requestsInMostUsedHour} requests. " +
 							 $"The most used route was '{mostUsedRoute}', with {requestsInMostUsedRoute} requests.";
 
 			return answer;
