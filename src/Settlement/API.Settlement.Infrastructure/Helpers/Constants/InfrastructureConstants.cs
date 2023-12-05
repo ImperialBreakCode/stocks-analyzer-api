@@ -18,15 +18,13 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 		private static readonly string _baseStockAPIHost = "https://localhost:";
 		private static bool _isInitializedRecurringFailedTransactionsJob = false;
 		private static bool _isInitializedRecurringCapitalLossCheckJob = false;
+		private static bool _isInitializedRecurringRabbitMQMessageSenderJob = false;
 		public string TransactionDeclinedMessage => _transactionDeclinedMessage;
-
 		public string TransactionScheduledMessage => _transactionScheduledMessage;
-
 		public string TransactionSuccessMessage => _transactionSuccessMessage;
 		public string TransactionConnectionIssueMessage => _transactionConnectionIssueMessage;
 		public string BaseAccountHost => _baseAccountHost;
 		public string BaseStockAPIHost => _baseStockAPIHost;
-
 		public string GETWalletBalanceRoute(string walletId)
 			=> $"{BaseAccountHost}/api/Wallet/GetWalletBalance/{walletId}";
 		public string POSTCompleteTransactionRoute(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
@@ -35,7 +33,6 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 			=> $"{BaseAccountHost}/api/Stock/GetStock/{stockId}";
 		public string GETStockPriceRoute(string stockName)
 			=> $"{BaseStockAPIHost}/api/StockAPI/Stock/Price/{stockName}";
-
 		public decimal GetCommissionBasedOnUserType(UserRank userRank)
 		{
 			switch (userRank)
@@ -47,7 +44,6 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 				default: throw new Exception("Invalid user type!");
 			}
 		}
-
 		public string GetMessageBasedOnStatus(Status status)
 		{
 			switch (status)
@@ -59,7 +55,6 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 
 			}
 		}
-
 		public bool IsInitializedRecurringFailedTransactionsJob
 		{
 			get
@@ -80,6 +75,17 @@ namespace API.Settlement.Infrastructure.Helpers.Constants
 			set
 			{
 				_isInitializedRecurringCapitalLossCheckJob = value;
+			}
+		}
+		public bool IsInitializedRecurringRabbitMQMessageSenderJob
+		{
+			get
+			{
+				return _isInitializedRecurringRabbitMQMessageSenderJob;
+			}
+			set
+			{
+				_isInitializedRecurringRabbitMQMessageSenderJob = value;
 			}
 		}
 

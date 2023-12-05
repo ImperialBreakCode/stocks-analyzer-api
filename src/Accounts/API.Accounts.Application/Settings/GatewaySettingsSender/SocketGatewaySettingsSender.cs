@@ -1,5 +1,5 @@
 ﻿using API.Accounts.Application.Settings.GatewayAuthSettingsSender;
-using API.Accounts.Application.Settings.Options;
+using API.Accounts.Application.Settings.Options.AccountOptions;
 using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;

@@ -10,13 +10,13 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
     public class TransactionDatabaseContext : ITransactionDatabaseContext
     {
         public ISuccessfulTransactionRepository SuccessfulTransactions { get; }
-
         public IFailedTransactionRepository FailedTransactions { get; }
         public TransactionDatabaseContext(ISuccessfulTransactionRepository successfulTransactions, 
-                                        IFailedTransactionRepository failedTransactions)
+                                          IFailedTransactionRepository failedTransactions)
         {
             SuccessfulTransactions = successfulTransactions;
             FailedTransactions = failedTransactions;
         }
+
     }
 }

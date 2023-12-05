@@ -2,6 +2,7 @@
 using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Entities.OutboxEntities;
 using AutoMapper;
 
 namespace API.Settlement.Infrastructure.Mappings
@@ -56,6 +57,7 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
 				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
 				.ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.UserEmail))
+				.ForMember(dest => dest.UserRank, opt => opt.MapFrom(src => src.UserRank))
 				.ForMember(dest => dest.Stocks, opt => opt.MapFrom(src => Enumerable.Empty<Stock>()));
 
 			CreateMap<StockInfoResponseDTO, Stock>()
@@ -65,8 +67,20 @@ namespace API.Settlement.Infrastructure.Mappings
 				.ForMember(dest => dest.AverageSingleStockPrice, opt => opt.MapFrom(src => src.SinglePriceIncludingCommission))
 				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
 
+			CreateMap<Wallet, Transaction>()
+				.ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.WalletId))
+				.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+				.ForMember(dest => dest.UserRank, opt => opt.MapFrom(src => src.UserRank));
 
+			CreateMap<Stock, Transaction>()
+				.ForMember(dest => dest.StockId, opt => opt.MapFrom(src => src.StockId))
+				.ForMember(dest => dest.StockName, opt => opt.MapFrom(src => src.StockName))
+				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
 
+			CreateMap<OutboxPendingMessage, OutboxSuccessfullySentMessage>()
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.QueueType, opt => opt.MapFrom(src => src.QueueType))
+				.ForMember(dest => dest.SentInfo, opt => opt.MapFrom(src => src.Body));
 
 		}
 	}

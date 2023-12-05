@@ -14,8 +14,4 @@
     <ProjectReference Include="..\API.Accounts.Domain\API.Accounts.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SqlScripts\" />
-  </ItemGroup>
-
 </Project>

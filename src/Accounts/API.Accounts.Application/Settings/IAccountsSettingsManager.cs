@@ -1,9 +1,11 @@
-﻿using API.Accounts.Application.Settings.Options;
+﻿using API.Accounts.Application.Settings.Options.AccountOptions;
 
 namespace API.Accounts.Application.Settings
 {
     public interface IAccountsSettingsManager : IDisposable
     {
+        string AccountDbConnection { get; }
+
         ExternalMicroservicesHosts ExternalHosts { get; }
         ICollection<string> AllowedHosts { get; }
         string SecretKey { get; }

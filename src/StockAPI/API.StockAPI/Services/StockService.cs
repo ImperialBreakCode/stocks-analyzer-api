@@ -6,28 +6,8 @@ namespace API.StockAPI.Services
 {
     public class StockService : IStockService
     {
-        public async Task<StockData> GetStockFromRequest(string symbol, string? reponse, string type)
+        public async Task<StockData> GetStockFromResponse(string symbol, string response, string type)
         {
-            var result = GetDataFromCsvResponse(symbol, reponse, type);
-            return result;
-        }
-        public async Task<StockData> GetStockFromDbData(string symbol, StockData? data, string type)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StockData GetDataFromCsvResponse(string symbol, string response, string type)
-        {
-            //int skipValue;
-            //if (type == "current")
-            //{
-            //    skipValue = 1;
-            //}
-            //else
-            //{
-            //    skipValue = 2;
-            //}
-
             var csvLine = response.Split(Environment.NewLine).Skip(1).ToList().First();
 
             var result = FromCsv(csvLine, symbol);

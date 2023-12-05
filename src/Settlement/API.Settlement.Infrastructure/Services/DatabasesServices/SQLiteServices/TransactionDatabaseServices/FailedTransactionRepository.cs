@@ -1,5 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Response;
 using API.Settlement.Domain.Entities;
+using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DateTimeInterfaces;
 using System;
@@ -15,22 +16,26 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 	{
 		private readonly SQLiteConnection _connection;
 		private readonly IDateTimeService _dateTimeService;
-		public FailedTransactionRepository(SQLiteConnection connection, IDateTimeService dateTimeService)
+
+		public FailedTransactionRepository(SQLiteConnection connection, 
+										   IDateTimeService dateTimeService)
 		{
 			_connection = connection;
 			_dateTimeService = dateTimeService;
 		}
+
 		public void Add(Transaction transaction)
 		{
 			string commandText = $@"INSERT INTO FailedTransaction
-                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, IsSale, Message) VALUES 
-                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @IsSale, @Message)";
+                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, UserEmail, IsSale, Message) VALUES 
+                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @UserEmail, @IsSale, @Message)";
 
 			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
 			{
 				_connection.Open();
 				command.Parameters.AddWithValue("@WalletId", transaction.WalletId);
 				command.Parameters.AddWithValue("@UserId", transaction.UserId);
+				command.Parameters.AddWithValue("@UserEmail", transaction.UserEmail);
 				command.Parameters.AddWithValue("@IsSale", transaction.IsSale);
 				command.Parameters.AddWithValue("TransactionId", transaction.TransactionId);
 				command.Parameters.AddWithValue("TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
@@ -44,21 +49,54 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 			}
 		}
 
-		public void Delete(string transactionId)
+		public Transaction Delete(string transactionId)
 		{
+			var transaction = GetById(transactionId);
 			string commandText = $"DELETE FROM FailedTransaction WHERE TransactionId = @TransactionId";
 
 			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
 			{
 				_connection.Open();
 
-					command.Parameters.AddWithValue("@TransactionId", transactionId);
-					command.ExecuteNonQuery();
-				
+				command.Parameters.AddWithValue("@TransactionId", transactionId);
+				command.ExecuteNonQuery();
+
 				_connection.Close();
 			}
+			return transaction;
+		}
 
-
+		public Transaction GetById(string transactionId)
+		{
+			string commandText = "SELECT * FROM FailedTransaction WHERE TransactionId = @TransactionId";
+			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
+			{
+				command.Parameters.AddWithValue("@TransactionId", transactionId);
+				var transaction = new Transaction();
+				_connection.Open();
+				using (SQLiteDataReader reader = command.ExecuteReader())
+				{
+					while (reader.Read())
+					{
+						transaction = new Transaction
+						{
+							TransactionId = Convert.ToString(reader["TransactionId"]),
+							WalletId = Convert.ToString(reader["WalletId"]),
+							UserId = Convert.ToString(reader["UserId"]),
+							UserEmail = Convert.ToString(reader["UserEmail"]),
+							IsSale = Convert.ToBoolean(reader["IsSale"]),
+							Message = Convert.ToString(reader["Message"]),
+							StockId = Convert.ToString(reader["StockId"]),
+							StockName = Convert.ToString(reader["StockName"]),
+							Quantity = Convert.ToInt32(reader["Quantity"]),
+							TotalPriceIncludingCommission = Convert.ToDecimal(reader["TotalPriceIncludingCommission"]),
+						};
+						break;
+					}
+				}
+				_connection.Close();
+				return transaction;
+			}
 		}
 
 		public IEnumerable<Transaction> GetAll()
@@ -80,6 +118,7 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 							TransactionId = Convert.ToString(reader["TransactionId"]),
 							WalletId = Convert.ToString(reader["WalletId"]),
 							UserId = Convert.ToString(reader["UserId"]),
+							UserEmail = Convert.ToString(reader["UserEmail"]),
 							IsSale = Convert.ToBoolean(reader["IsSale"]),
 							Message = Convert.ToString(reader["Message"]),
 							StockId = Convert.ToString(reader["StockId"]),
@@ -99,19 +138,29 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices
 		{
 			bool containsTransaction = false;
 			string commandText = $"SELECT COUNT(*) FROM FailedTransaction WHERE TransactionId = @TransactionId";
-			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
+			try
 			{
-				_connection.Open();
+				using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
+				{
+					_connection.Open();
 
-				command.Parameters.AddWithValue("@TransactionId", transactionId);
+					command.Parameters.AddWithValue("@TransactionId", transactionId);
 
-				int count = Convert.ToInt32(command.ExecuteScalar());
-				containsTransaction = (count > 0);
-				_connection.Close();
+					int count = Convert.ToInt32(command.ExecuteScalar());
+					containsTransaction = (count > 0);
+					_connection.Close();
+
+				}
+				return containsTransaction;
 
 			}
+			catch (Exception ex)
+			{
+                Console.WriteLine(ex.Message);
+            }
+			return false;
 
-			return containsTransaction;
 		}
+
 	}
 }

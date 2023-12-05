@@ -27,7 +27,6 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             using (var context = _accountsData.CreateDbContext())
             {
                 string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
-
                 if (error is not null)
                 {
                     return error;
@@ -37,6 +36,8 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     return ResponseMessages.WalletNotFound;
                 }
 
+                User user = context.Users.GetOneByUserName(username)!;
+
                 var stocksForPurchase = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForPurchaseCount != 0);
 
@@ -45,7 +46,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     return ResponseMessages.NoStocksAddedForPurchaseSale;
                 }
 
-                var finalizeDto = CreateFinalizeStockDto(false, wallet);
+                var finalizeDto = CreateFinalizeStockDto(false, wallet, user.Email);
 
                 var res = await _actionExecuter.ExecutePurchase(finalizeDto, stocksForPurchase);
 
@@ -65,7 +66,6 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             using (var context = _accountsData.CreateDbContext())
             {
                 string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
-
                 if (error is not null)
                 {
                     return error;
@@ -75,6 +75,8 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     return ResponseMessages.WalletNotFound;
                 }
 
+                User user = context.Users.GetConfirmedByUserName(username)!;
+
                 var stocksForSale = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForSaleCount != 0);
 
@@ -83,7 +85,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     return ResponseMessages.NoStocksAddedForPurchaseSale;
                 }
 
-                var finalizeDto = CreateFinalizeStockDto(true, wallet);
+                var finalizeDto = CreateFinalizeStockDto(true, wallet, user.Email);
 
                 var res = await _actionExecuter.ExecuteSell(finalizeDto, stocksForSale);
 
@@ -95,13 +97,14 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             return ResponseMessages.TransactionSendForProccessing;
         }
 
-        private FinalizeStockActionDTO CreateFinalizeStockDto(bool forSale, Wallet wallet)
+        private FinalizeStockActionDTO CreateFinalizeStockDto(bool forSale, Wallet wallet, string userEmail)
         {
             FinalizeStockActionDTO finalizeDto = new FinalizeStockActionDTO();
             finalizeDto.IsSale = forSale;
             finalizeDto.WalletId = wallet.Id;
             finalizeDto.UserId = wallet.UserId;
             finalizeDto.UserRank = (UserRank)_userTypeManager.GetUserType(wallet)!;
+            finalizeDto.UserEmail = userEmail;
 
             return finalizeDto;
         }
