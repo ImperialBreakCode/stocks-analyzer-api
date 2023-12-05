@@ -9,8 +9,8 @@ namespace API.Settlement.Domain.MongoDb.WalletDb
 {
     public class WalletDatabaseSettings : IWalletDatabaseSettings
 	{
-		public string WalletsCollectionName { get; set; } = String.Empty;
-		public string ConnectionString { get; set; } = String.Empty;
-		public string DatabaseName { get; set; } = String.Empty;
+		public string WalletsCollectionName { get; set; }
+		public string ConnectionString { get; set; }
+		public string DatabaseName { get; set; }
 	}
 }

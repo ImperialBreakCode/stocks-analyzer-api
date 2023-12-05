@@ -1,4 +1,5 @@
 ﻿using API.Gateway.Domain.DTOs;
+using API.Gateway.Domain.Entities.SQLiteEntities;
 using API.Gateway.Domain.Interfaces;
 using API.Gateway.Infrastructure.Provider;
 using API.Gateway.Settings;
@@ -8,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace API.Gateway.Services
 {
-	public class AccountService : IAccountService
+    public class AccountService : IAccountService
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
@@ -55,18 +56,18 @@ namespace API.Gateway.Services
 
 		public async Task<IActionResult> UserInformation(string username)
 		{
-			if (_memoryCache.TryGetValue(username, out UserDTO dto))
+			if (_memoryCache.TryGetValue(username, out User dto))
 			{
 				return new OkObjectResult(dto);
 			}
 
 			IActionResult res = await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UserInformation/{username}");
 
-			UserDTO userDto = null;
+			User user = null;
 
 			if (res is OkObjectResult okObjectResult)
 			{
-				userDto = okObjectResult.Value as UserDTO;
+				user = okObjectResult.Value as User;
 			}
 			else
 			{
@@ -79,7 +80,7 @@ namespace API.Gateway.Services
 				SlidingExpiration = TimeSpan.FromMinutes(10)
 			};
 
-			_memoryCache.Set(username, userDto, cacheEntryOptions);
+			_memoryCache.Set(username, user, cacheEntryOptions);
 
 			return res;
 		}

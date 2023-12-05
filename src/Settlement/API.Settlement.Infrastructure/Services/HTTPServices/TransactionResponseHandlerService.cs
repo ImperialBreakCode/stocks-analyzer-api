@@ -13,30 +13,31 @@ namespace API.Settlement.Infrastructure.Services
 {
     public class TransactionResponseHandlerService : ITransactionResponseHandlerService
 	{
-		private readonly ITransactionDatabaseContext _unitOfWork;
+		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
 		private readonly IInfrastructureConstants _InfrastructureConstants;
 
-		public TransactionResponseHandlerService(ITransactionDatabaseContext unitOfWork, IInfrastructureConstants infrastructureConstants)
+		public TransactionResponseHandlerService(ITransactionDatabaseContext transactionDatabaseContext, 
+												 IInfrastructureConstants infrastructureConstants)
 		{
-			_unitOfWork = unitOfWork;
+			_transactionDatabaseContext = transactionDatabaseContext;
 			_InfrastructureConstants = infrastructureConstants;
 		}
+
 		public void HandleTransactionResponse(HttpResponseMessage response, IEnumerable<Transaction> transactions)
 		{
-			//if(response.IsSuccessStatusCode)
-			if (response.StatusCode == HttpStatusCode.OK)
+			if(response.IsSuccessStatusCode)
 			{
 				foreach (var transaction in transactions)
 				{
-					if (!_unitOfWork.SuccessfulTransactions.ContainsTransaction(transaction.TransactionId))
+					if (!_transactionDatabaseContext.SuccessfulTransactions.ContainsTransaction(transaction.TransactionId))
 					{
 						transaction.Message = _InfrastructureConstants.TransactionSuccessMessage;
-						_unitOfWork.SuccessfulTransactions.Add(transaction);
+						_transactionDatabaseContext.SuccessfulTransactions.Add(transaction);
 					}
 
-					if (_unitOfWork.FailedTransactions.ContainsTransaction(transaction.TransactionId))
+					if (_transactionDatabaseContext.FailedTransactions.ContainsTransaction(transaction.TransactionId))
 					{
-						_unitOfWork.FailedTransactions.Delete(transaction.TransactionId);
+						_transactionDatabaseContext.FailedTransactions.Delete(transaction.TransactionId);
 					}
 
 				}
@@ -45,17 +46,15 @@ namespace API.Settlement.Infrastructure.Services
 			{
 				foreach (var transaction in transactions)
 				{
-					if (!_unitOfWork.FailedTransactions.ContainsTransaction(transaction.TransactionId))
+					if (!_transactionDatabaseContext.FailedTransactions.ContainsTransaction(transaction.TransactionId))
 					{
 						transaction.Message = _InfrastructureConstants.TransactionConnectionIssueMessage;
-						_unitOfWork.FailedTransactions.Add(transaction);
+						_transactionDatabaseContext.FailedTransactions.Add(transaction);
 					}
 
 				}
 			}
-
-
-
 		}
+
 	}
 }

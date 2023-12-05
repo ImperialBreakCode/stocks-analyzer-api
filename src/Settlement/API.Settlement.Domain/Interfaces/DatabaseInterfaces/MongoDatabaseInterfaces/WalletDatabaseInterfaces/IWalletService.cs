@@ -11,7 +11,7 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInter
     public interface IWalletService
     {
         void UpdateStocksInWallet(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
-        Task CapitalLossCheck();
+        Task CapitalCheck();
 
     }
 }

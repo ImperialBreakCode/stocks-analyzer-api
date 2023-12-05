@@ -11,7 +11,7 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.T
     public interface IFailedTransactionRepository
     {
         void Add(Transaction transaction);
-        void Delete(string transactionId);
+        Transaction Delete(string transactionId);
         IEnumerable<Transaction> GetAll();
         bool ContainsTransaction(string transactionId);
     }

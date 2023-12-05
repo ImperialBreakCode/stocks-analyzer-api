@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API.Analyzer.Domain.Interfaces;
-using API.Accounts.Application.DTOs.Response;
+using API.Analyzer.Domain.DTOs;
 using API.Analyzer.Infrastructure.Services;
 
 namespace Analyzer.APi.Controllers

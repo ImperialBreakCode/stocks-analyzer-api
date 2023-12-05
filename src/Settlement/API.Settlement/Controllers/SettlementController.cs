@@ -13,6 +13,7 @@ namespace API.Settlement.Controllers
 		{
 			_settlementService = settlementService;
 		}
+
 		[HttpPost]
 		[Route("processTransactions")]
 		public async Task<IActionResult> ProcessTransactions([FromBody] FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
