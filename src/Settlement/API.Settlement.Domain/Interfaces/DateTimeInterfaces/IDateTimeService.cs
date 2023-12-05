@@ -6,5 +6,7 @@
         TimeSpan GetTimeSpanUntilNextDayAtMinutePastMidnight();
         string GetCronExpressionForEveryFiveMinutes();
         string GetCronExpressionForEveryHour();
-    }
+        string GetCronExpressionForEveryTenMinutes();
+
+	}
 }

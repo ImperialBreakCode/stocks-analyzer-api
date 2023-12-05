@@ -8,40 +8,42 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Infrastructure.Services.SQLiteServices.TransactionDatabase
 {
-    public class SQLiteTransactionDatabaseInitializer : ISQLiteTransactionDatabaseInitializer
-    {
-        private readonly string _connectionString;
-        public SQLiteTransactionDatabaseInitializer(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-        public void Initialize()
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                CreateTables(connection);
-                connection.Close();
-            }
-        }
-        private void CreateTables(SQLiteConnection connection)
-        {
-            string createSuccessfulTransactionTableQuery = CreateSuccessfulTransactionTableQuery();
-            string createFailedTransactionTableQuery = CreateFailedTransactionTableQuery();
+	public class SQLiteTransactionDatabaseInitializer : ISQLiteTransactionDatabaseInitializer
+	{
+		private readonly string _connectionString;
+		public SQLiteTransactionDatabaseInitializer(string connectionString)
+		{
+			_connectionString = connectionString;
+		}
+		public void Initialize()
+		{
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+				CreateTables(connection);
+				connection.Close();
+			}
+		}
+		
 
-            using (var command = new SQLiteCommand(connection))
-            {
-                command.CommandText = createSuccessfulTransactionTableQuery;
-                command.ExecuteNonQuery();
+		private void CreateTables(SQLiteConnection connection)
+		{
+			string successfulTransactionTableQuery = CreateSuccessfulTransactionTableQuery();
+			string failedTransactionTableQuery = CreateFailedTransactionTableQuery();
 
-                command.CommandText = createFailedTransactionTableQuery;
-                command.ExecuteNonQuery();
-            }
-        }
+			using (var command = new SQLiteCommand(connection))
+			{
+				command.CommandText = successfulTransactionTableQuery;
+				command.ExecuteNonQuery();
 
-        private string CreateSuccessfulTransactionTableQuery()
-        {
-            return @"CREATE TABLE IF NOT EXISTS SuccessfulTransaction (
+				command.CommandText = failedTransactionTableQuery;
+				command.ExecuteNonQuery();
+			}
+		}
+		
+		private string CreateSuccessfulTransactionTableQuery()
+		{
+			return @"CREATE TABLE IF NOT EXISTS SuccessfulTransaction (
 					TransactionId TEXT NOT NULL UNIQUE,
 					TotalPriceIncludingCommission REAL,
 					Quantity INTEGER,
@@ -50,15 +52,16 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices.TransactionDatab
 					StockId TEXT,
 					UserId TEXT,
 					WalletId TEXT,
+                    UserEmail TEXT,
 					IsSale INTEGER,
 					Message TEXT,
 					PRIMARY KEY(TransactionId)
 					);";
-        }
+		}
 
-        private string CreateFailedTransactionTableQuery()
-        {
-            return @"CREATE TABLE IF NOT EXISTS FailedTransaction (
+		private string CreateFailedTransactionTableQuery()
+		{
+			return @"CREATE TABLE IF NOT EXISTS FailedTransaction (
 					TransactionId TEXT NOT NULL UNIQUE,
 					TotalPriceIncludingCommission REAL,
 					Quantity INTEGER,
@@ -67,10 +70,11 @@ namespace API.Settlement.Infrastructure.Services.SQLiteServices.TransactionDatab
 					StockId TEXT,
 					UserId TEXT,
 					WalletId TEXT,
+                    UserEmail TEXT,
 					IsSale INTEGER,
 					Message TEXT,
 					PRIMARY KEY(TransactionId)
 					);";
-        }
-    }
+		}
+	}
 }

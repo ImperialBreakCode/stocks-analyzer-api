@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Analyzer.Domain.DTOs
 {
-    internal class GetTransactionResponseDTO
+    public class GetTransactionResponseDTO
     {
         public decimal TotalAmount { get; set; }
         public int Quantity { get; set; }
