@@ -11,7 +11,6 @@ namespace API.Gateway.Domain.Interfaces
 	public interface IWalletService
 	{
 		Task<IActionResult> CreateWallet();
-		//Task<IActionResult> GetWallet();
 		Task<IActionResult> Deposit(DepositWalletDTO dto);
 		Task<IActionResult> DeleteWallet();
 	}

@@ -9,7 +9,7 @@ namespace API.StockAPI.Infrastructure.Interfaces
 {
     public interface IContextServices
     {
-        public Task<StockData> Get(string symbol, string type);
-        public Task<StockData> Create(StockData data, string type);
+        public Task<StockData> GetStockFromDB(string symbol, string type);
+        public Task<StockData> InsertStockInDB(StockData data, string type);
     }
 }

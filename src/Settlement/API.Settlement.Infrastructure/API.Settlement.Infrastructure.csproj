@@ -1,26 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="Hangfire" Version="1.8.6" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.6" />
-    <PackageReference Include="Hangfire.Core" Version="1.8.6" />
-    <PackageReference Include="MailKit" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\API.Settlement.Domain\API.Settlement.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="C:\Users\denkaty\.nuget\packages\dinktopdfincludesdependencies\1.0.8\lib\netcoreapp2.0\libwkhtmltox.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="12.0.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+		<PackageReference Include="DinkToPdf" Version="1.0.8" />
+		<PackageReference Include="DinkToPdfIncludesDependencies" Version="1.0.8" />
+		<PackageReference Include="Hangfire" Version="1.8.6" />
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.6" />
+		<PackageReference Include="Hangfire.Core" Version="1.8.6" />
+		<PackageReference Include="MailKit" Version="4.3.0" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+		<PackageReference Include="MongoDB.Driver" Version="2.22.0" />
+		<PackageReference Include="RabbitMQ.Client" Version="6.7.0" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\API.Settlement.Domain\API.Settlement.Domain.csproj" />
+	</ItemGroup>
 
 </Project>

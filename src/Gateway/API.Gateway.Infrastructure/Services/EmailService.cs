@@ -1,17 +1,17 @@
 ﻿using API.Gateway.Infrastructure.Contexts;
-using API.Gateway.Domain.DTOs;
 using Dapper;
 using Serilog;
 using System.Data;
 using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Entities.SQLiteEntities;
 
 namespace API.Gateway.Infrastructure.Provider
 {
-	public class EmailService : IEmailService
+    public class EmailService : IEmailService
 	{
-		private readonly Context _context;
+		private readonly SQLiteContext _context;
 
-		public EmailService(Context context)
+		public EmailService(SQLiteContext context)
 		{
 			_context = context;
 		}

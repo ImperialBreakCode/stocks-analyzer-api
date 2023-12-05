@@ -1,8 +1,8 @@
-﻿using API.Gateway.Domain.DTOs;
+﻿using API.Gateway.Domain.Entities.SQLiteEntities;
 
 namespace API.Gateway.Domain.Interfaces
 {
-	public interface IEmailService
+    public interface IEmailService
 	{
 		Task Create(Email email);
 		bool Exists(string email);

@@ -17,44 +17,16 @@ namespace API.StockAPI.Services
             _client = client;
 
         }
-        public async Task<string?> GetData(string symbol, string type)
+        public string QueryStringGenerator(string? symbol, string type)
         {
-            var query = QueryStringGenerator(symbol, type);
-            if(query == null)
+            return type switch
             {
-                return null;
-            }
-
-            var data = await GetDataFromQuery(query);
-            if(data == null)
-            {
-                return null;
-            }
-
-            return data;
-        }
-        public string QueryStringGenerator(string symbol, string type)
-        {
-            string function = "";
-            switch(type)
-            {
-                case "current":
-                    function = "TIME_SERIES_INTRADAY&interval=60min";
-                    break;
-                case "daily":
-                    function = "TIME_SERIES_DAILY";
-                    break;
-                case "weekly":
-                    function = "TIME_SERIES_WEEKLY";
-                    break;
-                case "monthly":
-                    function = "TIME_SERIES_MONTHLY";
-                    break;
-                default:
-                    break;
-            }
-
-            return $"https://www.alphavantage.co/query?function={function}&symbol={symbol}&datatype=csv&apikey={apiKey}";
+                "current" => $"https://www.alphavantage.co/query?functionTIME_SERIES_INTRADAY&interval=60min=&symbol={symbol}&datatype=csv&apikey={apiKey}",
+                "daily" => $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&datatype=csv&apikey={apiKey}",
+                "weekly" => $"https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol={symbol}&datatype=csv&apikey={apiKey}",
+                "monthly" => $"https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol={symbol}&datatype=csv&apikey={apiKey}",
+                _ => ""
+            };
         }
 
         public async Task<string?> GetDataFromQuery(string query)

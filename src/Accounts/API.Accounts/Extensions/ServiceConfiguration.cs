@@ -15,15 +15,15 @@ namespace API.Accounts.Extensions
                 .AddSettings<AccountSettingsAdapter>()
                 .AddBackgroundServices()
                 .AddAccountServices()
-                .AddAccountAuthentication();
-
+                .AddAccountAuthentication()
+                .AddRabbitMQConsumer();
         }
 
         public static IServiceCollection InjectData(this IServiceCollection services)
         {
             services.AddApplicationData()
                 // Sql Db
-                //.UseSqlDatabase<AccountDataAdapter>();
+                //.UseSqlDatabase();
                 // memory db
                 .UseMemoryMockupDb();
 
@@ -33,8 +33,8 @@ namespace API.Accounts.Extensions
         public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
         {
             services.AddApplicationEventClock();
+            services.AddHostedService<StartupService>();
             services.AddHostedService<EventClockService>();
-            services.AddHostedService<StartupSetupService>();
             return services;
         }
     }

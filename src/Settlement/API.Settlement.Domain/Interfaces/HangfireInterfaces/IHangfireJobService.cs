@@ -7,6 +7,7 @@ namespace API.Settlement.Domain.Interfaces
 	{
 		Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO);
 		Task RecurringFailedTransactionsJob();
-		Task RecurringCapitalLossCheckJob();
+		Task RecurringCapitalCheckJob();
+		Task RecurringRabbitMQMessageSenderJob();
 	}
 }

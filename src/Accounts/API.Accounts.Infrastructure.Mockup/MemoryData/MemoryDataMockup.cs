@@ -65,6 +65,7 @@ namespace API.Accounts.Infrastructure.Mockup.MemoryData
 
         public void Update<T>(T item) where T : IEntity
         {
+            GetMemoryTable<T>(_updateData).Remove(item.Id);
             GetMemoryTable<T>(_updateData).Add(item.Id, item);
         }
 

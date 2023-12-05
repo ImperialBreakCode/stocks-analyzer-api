@@ -4,13 +4,10 @@ namespace API.Settlement.Infrastructure.Services
 {
     public class DateTimeService : IDateTimeService
 	{
-
 		public DateTime UtcNow => DateTime.UtcNow;
-
 		public string GetCronExpressionForEveryFiveMinutes() => "*/5 * * * *";
-
 		public string GetCronExpressionForEveryHour() => "0 * * * *";
-
+		public string GetCronExpressionForEveryTenMinutes() => "*/10 * * * *";
 		public TimeSpan GetTimeSpanUntilNextDayAtMinutePastMidnight()
 		{
 			DateTime currentTime = UtcNow;
