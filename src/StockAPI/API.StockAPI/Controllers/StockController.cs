@@ -40,13 +40,13 @@ namespace API.StockAPI.Controllers
             try
             {
                 var query = _externalRequestServices.QueryStringGenerator(symbol, type);
-                if (query == null)
+                if (string.IsNullOrEmpty(query))
                 {
                     return BadRequest();
                 }
 
                 var data = await _externalRequestServices.GetDataFromQuery(query);
-                if (data == null)
+                if (string.IsNullOrEmpty(data))
                 {
                     return BadRequest();
                 }
