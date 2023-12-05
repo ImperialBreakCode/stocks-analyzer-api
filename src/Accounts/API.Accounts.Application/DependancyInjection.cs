@@ -19,6 +19,9 @@ using Microsoft.Extensions.DependencyInjection;
 using API.Accounts.Application.Services.UserService.UserRankService;
 using API.Accounts.Application.Services.UserService.EmailService;
 using API.Accounts.Application.RabbitMQ;
+using API.Accounts.Domain.Interfaces.DbManager;
+using API.Accounts.Infrastructure.DbManager;
+using API.Accounts.Application.Data.AccountsDataSeeder;
 
 namespace API.Accounts.Application
 {
@@ -33,6 +36,7 @@ namespace API.Accounts.Application
                     )
                 );
 
+            services.AddSingleton<IRabbitMQSetupService, RabbitMQSetupService>();
             services.AddTransient<ITransactionSaleHandler, TransactionSaleHandler>();
 
             return services;
@@ -42,14 +46,16 @@ namespace API.Accounts.Application
         {
             services.AddTransient<IStocksData, StocksDataMockup>();
             services.AddTransient<IExchangeRatesData, ExchangeRateDataMockup>();
+
+            services.AddTransient<IAccountsDataSeeder, AccountDataSeeder>();
+
             return services;
         }
 
-        public static IServiceCollection UseSqlDatabase<TDataAdapter>(this IServiceCollection services) 
-            where TDataAdapter : class, IAccountsData
+        public static IServiceCollection UseSqlDatabase(this IServiceCollection services) 
         {
-            services.AddTransient<ISqlContextCreator, SqlContextCreator>();
-            services.AddTransient<IAccountsData, TDataAdapter>();
+            services.AddTransient<IAccountsData, AccountData>();
+            services.AddTransient<IAccountsDbManager, AccountsDbManager>();
             return services;
         }
 

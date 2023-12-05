@@ -26,14 +26,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
         {
             using (var context = _accountsData.CreateDbContext())
             {
-                User? user = context.Users.GetOneByUserName(username);
-                if (user is null)
-                {
-                    return ResponseMessages.UserNotFound;
-                }
-
                 string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
-
                 if (error is not null)
                 {
                     return error;
@@ -42,6 +35,8 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                 {
                     return ResponseMessages.WalletNotFound;
                 }
+
+                User user = context.Users.GetOneByUserName(username)!;
 
                 var stocksForPurchase = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForPurchaseCount != 0);
@@ -71,7 +66,6 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             using (var context = _accountsData.CreateDbContext())
             {
                 string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
-
                 if (error is not null)
                 {
                     return error;

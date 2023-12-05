@@ -23,7 +23,7 @@ namespace API.Accounts.Extensions
         {
             services.AddApplicationData()
                 // Sql Db
-                //.UseSqlDatabase<AccountDataAdapter>();
+                //.UseSqlDatabase();
                 // memory db
                 .UseMemoryMockupDb();
 
@@ -33,8 +33,8 @@ namespace API.Accounts.Extensions
         public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
         {
             services.AddApplicationEventClock();
-            services.AddHostedService<EventClockService>();
             services.AddHostedService<StartupService>();
+            services.AddHostedService<EventClockService>();
             return services;
         }
     }
