@@ -9,7 +9,6 @@ namespace API.StockAPI.Domain.InterFaces
 {
     public interface IStockService
     {
-        public Task<StockData> GetStockFromRequest(string symbol, string? data, string type);
-        public Task<StockData> GetStockFromDbData(string symbol, StockData? data, string type);
+        public Task<StockData> GetStockFromResponse(string symbol, string? data, string type);
     }
 }
