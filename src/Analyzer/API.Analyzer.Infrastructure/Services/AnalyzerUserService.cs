@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using API.Analyzer.Domain.Interfaces;
-using API.StockAPI.Domain.Models;
-using API.Accounts.Application.DTOs.Response;
+using API.Analyzer.Domain.DTOs;
 
 namespace API.Analyzer.Infrastructure.Services
 {

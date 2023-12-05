@@ -5,15 +5,16 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Serilog;
+using API.Gateway.Domain.Entities.SQLiteEntities;
 
 namespace API.Gateway.Infrastructure.Init
 {
-	public class DatabaseInit : IDatabaseInit
+    public class SQLiteDBInit : IDatabaseInit
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly IEmailService _service;
-		private readonly Context _context;
-		public DatabaseInit(IHttpClient httpClient, IEmailService emailService, Context context)
+		private readonly SQLiteContext _context;
+		public SQLiteDBInit(IHttpClient httpClient, IEmailService emailService, SQLiteContext context)
 		{
 			_httpClient = httpClient;
 			_service = emailService;
@@ -58,7 +59,7 @@ namespace API.Gateway.Infrastructure.Init
 				ObjectResult response = (ObjectResult)await _httpClient.Get(url);
 
 				var stringResult = response.Value.ToString();
-				var users = JsonConvert.DeserializeObject<List<User>>(stringResult);
+				var users = JsonConvert.DeserializeObject<List<UserDTO>>(stringResult);
 
 				int a = 0;
 				foreach (var x in users)

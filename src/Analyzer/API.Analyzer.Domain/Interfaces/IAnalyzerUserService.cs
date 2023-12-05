@@ -1,4 +1,4 @@
-﻿using API.Accounts.Application.DTOs.Response;
+﻿using API.Analyzer.Domain.DTOs;
 namespace API.Analyzer.Domain.Interfaces
 {
 

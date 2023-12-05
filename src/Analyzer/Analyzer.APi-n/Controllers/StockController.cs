@@ -1,4 +1,4 @@
-﻿using API.Accounts.Application.DTOs.Response;
+﻿using API.Analyzer.Domain.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API.Analyzer.Domain.Interfaces;
@@ -29,19 +29,36 @@ namespace Analyzer.APi.Controllers
             
         }
 
-        //[HttpGet("percentage-change/{symbol}")]
-        //public async Task<IActionResult> PercentageChange(string symbol)
-        //{
-        //    try
-        //    {
-        //        decimal percentageChange = await service.PercentageChange(symbol);
-        //        return Ok(percentageChange);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Server error: {ex.Message}");
-        //    }
-        //}
+        [HttpGet("PercentageChange/{walletId}")]
+        public async Task<ActionResult<decimal?>> GetInvestmentPercentageChange(string walletId)
+        {
+            try
+            {
+                decimal? shareValue = await service.GetShareValue(walletId);
 
+                if (shareValue.HasValue)
+                {
+                    decimal? investmentPercentageGain = await service.CalculateInvestmentPercentageGain(walletId, shareValue.Value);
+
+                    if (investmentPercentageGain.HasValue)
+                    {
+                        return Ok(investmentPercentageGain.Value);
+                    }
+                    else
+                    {
+                        return NotFound("Unable to calculate investment percentage gain.");
+                    }
+                }
+                else
+                {
+                    return NotFound("Unable to retrieve share value.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetInvestmentPercentageChange: {ex.Message}");
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
     }
 }

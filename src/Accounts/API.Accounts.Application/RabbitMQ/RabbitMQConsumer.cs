@@ -9,23 +9,30 @@ namespace API.Accounts.Application.RabbitMQ
         private IModel _channel;
 
         private EventingBasicConsumer _consumer;
+        private ConnectionFactory _connectionFactory;
         private string _queueName;
 
         public RabbitMQConsumer(string hostName, string queueName)
         {
-            var connectionFactory = new ConnectionFactory();
-            connectionFactory.HostName = hostName;
+            _connectionFactory = new()
+            {
+                HostName = hostName
+            };
 
-            _connection = connectionFactory.CreateConnection();
+            _queueName = queueName;
+        }
+
+        public void Connect()
+        {
+            _connection = _connectionFactory.CreateConnection();
             _channel = _connection.CreateModel();
 
             _consumer = new EventingBasicConsumer(_channel);
-            _queueName = queueName;            
         }
 
         public void StartConsumer()
         {
-            _channel.QueueDeclare(_queueName);
+            _channel.QueueDeclare(_queueName, exclusive: false);
             _channel.BasicConsume(_queueName, true, _consumer);
         }
 
