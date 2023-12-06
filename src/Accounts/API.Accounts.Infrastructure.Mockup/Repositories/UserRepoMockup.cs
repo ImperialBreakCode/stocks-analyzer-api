@@ -75,5 +75,14 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
 
             return user;
         }
+
+        public void UpdateByUsername(User user)
+        {
+            User? userByUsername = GetOneByUserName(user.UserName);
+            if (userByUsername is not null)
+            {
+                MemoryData.Update(user, userByUsername.Id);
+            }
+        }
     }
 }

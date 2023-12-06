@@ -9,5 +9,6 @@ namespace API.Accounts.Domain.Interfaces
         User? GetOneByUserName(string username);
         User? GetOneByEmail(string email);
         User? GetConfirmedByUserName(string username);
+        void UpdateByUsername(User user);
     }
 }

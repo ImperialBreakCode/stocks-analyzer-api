@@ -23,9 +23,9 @@ namespace API.Accounts.Extensions
         {
             services.AddApplicationData()
                 // Sql Db
-                //.UseSqlDatabase();
+                .UseSqlDatabase();
                 // memory db
-                .UseMemoryMockupDb();
+                //.UseMemoryMockupDb();
 
             return services;
         }

@@ -35,6 +35,16 @@ namespace API.Accounts.Infrastructure.Repositories
             return GetByUsername(username, "SELECT * FROM [User] WHERE UserName = @userName");
         }
 
+        public void UpdateByUsername(User user)
+        {
+            var command = CreateCommand(UpdateQuery.Split("WHERE")[0] + "WHERE UserName = @usernameParam");
+
+            EntityConverterHelper.ToQuery(user, command);
+
+            command.Parameters.AddWithValue("@usernameParam", user.UserName);
+            command.ExecuteNonQuery();
+        }
+
         private User? GetByUsername(string username, string query)
         {
             var command = CreateCommand(query);

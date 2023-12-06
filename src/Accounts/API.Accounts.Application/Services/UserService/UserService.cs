@@ -182,16 +182,17 @@ namespace API.Accounts.Application.Services.UserService
                 if (confirmPass)
                 {
                     userForConfirmation.IsConfirmed = true;
+                    userForConfirmation.Id = Guid.NewGuid().ToString();
 
                     Wallet wallet = new Wallet()
                     {
                         Balance = 10000,
                         IsDemo = true,
-                        UserId = userId,
+                        UserId = userForConfirmation.Id,
                     };
 
+                    context.Users.UpdateByUsername(userForConfirmation);
                     context.Wallets.Insert(wallet);
-                    context.Users.Update(userForConfirmation); 
                     context.Commit();
                 }
 
