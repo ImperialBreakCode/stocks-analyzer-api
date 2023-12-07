@@ -10,8 +10,8 @@ var configuration = builder.Configuration;
 builder.Services.AddSQLiteTransactionDatabaseConfiguration(configuration);
 builder.Services.AddMSSQLOutboxDatabaseConfiguration(configuration);
 builder.Services.AddCustomServices();
-builder.Services.AddHangfireConfiguration(configuration);
 builder.Services.AddMongoDBWalletDatabaseConfiguration(configuration);
+builder.Services.AddHangfireConfiguration(configuration);
 
 builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

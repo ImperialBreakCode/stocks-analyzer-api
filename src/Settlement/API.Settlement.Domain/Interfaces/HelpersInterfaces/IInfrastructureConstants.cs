@@ -1,8 +1,7 @@
-﻿using API.Settlement.Domain.DTOs.Response;
+﻿using API.Settlement.Domain.DTOs.Response.FinalizeDTOs;
 using API.Settlement.Domain.Enums;
-using API.Settlement.Infrastructure.Helpers.Enums;
 
-namespace API.Settlement.Domain.Interfaces
+namespace API.Settlement.Domain.Interfaces.HelpersInterfaces
 {
 	public interface IInfrastructureConstants
 	{
@@ -17,7 +16,7 @@ namespace API.Settlement.Domain.Interfaces
 		decimal GetCommissionBasedOnUserType(UserRank userRank);
 		string GetMessageBasedOnStatus(Status status);
 		bool IsInitializedRecurringFailedTransactionsJob { get; set; }
-		bool IsInitializedRecurringCapitalLossCheckJob {get;set;}
+		bool IsInitializedRecurringCapitalLossCheckJob { get; set; }
 		bool IsInitializedRecurringRabbitMQMessageSenderJob { get; set; }
 	}
 }

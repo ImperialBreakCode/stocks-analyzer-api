@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace API.Settlement.Extensions.Middlewares
+namespace API.Settlement.Middlewares
 {
 	public class IPFilterMiddleware
 	{
@@ -15,17 +15,17 @@ namespace API.Settlement.Extensions.Middlewares
 		public async Task Invoke(HttpContext context)
 		{
 			var remoteIpAddress = context.Connection.RemoteIpAddress;
-			string remoteIp = remoteIpAddress.IsIPv4MappedToIPv6 
+			string remoteIp = remoteIpAddress.IsIPv4MappedToIPv6
 				? remoteIpAddress.MapToIPv4().ToString()
 				: remoteIpAddress.ToString();
 
 			if (_blackListedIPs.Contains(remoteIp))
-            {
+			{
 				context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
 				return;
-            }
+			}
 
 			await _next(context);
-        }
+		}
 	}
 }
