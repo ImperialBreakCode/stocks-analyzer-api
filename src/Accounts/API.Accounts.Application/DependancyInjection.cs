@@ -3,41 +3,40 @@ using API.Accounts.Application.Auth.TokenManager;
 using API.Accounts.Application.Data;
 using API.Accounts.Application.Data.ExchangeRates;
 using API.Accounts.Application.Data.StocksData;
+using API.Accounts.Application.Data.AccountsDataSeeder;
 using API.Accounts.Application.EventClocks;
 using API.Accounts.Application.HttpClientService;
+using API.Accounts.Application.RabbitMQ;
+using API.Accounts.Application.RabbitMQ.Interfaces;
 using API.Accounts.Application.Services.StockService;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
 using API.Accounts.Application.Services.StockService.SubServices;
 using API.Accounts.Application.Services.TransactionService;
 using API.Accounts.Application.Services.UserService;
-using API.Accounts.Application.Services.WalletService;
-using API.Accounts.Application.Settings.GatewayAuthSettingsSender;
-using API.Accounts.Application.Settings.GatewaySettingsSender;
-using API.Accounts.Application.Settings;
-using API.Accounts.Application.Settings.UpdateHandlers;
-using Microsoft.Extensions.DependencyInjection;
 using API.Accounts.Application.Services.UserService.UserRankService;
 using API.Accounts.Application.Services.UserService.EmailService;
-using API.Accounts.Application.RabbitMQ;
+using API.Accounts.Application.Services.WalletService;
+using API.Accounts.Application.Services.WalletService.Interfaces;
+using API.Accounts.Application.Settings;
+using API.Accounts.Application.Settings.GatewayAuthSettingsSender;
+using API.Accounts.Application.Settings.GatewaySettingsSender;
+using API.Accounts.Application.Settings.UpdateHandlers;
 using API.Accounts.Domain.Interfaces.DbManager;
 using API.Accounts.Infrastructure.DbManager;
-using API.Accounts.Application.Data.AccountsDataSeeder;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace API.Accounts.Application
 {
     public static class DependancyInjection
     {
-        public static IServiceCollection AddRabbitMQConsumer(this IServiceCollection services)
+        public static IServiceCollection AddRabbitMQServices(this IServiceCollection services)
         {
-            services.AddSingleton<IRabbitMQConsumer, RabbitMQConsumer>(
-                _ => new RabbitMQConsumer(
-                    hostName: "localhost", 
-                    queueName: "transactionSellStock"
-                    )
-                );
-
             services.AddSingleton<IRabbitMQSetupService, RabbitMQSetupService>();
+            services.AddSingleton<IRabbitMQConnection, RabbitMQConnection>();
+
             services.AddTransient<ITransactionSaleHandler, TransactionSaleHandler>();
+            services.AddTransient<IWalletDeleteRabbitMQProducer, WalletDeleteRabbitMQProducer>();
 
             return services;
         }

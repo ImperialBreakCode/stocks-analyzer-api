@@ -1,6 +1,6 @@
 ﻿using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
-using API.Accounts.Application.Services.WalletService;
+using API.Accounts.Application.Services.WalletService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Accounts.Controllers

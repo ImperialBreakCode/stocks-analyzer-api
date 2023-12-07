@@ -1,6 +1,6 @@
 ﻿using API.Accounts.Application.EventClocks;
-using API.Accounts.Application.RabbitMQ;
-using API.Accounts.Application.Services.WalletService;
+using API.Accounts.Application.RabbitMQ.Interfaces;
+using API.Accounts.Application.Services.WalletService.Interfaces;
 using API.Accounts.Application.Settings.UpdateHandlers;
 
 namespace API.Accounts.BackgroundServices

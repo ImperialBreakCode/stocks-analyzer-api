@@ -3,6 +3,7 @@ using API.Accounts.Application.Data.ExchangeRates;
 using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
+using API.Accounts.Application.Services.WalletService.Interfaces;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.RepositoryBase;
 
@@ -12,11 +13,13 @@ namespace API.Accounts.Application.Services.WalletService
     {
         private readonly IAccountsData _accountData;
         private readonly IExchangeRatesData _exchangeRatesData;
+        private readonly IWalletDeleteRabbitMQProducer _walletDeleteRabbitMQProducer;
 
-        public WalletService(IAccountsData accountData, IExchangeRatesData exchangeRatesData)
+        public WalletService(IAccountsData accountData, IExchangeRatesData exchangeRatesData, IWalletDeleteRabbitMQProducer walletDeleteRabbitMQProducer)
         {
             _accountData = accountData;
             _exchangeRatesData = exchangeRatesData;
+            _walletDeleteRabbitMQProducer = walletDeleteRabbitMQProducer;
         }
 
         public string CreateWallet(string username)
@@ -63,6 +66,8 @@ namespace API.Accounts.Application.Services.WalletService
 
                 context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
                 context.Commit();
+
+                _walletDeleteRabbitMQProducer.SendWalletIdForDeletion(wallet.Id);
             }
 
             return null;

@@ -1,7 +1,7 @@
 ﻿using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 
-namespace API.Accounts.Application.Services.WalletService
+namespace API.Accounts.Application.Services.WalletService.Interfaces
 {
     public interface IWalletService
     {

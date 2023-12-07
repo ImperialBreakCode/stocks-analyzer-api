@@ -6,6 +6,7 @@ using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.UserService.EmailService;
 using API.Accounts.Application.Services.UserService.UserRankService;
+using API.Accounts.Application.Services.WalletService.Interfaces;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.RepositoryBase;
 
@@ -18,20 +19,22 @@ namespace API.Accounts.Application.Services.UserService
         private readonly ITokenManager _tokenManager;
         private readonly IUserRankManager _userRankManager;
         private readonly IEmailConfirmation _emailConfirmation;
+        private readonly IWalletDeleteRabbitMQProducer _walletDeleteRabbitMQProducer;
 
         public UserService(
-            IAccountsData data, 
-            IPasswordManager passwordManager, 
-            ITokenManager tokenManager, 
+            IAccountsData data,
+            IPasswordManager passwordManager,
+            ITokenManager tokenManager,
             IUserRankManager userRankManager,
-            IEmailConfirmation emailConfirmation
-            )
+            IEmailConfirmation emailConfirmation,
+            IWalletDeleteRabbitMQProducer walletDeleteRabbitMQProducer)
         {
             _data = data;
             _passwordManager = passwordManager;
             _tokenManager = tokenManager;
             _userRankManager = userRankManager;
             _emailConfirmation = emailConfirmation;
+            _walletDeleteRabbitMQProducer = walletDeleteRabbitMQProducer;
         }
 
         public LoginResponseDTO LoginUser(LoginUserDTO loginDTO)
@@ -167,6 +170,11 @@ namespace API.Accounts.Application.Services.UserService
 
                 context.Users.DeleteByUserName(username);
                 context.Commit();
+
+                if (wallet is not null)
+                {
+                    _walletDeleteRabbitMQProducer.SendWalletIdForDeletion(wallet.Id);
+                }
             }
         }
 

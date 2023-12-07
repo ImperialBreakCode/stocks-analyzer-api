@@ -16,16 +16,16 @@ namespace API.Accounts.Extensions
                 .AddBackgroundServices()
                 .AddAccountServices()
                 .AddAccountAuthentication()
-                .AddRabbitMQConsumer();
+                .AddRabbitMQServices();
         }
 
         public static IServiceCollection InjectData(this IServiceCollection services)
         {
             services.AddApplicationData()
                 // Sql Db
-                .UseSqlDatabase();
+                //.UseSqlDatabase();
                 // memory db
-                //.UseMemoryMockupDb();
+                .UseMemoryMockupDb();
 
             return services;
         }
