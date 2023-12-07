@@ -2,12 +2,12 @@
 
 namespace API.Settlement.Middlewares
 {
-	public class IPFilterMiddleware
+	public class IPFilteringMiddleware
 	{
 		private readonly RequestDelegate _next;
 		private readonly HashSet<string> _blackListedIPs;
 
-		public IPFilterMiddleware(RequestDelegate next, IConfiguration configuration)
+		public IPFilteringMiddleware(RequestDelegate next, IConfiguration configuration)
 		{
 			_next = next;
 			_blackListedIPs = new HashSet<string>(configuration.GetSection("BlackListedIPs").Get<List<string>>());

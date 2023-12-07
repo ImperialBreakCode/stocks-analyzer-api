@@ -1,13 +1,13 @@
-﻿using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces;
+﻿using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MSSQLInterfaces.OutboxDatabaseInterfaces;
 
 namespace API.Settlement.Infrastructure.MSSQLServices.OutboxDatabaseServices
 {
-    public class OutboxDatabaseContext : IOutboxDatabaseContext
+    public class OutboxUnitOfWork : IOutboxUnitOfWork
     {
         public IOutboxPendingMessageRepository PendingMessageRepository { get; }
         public IOutboxSuccessfullySentMessageRepository SuccessfullySentMessageRepository { get; }
 
-        public OutboxDatabaseContext(IOutboxPendingMessageRepository pendingMessageRepository,
+        public OutboxUnitOfWork(IOutboxPendingMessageRepository pendingMessageRepository,
                                      IOutboxSuccessfullySentMessageRepository acknowledgedMessageRepository)
         {
             PendingMessageRepository = pendingMessageRepository;

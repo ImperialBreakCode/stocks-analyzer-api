@@ -1,4 +1,4 @@
-﻿using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces;
+﻿using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MSSQLInterfaces.OutboxDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.MapperManagementInterfaces;
 using API.Settlement.Domain.Interfaces.RabbitMQInterfaces;
 using System;
@@ -11,29 +11,29 @@ namespace API.Settlement.Application.Services.RabbitMQServices
 {
 	public class RabbitMQService : IRabbitMQService
 	{
-		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
+		private readonly IOutboxUnitOfWork _outboxUnitOfWork;
 		private readonly IRabbitMQProducer _rabbitMQProducer;
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 
-		public RabbitMQService(IOutboxDatabaseContext outboxDatabaseContext,
+		public RabbitMQService(IOutboxUnitOfWork outboxUnitOfWork,
 							   IRabbitMQProducer rabbitMQSellTransactionProducer,
 							   IMapperManagementWrapper mapperManagementWrapper)
 		{
-			_outboxDatabaseContext = outboxDatabaseContext;
+			_outboxUnitOfWork = outboxUnitOfWork;
 			_rabbitMQProducer = rabbitMQSellTransactionProducer;
 			_mapperManagementWrapper = mapperManagementWrapper;
 		}
 
 		public void PerformMessageSending()
 		{
-			var outboxPendingMessageEntities = _outboxDatabaseContext.PendingMessageRepository.GetAll();
+			var outboxPendingMessageEntities = _outboxUnitOfWork.PendingMessageRepository.GetAll();
 			foreach (var outboxPendingMessageEntity in outboxPendingMessageEntities)
 			{
 				_rabbitMQProducer.SendMessage(outboxPendingMessageEntity);
-				_outboxDatabaseContext.PendingMessageRepository.DeletePendingMessage(outboxPendingMessageEntity.Id);
+				_outboxUnitOfWork.PendingMessageRepository.DeletePendingMessage(outboxPendingMessageEntity.Id);
 
 				var outboxSuccessfullySentMessageEntity = _mapperManagementWrapper.OutboxSuccessfullySentMessageMapper.MapToOutboxSuccessfullySentMessageEntity(outboxPendingMessageEntity);
-				_outboxDatabaseContext.SuccessfullySentMessageRepository.AddSuccessfullySentMessage(outboxSuccessfullySentMessageEntity);
+				_outboxUnitOfWork.SuccessfullySentMessageRepository.AddSuccessfullySentMessage(outboxSuccessfullySentMessageEntity);
 			}
 		}
 

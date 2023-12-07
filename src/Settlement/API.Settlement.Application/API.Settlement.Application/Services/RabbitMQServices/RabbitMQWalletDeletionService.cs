@@ -1,4 +1,7 @@
-﻿using API.Settlement.Domain.Interfaces.RabbitMQInterfaces;
+﻿using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.RabbitMQInterfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -10,17 +13,20 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Application.Services.RabbitMQServices
 {
-	public class RabbitMQWalletDeletionService : IHostedService, IRabbitMQWalletDeletionService
+	public class RabbitMQWalletDeletionService : IRabbitMQWalletDeletionService, IHostedService
 	{
 		private readonly IConnection _connection;
 		private readonly IModel _channel;
 		private readonly string _queueName = "walletDeleteQueue";
-		public RabbitMQWalletDeletionService()
+		private readonly IServiceScopeFactory _serviceScopeFactory;
+
+		public RabbitMQWalletDeletionService(IServiceScopeFactory serviceScopeFactory)
 		{
 			var factory = new ConnectionFactory { HostName = "localhost" };
 			_connection = factory.CreateConnection();
 			_channel = _connection.CreateModel();
 			_channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+			_serviceScopeFactory = serviceScopeFactory;
 		}
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
@@ -29,7 +35,7 @@ namespace API.Settlement.Application.Services.RabbitMQServices
 			{
 				var body = eventArgs.Body.ToArray();
 				var walletId = Encoding.UTF8.GetString(body);
-				
+
 				DeleteWallet(walletId);
 			};
 
@@ -44,7 +50,14 @@ namespace API.Settlement.Application.Services.RabbitMQServices
 		}
 		public void DeleteWallet(string walletId)
 		{
-			
+			using (var scope = _serviceScopeFactory.CreateScope())
+			{
+				var _walletService = scope.ServiceProvider.GetRequiredService<IWalletService>();
+				var _transactionDbService = scope.ServiceProvider.GetRequiredService<ITransactionDatabaseService>();
+				_walletService.DeleteWallet(walletId);
+				_transactionDbService.DeleteTransactionsWithWalletId(walletId);
+			}
+
 		}
 	}
 }

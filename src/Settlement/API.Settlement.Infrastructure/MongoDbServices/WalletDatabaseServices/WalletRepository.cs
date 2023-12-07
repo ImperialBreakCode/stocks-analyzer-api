@@ -73,5 +73,12 @@ namespace API.Settlement.Infrastructure.MongoDbServices.WalletDatabaseServices
 
             _walletRepository.UpdateOne(filter, update);
         }
-    }
+
+		public bool ContainsWallet(string walletId)
+		{
+            var filter = Builders<Wallet>.Filter.Eq(w => w.WalletId, walletId);
+			Wallet wallet = _walletRepository.Find(filter).FirstOrDefault();
+            return wallet != null;
+		}
+	}
 }

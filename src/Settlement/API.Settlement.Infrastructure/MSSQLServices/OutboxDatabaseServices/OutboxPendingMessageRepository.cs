@@ -1,5 +1,5 @@
 ﻿using API.Settlement.Domain.Entities.OutboxEntities;
-using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MSSQLInterfaces.OutboxDatabaseInterfaces;
 using Microsoft.Data.SqlClient;
 
 namespace API.Settlement.Infrastructure.MSSQLServices.OutboxDatabaseServices

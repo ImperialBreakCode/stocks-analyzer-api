@@ -25,14 +25,14 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 		private readonly ITransactionResponseHandlerService _transactionResponseHandlerService;
 		private readonly IWalletService _walletService;
 		private readonly IEmailService _emailService;
-		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
+		private readonly ITransactionUnitOfWork _transactionUnitOfWork;
 		public FailedTransactionCompletionService(IHttpClientFactory httpClientFactory,
 									IMapperManagementWrapper mapperManagementWrapper,
 									IInfrastructureConstants infrastructureConstants,
 									ITransactionResponseHandlerService transactionResponseHandlerService,
 									IWalletService walletService,
 									IEmailService emailService,
-									ITransactionDatabaseContext transactionDatabaseContext)
+									ITransactionUnitOfWork transactionUnitOfWork)
 		{
 			_httpClientFactory = httpClientFactory;
 			_mapperManagementWrapper = mapperManagementWrapper;
@@ -40,7 +40,7 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 			_transactionResponseHandlerService = transactionResponseHandlerService;
 			_walletService = walletService;
 			_emailService = emailService;
-			_transactionDatabaseContext = transactionDatabaseContext;
+			_transactionUnitOfWork = transactionUnitOfWork;
 		}
 		public async Task ProcessFailedTransactions()
 		{
@@ -48,15 +48,25 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 			var finalizeTransactionResponseDTOs = MapFailedTransactionsToFinalizeDTOs(failedTransactionEntities);
 			foreach (var finalizeTransactionResponseDTO in finalizeTransactionResponseDTOs)
 			{
-				var response = await SendFinalizingTransactionRequest(finalizeTransactionResponseDTO);
+				//var response = await SendFinalizingTransactionRequest(finalizeTransactionResponseDTO);
+				var response = new HttpResponseMessage(HttpStatusCode.OK);
 				if (response != null && response.IsSuccessStatusCode)
 				{
+					UpdateStockInfoMessageToSuccessful(finalizeTransactionResponseDTO.StockInfoResponseDTOs);
 					await SendTransactionSummaryEmail(finalizeTransactionResponseDTO);
 					UpdateStocksInWallet(finalizeTransactionResponseDTO);
 				}
 				HandleTransactionResponse(response, finalizeTransactionResponseDTO);
 			}
 		}
+
+		private void UpdateStockInfoMessageToSuccessful(IEnumerable<StockInfoResponseDTO> stockInfoResponseDTOs)
+		{
+            foreach (var stockInfoResponseDTO in stockInfoResponseDTOs)
+            {
+				stockInfoResponseDTO.Message = _infrastructureConstants.TransactionSuccessMessage;
+            }
+        }
 
 		private IEnumerable<FinalizeTransactionResponseDTO> MapFailedTransactionsToFinalizeDTOs(IEnumerable<Transaction> failedTransactionEntities)
 		{
@@ -65,7 +75,7 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 
 		private IEnumerable<Transaction> GetAllFailedTransactions()
 		{
-			return _transactionDatabaseContext.FailedTransactions.GetAll();
+			return _transactionUnitOfWork.FailedTransactions.GetAll();
 		}
 
 		private async Task<HttpResponseMessage> SendFinalizingTransactionRequest(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)

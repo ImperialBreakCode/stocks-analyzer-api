@@ -1,4 +1,4 @@
-using API.Settlement.Extensions.Configuration;
+using API.Settlement.Extensions;
 using Hangfire;
 using System.Text.Json.Serialization;
 
@@ -7,11 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container
-builder.Services.AddSQLiteTransactionDatabaseConfiguration(configuration);
-builder.Services.AddMSSQLOutboxDatabaseConfiguration(configuration);
-builder.Services.AddCustomServices();
-builder.Services.AddMongoDBWalletDatabaseConfiguration(configuration);
+builder.Services.AddDatabaseConfigurations(configuration);
 builder.Services.AddHangfireConfiguration(configuration);
+builder.Services.AddCustomServiceRegistrations();
 
 builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -35,8 +33,7 @@ app.UseAuthorization();
 
 app.UseCustomMiddlewares();
 
-app.UseSQLiteTransactionDatabaseInitialization();
-app.UseMSSQLOutboxDatabaseInitialization();
+app.UseDatabasesInitialization();
 
 app.UseEndpoints(endpoints =>
 {

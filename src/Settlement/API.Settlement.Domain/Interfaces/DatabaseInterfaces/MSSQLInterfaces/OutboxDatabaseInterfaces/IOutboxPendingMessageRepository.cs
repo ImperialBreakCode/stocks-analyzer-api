@@ -1,6 +1,6 @@
 ﻿using API.Settlement.Domain.Entities.OutboxEntities;
 
-namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces
+namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.MSSQLInterfaces.OutboxDatabaseInterfaces
 {
 	public interface IOutboxPendingMessageRepository
 	{

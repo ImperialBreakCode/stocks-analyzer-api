@@ -20,7 +20,7 @@ namespace API.Settlement.Application.Services.RabbitMQServices
 			var connection = factory.CreateConnection();
 			using (var channel = connection.CreateModel())
 			{
-				channel.QueueDeclare(queue);
+				channel.QueueDeclare(queue, durable: true);
 				var consumer = new EventingBasicConsumer(channel);
 				consumer.Received += (model, eventArgs) =>
 				{

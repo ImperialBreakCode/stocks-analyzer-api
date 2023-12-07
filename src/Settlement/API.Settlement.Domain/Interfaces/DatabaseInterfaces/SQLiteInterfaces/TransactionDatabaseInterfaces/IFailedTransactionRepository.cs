@@ -8,5 +8,7 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.T
         Transaction Delete(string transactionId);
         IEnumerable<Transaction> GetAll();
         bool ContainsTransaction(string transactionId);
-    }
+		bool ContainsTransactionsWithWalletId(string walletId);
+		void DeleteTransactionsWithWalletId(string walletId);
+	}
 }

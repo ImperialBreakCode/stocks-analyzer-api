@@ -1,6 +1,6 @@
-﻿namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces
+﻿namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.MSSQLInterfaces.OutboxDatabaseInterfaces
 {
-	public interface IOutboxDatabaseContext
+	public interface IOutboxUnitOfWork
 	{
 		IOutboxPendingMessageRepository PendingMessageRepository { get; }
 		IOutboxSuccessfullySentMessageRepository SuccessfullySentMessageRepository { get;}

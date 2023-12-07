@@ -2,7 +2,7 @@
 using API.Settlement.Domain.Entities.MongoDatabaseEntities.WalletDatabaseEntities;
 using API.Settlement.Domain.Entities.SQLiteEntities.TransactionDatabaseEntities;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces;
-using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces;
+using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MSSQLInterfaces.OutboxDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.EmailInterfaces;
 using API.Settlement.Domain.Interfaces.HelpersInterfaces;
@@ -18,23 +18,23 @@ namespace API.Settlement.Application.Services
 		private readonly IInfrastructureConstants _infrastructureConstants;
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IEmailService _emailService;
-		private readonly ITransactionDatabaseContext _transactionDatabaseContext;
-		private readonly IOutboxDatabaseContext _outboxDatabaseContext;
+		private readonly ITransactionUnitOfWork _transactionUnitOfWork;
+		private readonly IOutboxUnitOfWork _outboxUnitOfWork;
 		public WalletService(IWalletRepository walletRepository,
 							 IMapperManagementWrapper mapperManagementWrapper,
 							 IInfrastructureConstants infrastructureConstants,
 							 IHttpClientFactory httpClientFactory,
 							 IEmailService emailService,
-							 ITransactionDatabaseContext transactionDatabaseContext,
-							 IOutboxDatabaseContext outboxDatabaseContext)
+							 ITransactionUnitOfWork transactionUnitOfWork,
+							 IOutboxUnitOfWork outboxUnitOfWork)
 		{
 			_walletRepository = walletRepository;
 			_mapperManagementWrapper = mapperManagementWrapper;
 			_infrastructureConstants = infrastructureConstants;
 			_httpClientFactory = httpClientFactory;
 			_emailService = emailService;
-			_transactionDatabaseContext = transactionDatabaseContext;
-			_outboxDatabaseContext = outboxDatabaseContext;
+			_transactionUnitOfWork = transactionUnitOfWork;
+			_outboxUnitOfWork = outboxUnitOfWork;
 		}
 
 		public void UpdateStocksInWallet(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
@@ -72,7 +72,7 @@ namespace API.Settlement.Application.Services
 					{
 						if (percentageDifference >= 20)
 						{
-							var generatedTransaction = await PerformCapitalCheckSale(wallet, stock, actualTotalStockPrice);
+							var generatedTransaction = await PerformCapitalLossSale(wallet, stock, actualTotalStockPrice);
 
 							await SendStockAlertEmail(percentageDifference, generatedTransaction);
 						}
@@ -86,7 +86,7 @@ namespace API.Settlement.Application.Services
 					{
 						if (percentageDifference <= -15)
 						{
-							var generatedTransaction = await PerformCapitalCheckSale(wallet, stock, actualTotalStockPrice);
+							var generatedTransaction = await PerformCapitalLossSale(wallet, stock, actualTotalStockPrice);
 
 							await SendStockAlertEmail(percentageDifference, generatedTransaction);
 						}
@@ -101,6 +101,14 @@ namespace API.Settlement.Application.Services
 					}
 				}
 			}
+		}
+		public void DeleteWallet(string walletId)
+		{
+			if (_walletRepository.ContainsWallet(walletId))
+			{
+				_walletRepository.DeleteWallet(walletId);
+			}
+			
 		}
 
 		private async Task SendNotifyingEmail(Wallet wallet, double percentageDifference)
@@ -118,16 +126,16 @@ namespace API.Settlement.Application.Services
 			await _emailService.SendEmailWithAttachment(emailDTO);
 		}
 
-		private async Task<Transaction> PerformCapitalCheckSale(Wallet wallet, Stock stock, decimal actualTotalStockPrice)
+		private async Task<Transaction> PerformCapitalLossSale(Wallet wallet, Stock stock, decimal actualTotalStockPrice)
 		{
 			_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
 
 			var transaction = _mapperManagementWrapper.TransactionMapper.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
 			transaction.Message = _infrastructureConstants.TransactionSuccessMessage;
-			_transactionDatabaseContext.SuccessfulTransactions.Add(transaction);
+			_transactionUnitOfWork.SuccessfulTransactions.Add(transaction);
 
 			var outboxPendingMessageEntity = _mapperManagementWrapper.OutboxPendingMessageMapper.MapToOutboxPendingMessageEntity(transaction);
-			_outboxDatabaseContext.PendingMessageRepository.AddPendingMessage(outboxPendingMessageEntity);
+			_outboxUnitOfWork.PendingMessageRepository.AddPendingMessage(outboxPendingMessageEntity);
 
 			return transaction;
 		}
@@ -186,6 +194,7 @@ namespace API.Settlement.Application.Services
 			}
 			return price;
 		}
+
 
 	}
 

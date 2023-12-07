@@ -13,5 +13,6 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInter
         void AddStock(string walletId, Stock stock);
         void RemoveStock(string walletId, string stockId);
         void UpdateStock(string walletId, Stock? existingStock);
-    }
+		bool ContainsWallet(string walletId);
+	}
 }

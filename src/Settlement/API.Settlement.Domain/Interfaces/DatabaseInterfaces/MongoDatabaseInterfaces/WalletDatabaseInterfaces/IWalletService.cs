@@ -6,6 +6,6 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInter
     {
         void UpdateStocksInWallet(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
         Task CheckCapital();
-
-    }
+		void DeleteWallet(string walletId);
+	}
 }

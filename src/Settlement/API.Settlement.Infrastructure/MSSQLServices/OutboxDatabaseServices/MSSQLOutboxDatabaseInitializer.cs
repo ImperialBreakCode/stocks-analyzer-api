@@ -1,4 +1,4 @@
-﻿using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.OutboxDatabaseInterfaces;
+﻿using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MSSQLInterfaces.OutboxDatabaseInterfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
