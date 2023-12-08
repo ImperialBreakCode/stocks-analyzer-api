@@ -14,6 +14,6 @@ namespace API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers
         FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(AvailabilityResponseDTO availabilityResponseDTO);
         FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(Transaction transaction);
 		IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> walletAndIsSaleTransactions);
-
-    }
+		FinalizeTransactionResponseDTO UpdateStockInfoMessageToSuccessful(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO);
+	}
 }

@@ -8,18 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using API.Settlement.Domain.DTOs.Response.FinalizeDTOs;
 using API.Settlement.Domain.Entities.SQLiteEntities.TransactionDatabaseEntities;
+using API.Settlement.Domain.Interfaces.HelpersInterfaces;
 
 namespace API.Settlement.Application.Mappings.Mappers
 {
 	public class FinalizeTransactionResponseDTOMapper : IFinalizeTransactionResponseDTOMapper
     {
         private readonly IMapper _mapper;
-        public FinalizeTransactionResponseDTOMapper(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
+        private readonly IInfrastructureConstants _infrastructureConstants;
+		public FinalizeTransactionResponseDTOMapper(IMapper mapper, IInfrastructureConstants infrastructureConstants)
+		{
+			_mapper = mapper;
+			_infrastructureConstants = infrastructureConstants;
+		}
 
-        public FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
+		public FinalizeTransactionResponseDTO MapToFinalizeTransactionResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
         {
             var finalizeTransactionResponseDTO = _mapper.Map<FinalizeTransactionResponseDTO>(availabilityResponseDTO);
             var stockInfoResponseDTOs = _mapper.Map<IEnumerable<StockInfoResponseDTO>>(availabilityResponseDTO.AvailabilityStockInfoResponseDTOs);
@@ -54,7 +57,7 @@ namespace API.Settlement.Application.Mappings.Mappers
         public IEnumerable<FinalizeTransactionResponseDTO> MapToFinalizeTransactionResponseDTOs(IEnumerable<Transaction> transactions)
         {
             var groupedTransactions = transactions
-                .GroupBy(transaction => new { transaction.WalletId, transaction.UserId, transaction.UserEmail, transaction.IsSale });
+                .GroupBy(transaction => new { transaction.WalletId, transaction.UserId, transaction.UserEmail, transaction.IsSale, transaction.UserRank });
 
             var finalizeTransactionResponseDTOs = new List<FinalizeTransactionResponseDTO>();
             foreach (var currentGroup in groupedTransactions)
@@ -64,8 +67,9 @@ namespace API.Settlement.Application.Mappings.Mappers
                 finalizeTransactionResponseDTO.UserId = currentGroup.Key.UserId;
                 finalizeTransactionResponseDTO.UserEmail = currentGroup.Key.UserEmail;
                 finalizeTransactionResponseDTO.IsSale = currentGroup.Key.IsSale;
+                finalizeTransactionResponseDTO.UserRank = currentGroup.Key.UserRank;
 
-                var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
+				var stockInfoResponseDTOs = new List<StockInfoResponseDTO>();
                 foreach (var currentTransaction in currentGroup)
                 {
                     var stockInfoResponseDTO = new StockInfoResponseDTO()
@@ -87,5 +91,14 @@ namespace API.Settlement.Application.Mappings.Mappers
 
             return finalizeTransactionResponseDTOs;
         }
-    }
+
+		public FinalizeTransactionResponseDTO UpdateStockInfoMessageToSuccessful(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
+		{
+			foreach (var stockInfoResponseDTO in finalizeTransactionResponseDTO.StockInfoResponseDTOs)
+			{
+				stockInfoResponseDTO.Message = _infrastructureConstants.TransactionSuccessMessage;
+			}
+            return finalizeTransactionResponseDTO;
+		}
+	}
 }

@@ -1,4 +1,5 @@
-﻿using API.Settlement.Domain.DTOs.Response.FinalizeDTOs;
+﻿using API.Settlement.Application.Mappings;
+using API.Settlement.Domain.DTOs.Response.FinalizeDTOs;
 using API.Settlement.Domain.Entities.SQLiteEntities.TransactionDatabaseEntities;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
@@ -52,21 +53,18 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 				var response = new HttpResponseMessage(HttpStatusCode.OK);
 				if (response != null && response.IsSuccessStatusCode)
 				{
-					UpdateStockInfoMessageToSuccessful(finalizeTransactionResponseDTO.StockInfoResponseDTOs);
-					await SendTransactionSummaryEmail(finalizeTransactionResponseDTO);
+					var updatedFinalizeTransactionResponseDTO = UpdateStockInfoMessageToSuccessful(finalizeTransactionResponseDTO);
+					await SendTransactionSummaryEmail(updatedFinalizeTransactionResponseDTO);
 					UpdateStocksInWallet(finalizeTransactionResponseDTO);
 				}
 				HandleTransactionResponse(response, finalizeTransactionResponseDTO);
 			}
 		}
 
-		private void UpdateStockInfoMessageToSuccessful(IEnumerable<StockInfoResponseDTO> stockInfoResponseDTOs)
+		private FinalizeTransactionResponseDTO UpdateStockInfoMessageToSuccessful(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
 		{
-            foreach (var stockInfoResponseDTO in stockInfoResponseDTOs)
-            {
-				stockInfoResponseDTO.Message = _infrastructureConstants.TransactionSuccessMessage;
-            }
-        }
+			return _mapperManagementWrapper.FinalizeTransactionResponseDTOMapper.UpdateStockInfoMessageToSuccessful(finalizeTransactionResponseDTO);
+		}
 
 		private IEnumerable<FinalizeTransactionResponseDTO> MapFailedTransactionsToFinalizeDTOs(IEnumerable<Transaction> failedTransactionEntities)
 		{

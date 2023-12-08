@@ -1,4 +1,5 @@
 ﻿using API.Settlement.Domain.Entities.SQLiteEntities.TransactionDatabaseEntities;
+using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.SQLiteInterfaces.TransactionDatabaseInterfaces;
 using API.Settlement.Domain.Interfaces.DateTimeInterfaces;
 using System.Data.SQLite;
@@ -20,8 +21,8 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
 		public void Add(Transaction transaction)
 		{
 			string commandText = $@"INSERT INTO FailedTransaction
-                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, UserEmail, IsSale, Message) VALUES 
-                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @UserEmail, @IsSale, @Message)";
+                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, UserEmail, IsSale, UserRank, Message) VALUES 
+                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @UserEmail, @IsSale, @UserRank, @Message)";
 
 			using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
 			{
@@ -30,13 +31,14 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
 				command.Parameters.AddWithValue("@UserId", transaction.UserId);
 				command.Parameters.AddWithValue("@UserEmail", transaction.UserEmail);
 				command.Parameters.AddWithValue("@IsSale", transaction.IsSale);
-				command.Parameters.AddWithValue("TransactionId", transaction.TransactionId);
-				command.Parameters.AddWithValue("TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
-				command.Parameters.AddWithValue("Quantity", transaction.Quantity);
-				command.Parameters.AddWithValue("DateTime", _dateTimeService.UtcNow);
-				command.Parameters.AddWithValue("StockName", transaction.StockName);
-				command.Parameters.AddWithValue("StockId", transaction.StockId);
-				command.Parameters.AddWithValue("Message", transaction.Message);
+				command.Parameters.AddWithValue("@UserRank", transaction.UserRank);
+				command.Parameters.AddWithValue("@TransactionId", transaction.TransactionId);
+				command.Parameters.AddWithValue("@TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
+				command.Parameters.AddWithValue("@Quantity", transaction.Quantity);
+				command.Parameters.AddWithValue("@DateTime", _dateTimeService.UtcNow);
+				command.Parameters.AddWithValue("@StockName", transaction.StockName);
+				command.Parameters.AddWithValue("@StockId", transaction.StockId);
+				command.Parameters.AddWithValue("@Message", transaction.Message);
 				command.ExecuteNonQuery();
 				_connection.Close();
 			}
@@ -78,6 +80,7 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
 							UserId = Convert.ToString(reader["UserId"]),
 							UserEmail = Convert.ToString(reader["UserEmail"]),
 							IsSale = Convert.ToBoolean(reader["IsSale"]),
+							UserRank = (UserRank)Convert.ToInt32(reader["UserRank"]),
 							Message = Convert.ToString(reader["Message"]),
 							StockId = Convert.ToString(reader["StockId"]),
 							StockName = Convert.ToString(reader["StockName"]),
@@ -113,6 +116,7 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
 							UserId = Convert.ToString(reader["UserId"]),
 							UserEmail = Convert.ToString(reader["UserEmail"]),
 							IsSale = Convert.ToBoolean(reader["IsSale"]),
+							UserRank = (UserRank)Convert.ToInt32(reader["UserRank"]),
 							Message = Convert.ToString(reader["Message"]),
 							StockId = Convert.ToString(reader["StockId"]),
 							StockName = Convert.ToString(reader["StockName"]),

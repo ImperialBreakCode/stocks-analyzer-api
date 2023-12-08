@@ -36,6 +36,7 @@ namespace API.Settlement.Application.Mappings.Mappers
                 transaction.UserId = finalizeTransactionResponseDTO.UserId;
                 transaction.UserEmail = finalizeTransactionResponseDTO.UserEmail;
                 transaction.IsSale = finalizeTransactionResponseDTO.IsSale;
+                transaction.UserRank = finalizeTransactionResponseDTO.UserRank;
             }
 
             return transactions;

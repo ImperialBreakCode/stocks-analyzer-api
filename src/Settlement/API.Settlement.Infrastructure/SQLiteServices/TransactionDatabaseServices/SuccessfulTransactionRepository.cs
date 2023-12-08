@@ -19,8 +19,8 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
         public void Add(Transaction transaction)
         {
             string commandText = $@"INSERT INTO SuccessfulTransaction
-                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, UserEmail, IsSale, Message) VALUES 
-                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @UserEmail, @IsSale, @Message)";
+                            (TransactionId, TotalPriceIncludingCommission, Quantity, DateTime, StockName, StockId, UserId, WalletId, UserEmail, IsSale, UserRank, Message) VALUES 
+                            (@TransactionId, @TotalPriceIncludingCommission, @Quantity, @DateTime, @StockName, @StockId, @UserId, @WalletId, @UserEmail, @IsSale, @UserRank, @Message)";
 
             using (SQLiteCommand command = new SQLiteCommand(commandText, _connection))
             {
@@ -29,13 +29,14 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
                 command.Parameters.AddWithValue("@UserId", transaction.UserId);
                 command.Parameters.AddWithValue("@UserEmail", transaction.UserEmail);
                 command.Parameters.AddWithValue("@IsSale", transaction.IsSale);
-                command.Parameters.AddWithValue("TransactionId", transaction.TransactionId);
-                command.Parameters.AddWithValue("TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
-                command.Parameters.AddWithValue("Quantity", transaction.Quantity);
-                command.Parameters.AddWithValue("DateTime", _dateTimeService.UtcNow);
-                command.Parameters.AddWithValue("StockName", transaction.StockName);
-                command.Parameters.AddWithValue("StockId", transaction.StockId);
-                command.Parameters.AddWithValue("Message", transaction.Message);
+				command.Parameters.AddWithValue("@UserRank", transaction.UserRank);
+				command.Parameters.AddWithValue("@TransactionId", transaction.TransactionId);
+                command.Parameters.AddWithValue("@TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
+                command.Parameters.AddWithValue("@Quantity", transaction.Quantity);
+                command.Parameters.AddWithValue("@DateTime", _dateTimeService.UtcNow);
+                command.Parameters.AddWithValue("@StockName", transaction.StockName);
+                command.Parameters.AddWithValue("@StockId", transaction.StockId);
+                command.Parameters.AddWithValue("@Message", transaction.Message);
                 command.ExecuteNonQuery();
                 _connection.Close();
             }

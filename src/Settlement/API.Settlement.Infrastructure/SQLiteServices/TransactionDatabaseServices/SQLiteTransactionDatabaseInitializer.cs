@@ -49,6 +49,7 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
 					WalletId TEXT,
                     UserEmail TEXT,
 					IsSale INTEGER,
+                    UserRank INTEGER,
 					Message TEXT,
 					PRIMARY KEY(TransactionId)
 					);";
@@ -67,6 +68,7 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
 					WalletId TEXT,
                     UserEmail TEXT,
 					IsSale INTEGER,
+                    UserRank INTEGER,
 					Message TEXT,
 					PRIMARY KEY(TransactionId)
 					);";
