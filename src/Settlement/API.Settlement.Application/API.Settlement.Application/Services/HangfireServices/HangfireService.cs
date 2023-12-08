@@ -9,47 +9,47 @@ namespace API.Settlement.Application.Services.HangfireServices
 
 	public class HangfireService : IHangfireService
 	{
-		private readonly IDateTimeService _dateTimeService;
-		private readonly IHangfireJobService _jobService;
-		private readonly IInfrastructureConstants _constants;
+		private readonly IDateTimeHelper _dateTimeHelper;
+		private readonly IHangfireJobService _hangfireJobService;
+		private readonly IConstantsHelperWrapper _constants;
 
-		public HangfireService(IDateTimeService dateTimeService,
-							   IHangfireJobService jobService,
-							   IInfrastructureConstants constants)
+		public HangfireService(IDateTimeHelper dateTimeService,
+							   IHangfireJobService hangfireJobService,
+							   IConstantsHelperWrapper constants)
 		{
-			_dateTimeService = dateTimeService;
-			_jobService = jobService;
+			_dateTimeHelper = dateTimeService;
+			_hangfireJobService = hangfireJobService;
 			_constants = constants;
 		}
 
 		public void ScheduleStockProcessingJob(AvailabilityResponseDTO availabilityResponseDTO)
 		{
-			BackgroundJob.Schedule(() => _jobService.ProcessNextDayAccountTransaction(availabilityResponseDTO), _dateTimeService.GetTimeSpanUntilNextDayAtMinutePastMidnight());
+			BackgroundJob.Schedule(() => _hangfireJobService.ProcessNextDayAccountTransaction(availabilityResponseDTO), _dateTimeHelper.GetTimeSpanUntilNextDayAtMinutePastMidnight());
 		}
 
 		public void InitializeRecurringFailedTransactionsJob()
 		{
-			if (!_constants.IsInitializedRecurringFailedTransactionsJob)
+			if (!_constants.JobInitializationFlags.IsInitializedRecurringFailedTransactionsJob)
 			{
-				RecurringJob.AddOrUpdate("recurringFailedTransactionsJob", () => _jobService.RecurringFailedTransactionsJob(), _dateTimeService.GetCronExpressionForEveryHour());
-				_constants.IsInitializedRecurringFailedTransactionsJob = true;
+				RecurringJob.AddOrUpdate("recurringFailedTransactionsJob", () => _hangfireJobService.RecurringFailedTransactionsJob(), _dateTimeHelper.GetCronExpressionForEveryHour());
+				_constants.JobInitializationFlags.IsInitializedRecurringFailedTransactionsJob = true;
 			}
 		}
 
 		public void InitializeRecurringCapitalLossJobCheck()
 		{
-			if (!_constants.IsInitializedRecurringCapitalLossCheckJob)
+			if (!_constants.JobInitializationFlags.IsInitializedRecurringCapitalLossCheckJob)
 			{
-				RecurringJob.AddOrUpdate("recurringCapitalLossJobCheck", () => _jobService.RecurringCapitalCheckJob(), _dateTimeService.GetCronExpressionForEveryHour());
-				_constants.IsInitializedRecurringCapitalLossCheckJob = true;
+				RecurringJob.AddOrUpdate("recurringCapitalLossJobCheck", () => _hangfireJobService.RecurringCapitalCheckJob(), _dateTimeHelper.GetCronExpressionForEveryHour());
+				_constants.JobInitializationFlags.IsInitializedRecurringCapitalLossCheckJob = true;
 			}
 		}
 
 		public void InitializeRecurringRabbitMQMessageSenderJob()
 		{
-			if (!_constants.IsInitializedRecurringRabbitMQMessageSenderJob)
+			if (!_constants.JobInitializationFlags.IsInitializedRecurringRabbitMQMessageSenderJob)
 			{
-				RecurringJob.AddOrUpdate("recurringRabbitMQMessageSender", () => _jobService.RecurringRabbitMQMessageSenderJob(), _dateTimeService.GetCronExpressionForEveryTenMinutes());
+				RecurringJob.AddOrUpdate("recurringRabbitMQMessageSender", () => _hangfireJobService.RecurringRabbitMQMessageSenderJob(), _dateTimeHelper.GetCronExpressionForEveryTenMinutes());
 			}
 		}
 

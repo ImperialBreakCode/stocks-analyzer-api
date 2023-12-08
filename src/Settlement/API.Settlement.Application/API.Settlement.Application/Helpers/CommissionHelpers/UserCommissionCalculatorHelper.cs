@@ -9,33 +9,33 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Application.Helpers.CommissionHelpers
 {
-	public class UserCommissionHelper : IUserCommissionService
+	public class UserCommissionCalculatorHelper : IUserCommissionCalculatorHelper
 	{
-		private readonly IInfrastructureConstants _infrastructureConstants;
+		private readonly IConstantsHelperWrapper _infrastructureConstants;
 
-		public UserCommissionHelper(IInfrastructureConstants infrastructureConstants)
+		public UserCommissionCalculatorHelper(IConstantsHelperWrapper infrastructureConstants)
 		{
 			_infrastructureConstants = infrastructureConstants;
 		}
 
 		public decimal CalculatePriceAfterAddingBuyCommission(decimal price, UserRank userRank)
 		{
-			return price + price * _infrastructureConstants.GetCommissionBasedOnUserType(userRank);
+			return price + price * _infrastructureConstants.CommissionConstants.GetCommissionBasedOnUserType(userRank);
 		}
 
 		public decimal CalculatePriceAfterAddingSaleCommission(decimal price, UserRank userRank)
 		{
-			return price - price * _infrastructureConstants.GetCommissionBasedOnUserType(userRank);
+			return price - price * _infrastructureConstants.CommissionConstants.GetCommissionBasedOnUserType(userRank);
 		}
 
 		public decimal CalculatePriceAfterRemovingBuyCommission(decimal price, UserRank userRank)
 		{
-			return price / (1 + _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
+			return price / (1 + _infrastructureConstants.CommissionConstants.GetCommissionBasedOnUserType(userRank));
 		}
 
 		public decimal CalculatePriceAfterRemovingSaleCommission(decimal price, UserRank userRank)
 		{
-			return price / (1 - _infrastructureConstants.GetCommissionBasedOnUserType(userRank));
+			return price / (1 - _infrastructureConstants.CommissionConstants.GetCommissionBasedOnUserType(userRank));
 		}
 
 		public decimal CalculateSinglePriceWithCommission(decimal totalPriceIncludingCommission, decimal quantity)

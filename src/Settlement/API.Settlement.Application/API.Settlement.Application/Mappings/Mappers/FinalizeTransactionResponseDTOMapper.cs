@@ -15,8 +15,8 @@ namespace API.Settlement.Application.Mappings.Mappers
 	public class FinalizeTransactionResponseDTOMapper : IFinalizeTransactionResponseDTOMapper
     {
         private readonly IMapper _mapper;
-        private readonly IInfrastructureConstants _infrastructureConstants;
-		public FinalizeTransactionResponseDTOMapper(IMapper mapper, IInfrastructureConstants infrastructureConstants)
+        private readonly IConstantsHelperWrapper _infrastructureConstants;
+		public FinalizeTransactionResponseDTOMapper(IMapper mapper, IConstantsHelperWrapper infrastructureConstants)
 		{
 			_mapper = mapper;
 			_infrastructureConstants = infrastructureConstants;
@@ -96,7 +96,7 @@ namespace API.Settlement.Application.Mappings.Mappers
 		{
 			foreach (var stockInfoResponseDTO in finalizeTransactionResponseDTO.StockInfoResponseDTOs)
 			{
-				stockInfoResponseDTO.Message = _infrastructureConstants.TransactionSuccessMessage;
+				stockInfoResponseDTO.Message = _infrastructureConstants.MessageConstants.TransactionSuccessMessage;
 			}
             return finalizeTransactionResponseDTO;
 		}

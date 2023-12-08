@@ -12,19 +12,19 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 	public class BuyService : IBuyService
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
-		private readonly IInfrastructureConstants _infrastructureConstants;
+		private readonly IConstantsHelperWrapper _infrastructureConstants;
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
-		private readonly IUserCommissionService _commissionService;
+		private readonly IUserCommissionCalculatorHelper _userCommissionCalculatorHelper;
 
 		public BuyService(IHttpClientFactory httpClientFactory,
-						  IInfrastructureConstants constants,
+						  IConstantsHelperWrapper constants,
 						  IMapperManagementWrapper mapperManagementWrapper,
-						  IUserCommissionService commissionService)
+						  IUserCommissionCalculatorHelper userCommissionCalculatorHelper)
 		{
 			_httpClientFactory = httpClientFactory;
 			_infrastructureConstants = constants;
 			_mapperManagementWrapper = mapperManagementWrapper;
-			_commissionService = commissionService;
+			_userCommissionCalculatorHelper = userCommissionCalculatorHelper;
 		}
 
 		public async Task<AvailabilityResponseDTO> BuyStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
@@ -54,7 +54,7 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 			decimal balance = 0;
 			using (var _httpClient = _httpClientFactory.CreateClient())
 			{
-				var response = await _httpClient.GetAsync(_infrastructureConstants.GETWalletBalanceRoute(walletId));
+				var response = await _httpClient.GetAsync(_infrastructureConstants.RouteConstants.GETWalletBalanceRoute(walletId));
 				if (response.IsSuccessStatusCode)
 				{
 					var json = await response.Content.ReadAsStringAsync();
@@ -78,7 +78,7 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 
 		private decimal CalculateTotalPriceIncludingCommission(decimal totalPriceExcludingCommission, UserRank userRank)
 		{
-			return _commissionService.CalculatePriceAfterAddingBuyCommission(totalPriceExcludingCommission, userRank);
+			return _userCommissionCalculatorHelper.CalculatePriceAfterAddingBuyCommission(totalPriceExcludingCommission, userRank);
 		}
 
 		private AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)

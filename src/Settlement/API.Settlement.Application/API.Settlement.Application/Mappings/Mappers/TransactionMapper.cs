@@ -16,15 +16,15 @@ namespace API.Settlement.Application.Mappings.Mappers
 	public class TransactionMapper : ITransactionMapper
     {
         private readonly IMapper _mapper;
-        private readonly IInfrastructureConstants _infrastructureConstants;
-        private readonly IUserCommissionService _commissionService;
+        private readonly IConstantsHelperWrapper _infrastructureConstants;
+        private readonly IUserCommissionCalculatorHelper _userCommissionCalculatorHelper;
         public TransactionMapper(IMapper mapper,
-                                 IInfrastructureConstants infrastructureConstants,
-                                 IUserCommissionService commissionService)
+                                 IConstantsHelperWrapper infrastructureConstants,
+                                 IUserCommissionCalculatorHelper userCommissionCalculatorHelper)
         {
             _mapper = mapper;
             _infrastructureConstants = infrastructureConstants;
-            _commissionService = commissionService;
+            _userCommissionCalculatorHelper = userCommissionCalculatorHelper;
         }
         public IEnumerable<Transaction> MapToTransactionEntities(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
         {
@@ -47,8 +47,8 @@ namespace API.Settlement.Application.Mappings.Mappers
             transaction = _mapper.Map(stock, transaction);
             transaction.TransactionId = Guid.NewGuid().ToString();
             transaction.IsSale = true;
-            transaction.Message = _infrastructureConstants.TransactionScheduledMessage;
-            transaction.TotalPriceIncludingCommission = _commissionService.CalculatePriceAfterAddingSaleCommission(actualTotalStockPrice, wallet.UserRank);
+            transaction.Message = _infrastructureConstants.MessageConstants.TransactionScheduledMessage;
+            transaction.TotalPriceIncludingCommission = _userCommissionCalculatorHelper.CalculatePriceAfterAddingSaleCommission(actualTotalStockPrice, wallet.UserRank);
             return transaction;
         }
     }

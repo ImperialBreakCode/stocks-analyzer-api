@@ -17,12 +17,12 @@ namespace API.Settlement.Application.Mappings.Mappers
         {
             _pdfGenerator = pdfGenerator;
         }
-        public FinalizingEmail CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject)
+        public EmailWithAttachment CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject)
         {
             var pdfBytes = _pdfGenerator.GenerateTransactionSummaryReportPDF(finalizeTransactionResponseDTO);
-            var finalizingEmail = new FinalizingEmail()
+            var finalizingEmail = new EmailWithAttachment()
             {
-                To = finalizeTransactionResponseDTO.UserEmail,
+                Receiver = finalizeTransactionResponseDTO.UserEmail,
                 Subject = subject,
                 Body = "Transaction Summary Report - PDF",
                 Attachment = pdfBytes,

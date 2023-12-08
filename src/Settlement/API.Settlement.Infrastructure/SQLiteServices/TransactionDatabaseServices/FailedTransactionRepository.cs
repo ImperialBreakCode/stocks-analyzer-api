@@ -9,13 +9,13 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
 	public class FailedTransactionRepository : IFailedTransactionRepository
 	{
 		private readonly SQLiteConnection _connection;
-		private readonly IDateTimeService _dateTimeService;
+		private readonly IDateTimeHelper _dateTimeHelper;
 
 		public FailedTransactionRepository(SQLiteConnection connection,
-										   IDateTimeService dateTimeService)
+										   IDateTimeHelper dateTimeHelper)
 		{
 			_connection = connection;
-			_dateTimeService = dateTimeService;
+			_dateTimeHelper = dateTimeHelper;
 		}
 
 		public void Add(Transaction transaction)
@@ -35,7 +35,7 @@ namespace API.Settlement.Infrastructure.SQLiteServices.TransactionDatabaseServic
 				command.Parameters.AddWithValue("@TransactionId", transaction.TransactionId);
 				command.Parameters.AddWithValue("@TotalPriceIncludingCommission", transaction.TotalPriceIncludingCommission);
 				command.Parameters.AddWithValue("@Quantity", transaction.Quantity);
-				command.Parameters.AddWithValue("@DateTime", _dateTimeService.UtcNow);
+				command.Parameters.AddWithValue("@DateTime", _dateTimeHelper.UtcNow);
 				command.Parameters.AddWithValue("@StockName", transaction.StockName);
 				command.Parameters.AddWithValue("@StockId", transaction.StockId);
 				command.Parameters.AddWithValue("@Message", transaction.Message);

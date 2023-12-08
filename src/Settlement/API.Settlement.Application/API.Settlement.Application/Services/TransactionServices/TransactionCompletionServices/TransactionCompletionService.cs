@@ -20,13 +20,13 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 	{
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IHttpClientFactory _httpClientFactory;
-		private readonly IInfrastructureConstants _infrastructureConstants;
+		private readonly IConstantsHelperWrapper _infrastructureConstants;
 		private readonly ITransactionResponseHandlerService _transactionResponseHandlerService;
 		private readonly IWalletService _walletService;
 		private readonly IEmailService _emailService;
 		public TransactionCompletionService(IHttpClientFactory httpClientFactory,
 									IMapperManagementWrapper mapperManagementWrapper,
-									IInfrastructureConstants infrastructureConstants,
+									IConstantsHelperWrapper infrastructureConstants,
 									ITransactionResponseHandlerService transactionResponseHandlerService,
 									IWalletService walletService,
 									IEmailService emailService)
@@ -65,7 +65,7 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 				try
 				{
-					response = await httpClient.PostAsync(_infrastructureConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
+					response = await httpClient.PostAsync(_infrastructureConstants.RouteConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
 					//response = new HttpResponseMessage(HttpStatusCode.BadRequest);
 				}
 				catch (Exception ex)

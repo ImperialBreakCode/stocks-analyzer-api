@@ -9,15 +9,15 @@ namespace API.Settlement.Application.Services
 {
 	public class SettlementService : ISettlementService
 	{
-		private readonly ITransactionProcessingService _transactionWrapper;
+		private readonly ITransactionProcessingService _transactionProcessingService;
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IHangfireService _hangfireService;
 
-		public SettlementService(ITransactionProcessingService transactionWrapper,
+		public SettlementService(ITransactionProcessingService transactionProcessingService,
 								 IMapperManagementWrapper mapperManagementWrapper,
 								 IHangfireService hangfireService)
 		{
-			_transactionWrapper = transactionWrapper;
+			_transactionProcessingService = transactionProcessingService;
 			_hangfireService = hangfireService;
 			_mapperManagementWrapper = mapperManagementWrapper;
 		}
@@ -36,7 +36,7 @@ namespace API.Settlement.Application.Services
 
 		private async Task<AvailabilityResponseDTO> ProcessTransactionRequests(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			return await _transactionWrapper.ProcessTransactions(finalizeTransactionRequestDTO);
+			return await _transactionProcessingService.ProcessTransactions(finalizeTransactionRequestDTO);
 		}
 
 		private AvailabilityResponseDTO CreateCopyOfAvailabilityResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)

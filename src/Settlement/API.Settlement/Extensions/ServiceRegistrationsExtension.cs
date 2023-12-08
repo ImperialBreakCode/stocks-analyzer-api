@@ -38,6 +38,7 @@ using API.Settlement.Application.Services.EmailServices;
 using API.Settlement.Application.Helpers.CommissionHelpers;
 using API.Settlement.Infrastructure.MSSQLServices.OutboxDatabaseServices;
 using API.Settlement.Domain.Interfaces.DatabaseInterfaces.MSSQLInterfaces.OutboxDatabaseInterfaces;
+using API.Settlement.Domain.Entities.Emails;
 
 namespace API.Settlement.Extensions
 {
@@ -52,8 +53,15 @@ namespace API.Settlement.Extensions
 			services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 			services.AddScoped<IHTMLContentGenerator, HTMLContentGenerator>();
 			services.AddScoped<IPDFGenerator, PDFGenerator>();
-			services.AddTransient<IDateTimeService, DateTimeHelper>();
-			services.AddTransient<IUserCommissionService, UserCommissionHelper>();
+			services.AddSingleton<ICommissionConstants, CommissionConstants>();
+			services.AddSingleton<IJobInitializationFlags, JobInitializationFlags>();
+			services.AddSingleton<IMessageConstants, MessageConstants>();
+			services.AddSingleton<IRouteConstants, RouteConstants>();
+			services.AddScoped<IConstantsHelperWrapper, ConstantsHelperWrapper>();
+			services.AddTransient<IDateTimeHelper, DateTimeHelper>();
+			services.AddTransient<IUserCommissionCalculatorHelper, UserCommissionCalculatorHelper>();
+			services.AddScoped<IEmailBuilder, EmailBuilder>();
+			services.AddScoped<IEmailSender,  EmailSender>();
 			services.AddTransient<IEmailService, EmailService>();
 
 			// Register mappers
@@ -93,7 +101,7 @@ namespace API.Settlement.Extensions
 
 			// Register transaction handling and mapping services
 			services.AddTransient<ITransactionResponseHandlerService, TransactionResponseHandlerService>();
-			services.AddTransient<IInfrastructureConstants, InfrastructureConstantsHelper>();
+			services.AddTransient<IConstantsHelperWrapper, ConstantsHelperWrapper>();
 
 			// Register transaction-specific services
 			services.AddScoped<ITransactionCompletionService, TransactionCompletionService>();

@@ -1,8 +1,8 @@
 ﻿namespace API.Settlement.Domain.Entities.Emails
 {
-    public class NotifyingEmail
+    public class BaseEmail
     {
-        public string To { get; set; }
+        public string Receiver { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
     }

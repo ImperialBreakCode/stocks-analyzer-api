@@ -15,18 +15,18 @@ namespace API.Settlement.Application.Mappings.Mappers
 	public class StockMapper : IStockMapper
     {
         private readonly IMapper _mapper;
-        private readonly IUserCommissionService _commissionService;
+        private readonly IUserCommissionCalculatorHelper _userCommissionCalculatorHelper;
 
         public StockMapper(IMapper mapper,
-                           IUserCommissionService commissionService)
+                           IUserCommissionCalculatorHelper userCommissionCalculatorHelper)
         {
             _mapper = mapper;
-            _commissionService = commissionService;
+            _userCommissionCalculatorHelper = userCommissionCalculatorHelper;
         }
         public Stock MapToStockEntity(StockInfoResponseDTO stockInfoResponseDTO, UserRank userRank)
         {
             var stock = _mapper.Map<Stock>(stockInfoResponseDTO);
-            decimal singleBuyPriceExcludingCommission = _commissionService.CalculatePriceAfterRemovingBuyCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank);
+            decimal singleBuyPriceExcludingCommission = _userCommissionCalculatorHelper.CalculatePriceAfterRemovingBuyCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank);
             stock.AverageSingleStockPrice = singleBuyPriceExcludingCommission;
             stock.InvestedAmount = singleBuyPriceExcludingCommission;
             return stock;
@@ -35,10 +35,10 @@ namespace API.Settlement.Application.Mappings.Mappers
         {
             stock.Quantity += stockInfoResponseDTO.Quantity;
 
-            decimal totalBuyPriceExcludingCommission = _commissionService.CalculatePriceAfterRemovingBuyCommission(stockInfoResponseDTO.TotalPriceIncludingCommission, userRank);
+            decimal totalBuyPriceExcludingCommission = _userCommissionCalculatorHelper.CalculatePriceAfterRemovingBuyCommission(stockInfoResponseDTO.TotalPriceIncludingCommission, userRank);
             stock.InvestedAmount += totalBuyPriceExcludingCommission;
 
-            decimal singleBuyPriceExcludingCommission = _commissionService.CalculatePriceAfterRemovingBuyCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank);
+            decimal singleBuyPriceExcludingCommission = _userCommissionCalculatorHelper.CalculatePriceAfterRemovingBuyCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank);
             stock.AverageSingleStockPrice = (stock.AverageSingleStockPrice + singleBuyPriceExcludingCommission) / 2;
             return stock;
         }
@@ -47,7 +47,7 @@ namespace API.Settlement.Application.Mappings.Mappers
             stock.Quantity -= stockInfoResponseDTO.Quantity;
             stock.InvestedAmount = stock.InvestedAmount - stock.AverageSingleStockPrice * stockInfoResponseDTO.Quantity;
 
-            decimal singleSalePriceExcludingCommission = _commissionService.CalculatePriceAfterRemovingSaleCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank);
+            decimal singleSalePriceExcludingCommission = _userCommissionCalculatorHelper.CalculatePriceAfterRemovingSaleCommission(stockInfoResponseDTO.SinglePriceIncludingCommission, userRank);
             stock.AverageSingleStockPrice = (stock.AverageSingleStockPrice + singleSalePriceExcludingCommission) / 2;
 
             return stock;

@@ -9,6 +9,7 @@ var configuration = builder.Configuration;
 // Add services to the container
 builder.Services.AddDatabaseConfigurations(configuration);
 builder.Services.AddHangfireConfiguration(configuration);
+builder.Services.AddSettingsConfigurations(configuration);
 builder.Services.AddCustomServiceRegistrations();
 
 builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });

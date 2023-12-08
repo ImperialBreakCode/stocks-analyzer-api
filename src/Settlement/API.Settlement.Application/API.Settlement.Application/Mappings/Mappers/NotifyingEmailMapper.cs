@@ -10,11 +10,11 @@ namespace API.Settlement.Application.Mappings.Mappers
 {
     public class NotifyingEmailMapper : INotifyingEmailMapper
     {
-        public NotifyingEmail CreateNotifyingEmailDTO(string userEmail, string subject, string message)
+        public BaseEmail CreateNotifyingEmailDTO(string userEmail, string subject, string message)
         {
-            return new NotifyingEmail()
+            return new BaseEmail()
             {
-                To = userEmail,
+                Receiver = userEmail,
                 Subject = subject,
                 Body = message
             };

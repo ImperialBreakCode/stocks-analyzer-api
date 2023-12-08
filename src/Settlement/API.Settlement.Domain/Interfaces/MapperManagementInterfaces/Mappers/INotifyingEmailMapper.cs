@@ -9,7 +9,7 @@ namespace API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers
 {
     public interface INotifyingEmailMapper
     {
-        NotifyingEmail CreateNotifyingEmailDTO(string userEmail, string subject, string message);
+        BaseEmail CreateNotifyingEmailDTO(string userEmail, string subject, string message);
 
     }
 }

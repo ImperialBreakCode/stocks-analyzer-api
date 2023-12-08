@@ -10,6 +10,6 @@ namespace API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers
 {
 	public interface IFinalizingEmailMapper
     {
-        FinalizingEmail CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject);
+        EmailWithAttachment CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject);
     }
 }

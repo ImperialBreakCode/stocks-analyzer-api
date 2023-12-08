@@ -45,5 +45,6 @@ namespace API.Settlement.Application.Services.EmailServices
 			byte[] bytes = _pdfConverter.Convert(doc);
 			return bytes;
 		}
+
 	}
 }

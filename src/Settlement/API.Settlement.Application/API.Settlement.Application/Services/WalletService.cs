@@ -15,14 +15,14 @@ namespace API.Settlement.Application.Services
 	{
 		private readonly IWalletRepository _walletRepository;
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
-		private readonly IInfrastructureConstants _infrastructureConstants;
+		private readonly IConstantsHelperWrapper _infrastructureConstants;
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IEmailService _emailService;
 		private readonly ITransactionUnitOfWork _transactionUnitOfWork;
 		private readonly IOutboxUnitOfWork _outboxUnitOfWork;
 		public WalletService(IWalletRepository walletRepository,
 							 IMapperManagementWrapper mapperManagementWrapper,
-							 IInfrastructureConstants infrastructureConstants,
+							 IConstantsHelperWrapper infrastructureConstants,
 							 IHttpClientFactory httpClientFactory,
 							 IEmailService emailService,
 							 ITransactionUnitOfWork transactionUnitOfWork,
@@ -131,7 +131,7 @@ namespace API.Settlement.Application.Services
 			_walletRepository.RemoveStock(wallet.WalletId, stock.StockId);
 
 			var transaction = _mapperManagementWrapper.TransactionMapper.MapToSelllTransactionEntity(wallet, stock, actualTotalStockPrice);
-			transaction.Message = _infrastructureConstants.TransactionSuccessMessage;
+			transaction.Message = _infrastructureConstants.MessageConstants.TransactionSuccessMessage;
 			_transactionUnitOfWork.SuccessfulTransactions.Add(transaction);
 
 			var outboxPendingMessageEntity = _mapperManagementWrapper.OutboxPendingMessageMapper.MapToOutboxPendingMessageEntity(transaction);
@@ -184,7 +184,7 @@ namespace API.Settlement.Application.Services
 			decimal price = 0;
 			using (var _httpClient = _httpClientFactory.CreateClient())
 			{
-				var response = await _httpClient.GetAsync(_infrastructureConstants.GETStockPriceRoute(stockName));
+				var response = await _httpClient.GetAsync(_infrastructureConstants.RouteConstants.GETStockPriceRoute(stockName));
 				if (response.IsSuccessStatusCode)
 				{
 					var json = await response.Content.ReadAsStringAsync();

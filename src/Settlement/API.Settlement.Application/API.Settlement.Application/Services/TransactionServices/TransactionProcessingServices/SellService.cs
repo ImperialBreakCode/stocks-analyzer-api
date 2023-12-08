@@ -12,16 +12,16 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
-		private readonly IUserCommissionService _commissionService;
+		private readonly IUserCommissionCalculatorHelper _userCommissionCalculatorHelper;
 
 
 		public SellService(IHttpClientFactory httpClientFactory,
 						   IMapperManagementWrapper mapperManagementWrapper,
-						   IUserCommissionService commissionService)
+						   IUserCommissionCalculatorHelper userCommissionCalculatorHelper)
 		{
 			_httpClientFactory = httpClientFactory;
 			_mapperManagementWrapper = mapperManagementWrapper;
-			_commissionService = commissionService;
+			_userCommissionCalculatorHelper = userCommissionCalculatorHelper;
 		}
 
 		public async Task<AvailabilityResponseDTO> SellStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
@@ -65,7 +65,7 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 
 		private decimal CalculateTotalPriceIncludingCommission(decimal totalPriceExcludingCommission, UserRank userRank)
 		{
-			return _commissionService.CalculatePriceAfterAddingSaleCommission(totalPriceExcludingCommission, userRank);
+			return _userCommissionCalculatorHelper.CalculatePriceAfterAddingSaleCommission(totalPriceExcludingCommission, userRank);
 		}
 
 		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO, int availableQuantity, decimal totalPriceIncludingCommission)

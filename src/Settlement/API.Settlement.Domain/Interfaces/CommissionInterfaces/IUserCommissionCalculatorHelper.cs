@@ -2,7 +2,7 @@
 
 namespace API.Settlement.Domain.Interfaces.CommissionInterfaces
 {
-	public interface IUserCommissionService
+	public interface IUserCommissionCalculatorHelper
 	{
 		decimal CalculatePriceAfterAddingBuyCommission(decimal price, UserRank userRank);
 		decimal CalculatePriceAfterRemovingBuyCommission(decimal price, UserRank userRank);

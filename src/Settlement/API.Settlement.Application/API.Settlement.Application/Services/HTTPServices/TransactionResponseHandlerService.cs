@@ -14,10 +14,10 @@ namespace API.Settlement.Application.Services.HTTPServices
 	public class TransactionResponseHandlerService : ITransactionResponseHandlerService
 	{
 		private readonly ITransactionUnitOfWork _transactionUnitOfWork;
-		private readonly IInfrastructureConstants _InfrastructureConstants;
+		private readonly IConstantsHelperWrapper _InfrastructureConstants;
 
 		public TransactionResponseHandlerService(ITransactionUnitOfWork transactionUnitOfWork,
-												 IInfrastructureConstants infrastructureConstants)
+												 IConstantsHelperWrapper infrastructureConstants)
 		{
 			_transactionUnitOfWork = transactionUnitOfWork;
 			_InfrastructureConstants = infrastructureConstants;
@@ -31,7 +31,7 @@ namespace API.Settlement.Application.Services.HTTPServices
 				{
 					if (!_transactionUnitOfWork.SuccessfulTransactions.ContainsTransaction(transaction.TransactionId))
 					{
-						transaction.Message = _InfrastructureConstants.TransactionSuccessMessage;
+						transaction.Message = _InfrastructureConstants.MessageConstants.TransactionSuccessMessage;
 						_transactionUnitOfWork.SuccessfulTransactions.Add(transaction);
 					}
 
@@ -48,7 +48,7 @@ namespace API.Settlement.Application.Services.HTTPServices
 				{
 					if (!_transactionUnitOfWork.FailedTransactions.ContainsTransaction(transaction.TransactionId))
 					{
-						transaction.Message = _InfrastructureConstants.TransactionConnectionIssueMessage;
+						transaction.Message = _InfrastructureConstants.MessageConstants.TransactionConnectionIssueMessage;
 						_transactionUnitOfWork.FailedTransactions.Add(transaction);
 					}
 

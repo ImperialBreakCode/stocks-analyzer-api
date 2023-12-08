@@ -1,6 +1,6 @@
 ﻿namespace API.Settlement.Domain.Interfaces.DateTimeInterfaces
 {
-    public interface IDateTimeService
+    public interface IDateTimeHelper
     {
         DateTime UtcNow { get; }
         TimeSpan GetTimeSpanUntilNextDayAtMinutePastMidnight();

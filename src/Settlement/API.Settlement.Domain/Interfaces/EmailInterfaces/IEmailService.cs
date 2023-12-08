@@ -4,7 +4,7 @@ namespace API.Settlement.Domain.Interfaces.EmailInterfaces
 {
 	public interface IEmailService
 	{
-		Task SendEmailWithoutAttachment(NotifyingEmail emailDTO);
-		Task SendEmailWithAttachment(FinalizingEmail emailDTO);
+		Task SendEmailWithoutAttachment(BaseEmail emailDTO);
+		Task SendEmailWithAttachment(EmailWithAttachment emailDTO);
 	}
 }

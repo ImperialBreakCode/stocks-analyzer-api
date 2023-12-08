@@ -2,7 +2,7 @@
 
 namespace API.Settlement.Application.Helpers.DateTimeHelpers
 {
-	public class DateTimeHelper : IDateTimeService
+	public class DateTimeHelper : IDateTimeHelper
 	{
 		public DateTime UtcNow => DateTime.UtcNow;
 		public string GetCronExpressionForEveryFiveMinutes() => "*/5 * * * *";

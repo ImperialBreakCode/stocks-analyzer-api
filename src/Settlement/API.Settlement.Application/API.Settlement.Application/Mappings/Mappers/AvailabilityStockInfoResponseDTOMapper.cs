@@ -16,26 +16,27 @@ namespace API.Settlement.Application.Mappings.Mappers
 	public class AvailabilityStockInfoResponseDTOMapper : IAvailabilityStockInfoResponseDTOMapper
 	{
 		private readonly IMapper _mapper;
-		private readonly IInfrastructureConstants _infrastructureConstants;
-		private readonly IUserCommissionService _commissionService;
+		private readonly IConstantsHelperWrapper _infrastructureConstants;
+		private readonly IUserCommissionCalculatorHelper _userCommissionCalculatorHelper;
 
 		public AvailabilityStockInfoResponseDTOMapper(IMapper mapper,
-													  IInfrastructureConstants infrastructureConstants,
-													  IUserCommissionService commissionService)
+													  IConstantsHelperWrapper infrastructureConstants,
+													  IUserCommissionCalculatorHelper userCommissionCalculatorHelper)
 		{
 			_mapper = mapper;
 			_infrastructureConstants = infrastructureConstants;
-			_commissionService = commissionService;
+			_userCommissionCalculatorHelper = userCommissionCalculatorHelper;
 		}
 
 		public AvailabilityStockInfoResponseDTO MapToAvailabilityStockInfoResponseDTO(StockInfoRequestDTO stockInfoRequestDTO, decimal totalPriceIncludingCommission, Status status)
 		{
 			var availabilityStockResponseDTO = _mapper.Map<AvailabilityStockInfoResponseDTO>(stockInfoRequestDTO);
 			availabilityStockResponseDTO.IsSuccessful = status == Status.Scheduled;
-			availabilityStockResponseDTO.Message = _infrastructureConstants.GetMessageBasedOnStatus(status);
-			availabilityStockResponseDTO.SinglePriceIncludingCommission = _commissionService.CalculateSinglePriceWithCommission(totalPriceIncludingCommission, availabilityStockResponseDTO.Quantity);
+			availabilityStockResponseDTO.Message = _infrastructureConstants.MessageConstants.GetMessageBasedOnStatus(status);
+			availabilityStockResponseDTO.SinglePriceIncludingCommission = _userCommissionCalculatorHelper.CalculateSinglePriceWithCommission(totalPriceIncludingCommission, availabilityStockResponseDTO.Quantity);
 
 			return availabilityStockResponseDTO;
 		}
+
 	}
 }

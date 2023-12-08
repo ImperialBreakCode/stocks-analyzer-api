@@ -13,18 +13,18 @@ namespace API.Settlement.Application.Mappings.Mappers
     public class OutboxSuccessfullySentMessageMapper : IOutboxSuccessfullySentMessageMapper
     {
         private readonly IMapper _mapper;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly IDateTimeHelper _dateTimeHelper;
         public OutboxSuccessfullySentMessageMapper(IMapper mapper,
-                                                   IDateTimeService dateTimeService)
+                                                   IDateTimeHelper dateTimeHelper)
         {
             _mapper = mapper;
-            _dateTimeService = dateTimeService;
+            _dateTimeHelper = dateTimeHelper;
         }
 
         public OutboxSuccessfullySentMessage MapToOutboxSuccessfullySentMessageEntity(OutboxPendingMessage outboxPendingMessageEntity)
         {
             var outboxSuccessfullySentMessageEntity = _mapper.Map<OutboxSuccessfullySentMessage>(outboxPendingMessageEntity);
-            outboxSuccessfullySentMessageEntity.SentDateTime = _dateTimeService.UtcNow;
+            outboxSuccessfullySentMessageEntity.SentDateTime = _dateTimeHelper.UtcNow;
             return outboxSuccessfullySentMessageEntity;
         }
     }
