@@ -127,7 +127,7 @@ namespace API.Accounts.Application.Services.UserService
             return responseDTO;
         }
 
-        public string? UpdateUser(UpdateUserDTO updateDTO, string username)
+        public string UpdateUser(UpdateUserDTO updateDTO, string username)
         {
             using (var context = _data.CreateDbContext())
             {
@@ -154,7 +154,7 @@ namespace API.Accounts.Application.Services.UserService
                 context.Commit();
             }
 
-            return null;
+            return ResponseMessages.UserUpdatedSuccessfully;
         }
 
         public void DeleteUser(string username)

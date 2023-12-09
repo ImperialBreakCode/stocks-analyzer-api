@@ -8,6 +8,6 @@ namespace API.Accounts.Application.Services.WalletService.Interfaces
         string Deposit(DepositWalletDTO depositDTO, string username);
         string CreateWallet(string username);
         GetWalletResponseDTO? GetWallet(string walletId);
-        string? DeleteWallet(string username);
+        string DeleteWallet(string username);
     }
 }

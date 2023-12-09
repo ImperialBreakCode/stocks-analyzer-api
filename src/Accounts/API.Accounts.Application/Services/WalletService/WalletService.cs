@@ -50,7 +50,7 @@ namespace API.Accounts.Application.Services.WalletService
             return ResponseMessages.WalletCreated;
         }
 
-        public string? DeleteWallet(string username)
+        public string DeleteWallet(string username)
         {
             using (var context = _accountData.CreateDbContext())
             {
@@ -70,7 +70,7 @@ namespace API.Accounts.Application.Services.WalletService
                 _walletDeleteRabbitMQProducer.SendWalletIdForDeletion(wallet.Id);
             }
 
-            return null;
+            return ResponseMessages.WalletDeletedSuccessfully;
         }
 
         public string Deposit(DepositWalletDTO depositDTO, string username)
