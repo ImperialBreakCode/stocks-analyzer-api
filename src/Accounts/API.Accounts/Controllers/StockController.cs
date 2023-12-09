@@ -94,6 +94,8 @@ namespace API.Accounts.Controllers
                     return NotFound(response);
                 case ResponseType.BadRequest:
                     return BadRequest(response);
+                case ResponseType.Error:
+                    return StatusCode(500, response);
                 default:
                     return Ok(response);
             }
@@ -112,6 +114,8 @@ namespace API.Accounts.Controllers
                     return NotFound(response);
                 case ResponseType.BadRequest:
                     return BadRequest(response);
+                case ResponseType.Error:
+                    return StatusCode(500, response);
                 default:
                     return Ok(response);
             }

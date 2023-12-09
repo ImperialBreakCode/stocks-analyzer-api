@@ -25,5 +25,8 @@
         public const string StockActionSuccessfull = "Stock added for transaction processing successfully.";
         public const string TransactionSendForProccessing = "Transaction is send for proccessing.";
         public const string StockNotEnoughStocksToSale = "Not enough stocks to sale.";
+
+        // Exceptions
+        public const string ProblemWithSettlementService = "Could not send transactions to the settlement service.";
     }
 }

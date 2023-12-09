@@ -48,12 +48,19 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
                 var finalizeDto = CreateFinalizeStockDto(false, wallet, user.Email);
 
-                var res = await _actionExecuter.ExecutePurchase(finalizeDto, stocksForPurchase);
-
-                ReflectStockQuantityChanges(res, stocksForPurchase, context);
-
-                wallet.Balance -= res.TotalSuccessfulPrice;
-                context.Wallets.Update(wallet);
+                try
+                {
+                    var res = await _actionExecuter.ExecutePurchase(finalizeDto, stocksForPurchase);
+                    ReflectStockQuantityChanges(res, stocksForPurchase, context);
+                    
+                    wallet.Balance -= res.TotalSuccessfulPrice;
+                    context.Wallets.Update(wallet);
+                }
+                catch (HttpRequestException ex)
+                {
+                    await Console.Out.WriteLineAsync(ex.Message);
+                    return ResponseMessages.ProblemWithSettlementService;
+                }
 
                 context.Commit();
             }
@@ -87,9 +94,16 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
                 var finalizeDto = CreateFinalizeStockDto(true, wallet, user.Email);
 
-                var res = await _actionExecuter.ExecuteSell(finalizeDto, stocksForSale);
-
-                ReflectStockQuantityChanges(res, stocksForSale, context);
+                try
+                {
+                    var res = await _actionExecuter.ExecuteSell(finalizeDto, stocksForSale);
+                    ReflectStockQuantityChanges(res, stocksForSale, context);
+                }
+                catch (HttpRequestException ex)
+                {
+                    await Console.Out.WriteLineAsync(ex.Message);
+                    return ResponseMessages.ProblemWithSettlementService;
+                }
 
                 context.Commit();
             }
