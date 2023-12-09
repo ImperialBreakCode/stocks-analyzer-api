@@ -11,14 +11,14 @@ namespace API.Accounts.Infrastructure.Repositories
         {
         }
 
-        public void DeleteByUserName(string userName)
+        public void DeleteByUsername(string userName)
         {
             var command = CreateCommand("DELETE FROM [User] WHERE UserName = @userName");
             command.Parameters.AddWithValue("@userName", userName);
             command.ExecuteNonQuery();
         }
 
-        public User? GetConfirmedByUserName(string username)
+        public User? GetConfirmedByUsername(string username)
         {
             return GetByUsername(username, "SELECT * FROM [User] WHERE UserName = @userName AND IsConfirmed=1");
         }
@@ -30,7 +30,7 @@ namespace API.Accounts.Infrastructure.Repositories
             return EntityConverterHelper.ToEntityCollection<User>(command).FirstOrDefault();
         }
 
-        public User? GetOneByUserName(string username)
+        public User? GetOneByUsername(string username)
         {
             return GetByUsername(username, "SELECT * FROM [User] WHERE UserName = @userName");
         }

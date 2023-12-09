@@ -43,7 +43,7 @@ namespace API.Accounts.Application.Services.UserService
 
             using(var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetConfirmedByUserName(loginDTO.Username);
+                User? user = context.Users.GetConfirmedByUsername(loginDTO.Username);
 
                 if (user is null)
                 {
@@ -69,7 +69,7 @@ namespace API.Accounts.Application.Services.UserService
 
             using(var context = _data.CreateDbContext())
             {
-                if (context.Users.GetOneByUserName(registerDTO.Username) is not null)
+                if (context.Users.GetOneByUsername(registerDTO.Username) is not null)
                 {
                     return ResponseMessages.UserNameAlreadyExists;
                 }
@@ -105,7 +105,7 @@ namespace API.Accounts.Application.Services.UserService
 
             using (var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetConfirmedByUserName(username);
+                User? user = context.Users.GetConfirmedByUsername(username);
 
                 if (user is not null)
                 {
@@ -131,7 +131,7 @@ namespace API.Accounts.Application.Services.UserService
         {
             using (var context = _data.CreateDbContext())
             {
-                User? user = context.Users.GetConfirmedByUserName(username);
+                User? user = context.Users.GetConfirmedByUsername(username);
                 if (user is null)
                 {
                     return ResponseMessages.UserNotFound;
@@ -168,7 +168,7 @@ namespace API.Accounts.Application.Services.UserService
                     context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
                 }
 
-                context.Users.DeleteByUserName(username);
+                context.Users.DeleteByUsername(username);
                 context.Commit();
 
                 if (wallet is not null)

@@ -5,10 +5,10 @@ namespace API.Accounts.Domain.Interfaces
 {
     public interface IUserRepository : IRepoInsert<User>, IRepoUpdate<User>, IRepoReadMany<User>
     {
-        void DeleteByUserName(string userName);
-        User? GetOneByUserName(string username);
+        void DeleteByUsername(string userName);
+        User? GetOneByUsername(string username);
         User? GetOneByEmail(string email);
-        User? GetConfirmedByUserName(string username);
+        User? GetConfirmedByUsername(string username);
         void UpdateByUsername(User user);
     }
 }

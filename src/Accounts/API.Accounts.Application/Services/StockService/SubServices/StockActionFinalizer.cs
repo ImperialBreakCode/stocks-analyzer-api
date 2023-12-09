@@ -36,7 +36,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     return ResponseMessages.WalletNotFound;
                 }
 
-                User user = context.Users.GetOneByUserName(username)!;
+                User user = context.Users.GetOneByUsername(username)!;
 
                 var stocksForPurchase = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForPurchaseCount != 0);
@@ -75,7 +75,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                     return ResponseMessages.WalletNotFound;
                 }
 
-                User user = context.Users.GetConfirmedByUserName(username)!;
+                User user = context.Users.GetConfirmedByUsername(username)!;
 
                 var stocksForSale = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForSaleCount != 0);

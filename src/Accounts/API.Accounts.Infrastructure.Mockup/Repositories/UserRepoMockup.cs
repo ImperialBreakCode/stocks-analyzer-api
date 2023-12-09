@@ -12,7 +12,7 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
 
         public override void Insert(User entity)
         {
-            if (GetOneByUserName(entity.UserName) is not null)
+            if (GetOneByUsername(entity.UserName) is not null)
             {
                 throw new ArgumentException("Username is unique");
             }
@@ -27,7 +27,7 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
 
         public override void Update(User entity)
         {
-            User? userByName = GetOneByUserName(entity.UserName);
+            User? userByName = GetOneByUsername(entity.UserName);
             User? userByEmail = GetOneByEmail(entity.Email);
             User? userById = GetOneById(entity.Id);
 
@@ -44,7 +44,7 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
             base.Update(entity);
         }
 
-        public void DeleteByUserName(string userName)
+        public void DeleteByUsername(string userName)
         {
             User? user = GetManyByCondition(u => u.UserName == userName).FirstOrDefault();
 
@@ -54,7 +54,7 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
             }
         }
 
-        public User? GetOneByUserName(string username)
+        public User? GetOneByUsername(string username)
         {
             return GetManyByCondition(u => u.UserName == username).FirstOrDefault();
         }
@@ -64,9 +64,9 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
             return GetManyByCondition(u => u.Email == email).FirstOrDefault();
         }
 
-        public User? GetConfirmedByUserName(string username)
+        public User? GetConfirmedByUsername(string username)
         {
-            User? user = GetOneByUserName(username);
+            User? user = GetOneByUsername(username);
 
             if (user is not null && !user.IsConfirmed)
             {
@@ -78,7 +78,7 @@ namespace API.Accounts.Infrastructure.Mockup.Repositories
 
         public void UpdateByUsername(User user)
         {
-            User? userByUsername = GetOneByUserName(user.UserName);
+            User? userByUsername = GetOneByUsername(user.UserName);
             if (userByUsername is not null)
             {
                 MemoryData.Update(user, userByUsername.Id);
