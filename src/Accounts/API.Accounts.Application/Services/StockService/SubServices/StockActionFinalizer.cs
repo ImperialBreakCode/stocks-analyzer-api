@@ -27,24 +27,15 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             using (var context = _accountsData.CreateDbContext())
             {
                 string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
-                if (error is not null)
-                {
-                    return error;
-                }
-                else if (wallet is null)
-                {
-                    return ResponseMessages.WalletNotFound;
-                }
+                if (error is not null) return error;
+                else if (wallet is null) return ResponseMessages.WalletNotFound;
 
                 User user = context.Users.GetOneByUsername(username)!;
 
                 var stocksForPurchase = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForPurchaseCount != 0);
 
-                if (!stocksForPurchase.Any())
-                {
-                    return ResponseMessages.NoStocksAddedForPurchaseSale;
-                }
+                if (!stocksForPurchase.Any()) return ResponseMessages.NoStocksAddedForPurchaseSale;
 
                 var finalizeDto = CreateFinalizeStockDto(false, wallet, user.Email);
 
@@ -52,9 +43,7 @@ namespace API.Accounts.Application.Services.StockService.SubServices
                 {
                     var res = await _actionExecuter.ExecutePurchase(finalizeDto, stocksForPurchase);
                     ReflectStockQuantityChanges(res, stocksForPurchase, context);
-                    
-                    wallet.Balance -= res.TotalSuccessfulPrice;
-                    context.Wallets.Update(wallet);
+                    UpdateWalletBalanceForPurhcase(wallet, res.TotalSuccessfulPrice, context);
                 }
                 catch (HttpRequestException ex)
                 {
@@ -73,24 +62,15 @@ namespace API.Accounts.Application.Services.StockService.SubServices
             using (var context = _accountsData.CreateDbContext())
             {
                 string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
-                if (error is not null)
-                {
-                    return error;
-                }
-                else if (wallet is null)
-                {
-                    return ResponseMessages.WalletNotFound;
-                }
+                if (error is not null) return error;
+                else if (wallet is null) return ResponseMessages.WalletNotFound;
 
                 User user = context.Users.GetConfirmedByUsername(username)!;
 
                 var stocksForSale = context.Stocks
                     .GetManyByCondition(s => s.WalletId == wallet.Id && s.WaitingForSaleCount != 0);
 
-                if (!stocksForSale.Any())
-                {
-                    return ResponseMessages.NoStocksAddedForPurchaseSale;
-                }
+                if (!stocksForSale.Any()) return ResponseMessages.NoStocksAddedForPurchaseSale;
 
                 var finalizeDto = CreateFinalizeStockDto(true, wallet, user.Email);
 
@@ -145,6 +125,12 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
                 context.Stocks.Update(stock);
             }
+        }
+
+        private void UpdateWalletBalanceForPurhcase(Wallet wallet, decimal amount, IAccountsDbContext context)
+        {
+            wallet.Balance -= amount;
+            context.Wallets.Update(wallet);
         }
     }
 }
