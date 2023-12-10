@@ -1,10 +1,12 @@
 using API.StockAPI.Domain.InterFaces;
 using API.StockAPI.Infrastructure.Context;
+using API.StockAPI.Infrastructure.Helpers;
 using API.StockAPI.Infrastructure.Interfaces;
 using API.StockAPI.Infrastructure.Jobs;
 using API.StockAPI.Infrastructure.Services;
 using API.StockAPI.Services;
 using Quartz;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<DapperContext>();
+DatabaseHelper.EnsureDatabaseExists(builder.Configuration.GetConnectionString("Default"));
+
 builder.Services.AddScoped<IContextServices, ContextServices>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IExternalRequestService, ExternalRequestService>();
