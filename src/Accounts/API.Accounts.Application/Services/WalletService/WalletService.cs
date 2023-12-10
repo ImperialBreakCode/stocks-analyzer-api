@@ -28,15 +28,13 @@ namespace API.Accounts.Application.Services.WalletService
             {
                 User? user = context.Users.GetConfirmedByUsername(username);
 
-                if (user is null)
-                {
+                if (user is null) 
                     return ResponseMessages.UserNotFound;
-                }
+                
 
                 if (context.Wallets.GetUserWallet(user.Id) is not null)
-                {
                     return ResponseMessages.WalletAlreadyExists;
-                }
+                
 
                 Wallet wallet = new Wallet()
                 {
@@ -56,13 +54,9 @@ namespace API.Accounts.Application.Services.WalletService
             {
                 string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
                 if (error is not null)
-                {
                     return error;
-                }
                 else if (wallet is null)
-                {
                     return ResponseMessages.WalletNotFound;
-                }
 
                 context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
                 context.Commit();

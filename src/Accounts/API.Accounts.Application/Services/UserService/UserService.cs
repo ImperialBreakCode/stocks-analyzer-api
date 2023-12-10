@@ -70,14 +70,11 @@ namespace API.Accounts.Application.Services.UserService
             using(var context = _data.CreateDbContext())
             {
                 if (context.Users.GetOneByUsername(registerDTO.Username) is not null)
-                {
                     return ResponseMessages.UserNameAlreadyExists;
-                }
 
                 if (context.Users.GetOneByEmail(registerDTO.Email) is not null)
-                {
                     return ResponseMessages.UserEmailAlreadyExists;
-                }
+                
 
                 User user = new()
                 {
@@ -132,19 +129,15 @@ namespace API.Accounts.Application.Services.UserService
             using (var context = _data.CreateDbContext())
             {
                 User? user = context.Users.GetConfirmedByUsername(username);
-                if (user is null)
-                {
+                if (user is null) 
                     return ResponseMessages.UserNotFound;
-                }
 
                 bool newEmailExists = updateDTO.Email != null
                     && user.Email != updateDTO.Email
                     && context.Users.GetOneByEmail(updateDTO.Email) is not null;
 
-                if (newEmailExists)
-                {
+                if (newEmailExists) 
                     return ResponseMessages.UserEmailAlreadyExists;
-                }
 
                 user.FirstName = updateDTO.FirstName ?? user.FirstName;
                 user.LastName = updateDTO.LastName ?? user.LastName;

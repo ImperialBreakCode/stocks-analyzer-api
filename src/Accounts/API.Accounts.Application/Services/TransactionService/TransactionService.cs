@@ -21,10 +21,7 @@ namespace API.Accounts.Application.Services.TransactionService
             {
                 Wallet? wallet = context.Wallets.GetOneById(finalizeTransactionDTO.WalletId);
 
-                if (wallet is null)
-                {
-                    return false;
-                }
+                if (wallet is null) return false;
 
                 foreach (var stockInfo in finalizeTransactionDTO.StockInfoResponseDTOs)
                 {
