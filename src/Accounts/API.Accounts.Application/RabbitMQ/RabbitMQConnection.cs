@@ -37,7 +37,7 @@ namespace API.Accounts.Application.RabbitMQ
 
         public void Dispose()
         {
-            _connection.Close();
+            _connection?.Close();
         }
     }
 }
