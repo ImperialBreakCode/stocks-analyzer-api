@@ -96,6 +96,7 @@ namespace API.Accounts.Application
             AddUserService(services);
 
             services.AddTransient<IWalletService, WalletService>();
+            services.AddSingleton<IWaitingDeletedWalletIdsList, WaitingDeletedWalletIdsLIst>();
             services.AddTransient<ITransactionService, TransactionService>();
 
             return services;

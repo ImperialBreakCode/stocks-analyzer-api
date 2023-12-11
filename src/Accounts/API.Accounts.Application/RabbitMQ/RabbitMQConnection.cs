@@ -13,6 +13,8 @@ namespace API.Accounts.Application.RabbitMQ
             _isConnected = false;
         }
 
+        public bool IsConnected => _isConnected;
+
         public void Connect(string hostName)
         {
             if (!_isConnected)
