@@ -37,6 +37,7 @@ namespace API.Accounts.Application
 
             services.AddTransient<ITransactionSaleHandler, TransactionSaleHandler>();
             services.AddTransient<IWalletDeleteRabbitMQProducer, WalletDeleteRabbitMQProducer>();
+            services.AddSingleton<IWaitingDeletedWalletIdsList, WaitingDeletedWalletIdsLIst>();
 
             return services;
         }
@@ -68,15 +69,15 @@ namespace API.Accounts.Application
             where T : class, IHttpService
         {
             services.AddSingleton<IHttpClientRoutes, HttpClientRoutes>();
-            services.AddScoped<IHttpService, T>();
+            services.AddTransient<IHttpService, T>();
 
             return services;
         }
 
         public static IServiceCollection AddAccountAuthentication(this IServiceCollection services)
         {
-            services.AddSingleton<IPasswordManager, PasswordManager>();
-            services.AddSingleton<ITokenManager, TokenManager>();
+            services.AddTransient<IPasswordManager, PasswordManager>();
+            services.AddTransient<ITokenManager, TokenManager>();
 
             return services;
         }
@@ -96,7 +97,6 @@ namespace API.Accounts.Application
             AddUserService(services);
 
             services.AddTransient<IWalletService, WalletService>();
-            services.AddSingleton<IWaitingDeletedWalletIdsList, WaitingDeletedWalletIdsLIst>();
             services.AddTransient<ITransactionService, TransactionService>();
 
             return services;
@@ -106,7 +106,7 @@ namespace API.Accounts.Application
             where TSettingsAdapter : class, IAccountsSettingsManager
         {
             services.AddSingleton<IAccountsSettingsManager, TSettingsAdapter>();
-            services.AddSingleton<ISocketGatewaySettingsSender, SocketGatewaySettingsSender>();
+            services.AddTransient<ISocketGatewaySettingsSender, SocketGatewaySettingsSender>();
 
             return services;
         }
