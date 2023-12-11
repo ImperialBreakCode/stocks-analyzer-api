@@ -1,5 +1,6 @@
 ﻿using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
+using API.Accounts.Application.Exceptions;
 using API.Accounts.Application.Services.StockService;
 using API.Accounts.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -49,9 +50,16 @@ namespace API.Accounts.Controllers
         [Route("AddStockForPurchase/{username}")]
         public async Task<IActionResult> AddStockForPurchase([FromBody] StockActionDTO stockAction, [FromRoute] string username)
         {
-            string response = await _stockService.ActionManager.AddForPurchase(stockAction, username);
-
-            return this.ParseAndReturnMessage(response);
+            try
+            {
+                string response = await _stockService.ActionManager.AddForPurchase(stockAction, username);
+                return this.ParseAndReturnMessage(response);
+            }
+            catch (StockAPIConnectionException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            
         }
 
         [HttpPut]
@@ -67,18 +75,39 @@ namespace API.Accounts.Controllers
         [Route("ConfirmPurchase/{username}")]
         public async Task<IActionResult> ConfirmPurchase(string username)
         {
-            string response = await _stockService.ActionFinalizer.ConfirmPurchase(username);
+            try
+            {
+                string response = await _stockService.ActionFinalizer.ConfirmPurchase(username);
+                return this.ParseAndReturnMessage(response);
+            }
+            catch (SettlementConnectionException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            catch (StockAPIConnectionException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
 
-            return this.ParseAndReturnMessage(response);
         }
 
         [HttpPost]
         [Route("ConfirmSale/{username}")]
         public async Task<IActionResult> ConfirmSale(string username)
         {
-            string response = await _stockService.ActionFinalizer.ConfirmSales(username);
-            
-            return this.ParseAndReturnMessage(response);
+            try
+            {
+                string response = await _stockService.ActionFinalizer.ConfirmSales(username);
+                return this.ParseAndReturnMessage(response);
+            }
+            catch(SettlementConnectionException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            catch (StockAPIConnectionException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

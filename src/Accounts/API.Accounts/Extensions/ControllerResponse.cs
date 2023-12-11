@@ -19,8 +19,6 @@ namespace API.Accounts.Extensions
                     return controller.Conflict(message);
                 case ResponseType.BadRequest:
                     return controller.BadRequest(message);
-                case ResponseType.Error:
-                    return controller.StatusCode(500, message);
                 default:
                     return controller.Ok(message);
             }

@@ -6,7 +6,6 @@
         Unauthorized,
         Conflict,
         BadRequest,
-        Error,
         Success
     }
 
@@ -35,9 +34,6 @@
                 case ResponseMessages.NotEnoughBalance:
                 case ResponseMessages.StockNotEnoughStocksToSale:
                     return ResponseType.BadRequest;
-
-                case ResponseMessages.ProblemWithSettlementService:
-                    return ResponseType.Error;
 
                 default:
                     return ResponseType.Success;
