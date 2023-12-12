@@ -50,7 +50,7 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 			foreach (var finalizeTransactionResponseDTO in finalizeTransactionResponseDTOs)
 			{
 				//var response = await SendFinalizingTransactionRequest(finalizeTransactionResponseDTO);
-				var response = new HttpResponseMessage(HttpStatusCode.OK);
+				var response = new HttpResponseMessage(HttpStatusCode.OK); //TODO: Hardcoded for testing!
 				if (response != null && response.IsSuccessStatusCode)
 				{
 					var updatedFinalizeTransactionResponseDTO = UpdateStockInfoMessageToSuccessful(finalizeTransactionResponseDTO);

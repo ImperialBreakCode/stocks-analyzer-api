@@ -28,20 +28,12 @@ namespace API.Settlement.Application.Services
 			var copiedAvailabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.CreateCopyOfAvailabilityResponseDTO(availabilityResponseDTO);
 			var filteredSuccessfulAvailabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.FilterSuccessfulAvailabilityStockInfoDTOs(copiedAvailabilityResponseDTO);
 
-			ScheduleStockProcessingJob(filteredSuccessfulAvailabilityResponseDTO);
-			InitializeRecurringJobs();
-
-			return availabilityResponseDTO;
-		}
-		private void ScheduleStockProcessingJob(AvailabilityResponseDTO filteredSuccessfulAvailabilityResponseDTO)
-		{
 			_hangfireService.ScheduleStockProcessingJob(filteredSuccessfulAvailabilityResponseDTO);
-		}
-		private void InitializeRecurringJobs()
-		{
 			_hangfireService.InitializeRecurringFailedTransactionsJob();
 			_hangfireService.InitializeRecurringCapitalLossJobCheck();
 			_hangfireService.InitializeRecurringRabbitMQMessageSenderJob();
+
+			return availabilityResponseDTO;
 		}
 
 	}

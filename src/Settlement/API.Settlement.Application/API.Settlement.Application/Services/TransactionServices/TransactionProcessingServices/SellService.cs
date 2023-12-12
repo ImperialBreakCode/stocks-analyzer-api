@@ -14,7 +14,6 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IUserCommissionCalculatorHelper _userCommissionCalculatorHelper;
 
-
 		public SellService(IHttpClientFactory httpClientFactory,
 						   IMapperManagementWrapper mapperManagementWrapper,
 						   IUserCommissionCalculatorHelper userCommissionCalculatorHelper)
@@ -38,7 +37,7 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 			{
 				//var stockDTO = await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
-				var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" };
+				var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" }; //TODO: Hardcoded for testing!
 
 				decimal totalPriceIncludingCommission = _userCommissionCalculatorHelper.CalculatePriceAfterAddingSaleCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, finalizeTransactionRequestDTO.UserRank);
 

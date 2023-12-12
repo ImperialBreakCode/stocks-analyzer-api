@@ -39,7 +39,7 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 		private async Task<IEnumerable<AvailabilityStockInfoResponseDTO>> GenerateAvailabilityStockInfoList(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
 			//decimal walletBalance = await GetWalletBalance(finalizeTransactionRequestDTO.WalletId);
-			decimal walletBalance = 1000.5M; //Hardcoded for testing!
+			decimal walletBalance = 1000.5M; //TODO: Hardcoded for testing!
 
 			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
 			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
