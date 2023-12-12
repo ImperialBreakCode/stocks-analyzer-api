@@ -28,7 +28,7 @@ namespace Analyzer.APi.Controllers
         }
     
 
-        [HttpGet("CurrentProfitability/{walletId}")]
+        [HttpGet("CurrentBalanceInWallet/{walletId}")]
         public async Task<ActionResult<decimal>> GetCurrentProfitability(string walletId)
         {
             try
