@@ -1,4 +1,5 @@
 ﻿using API.Accounts.Application.DTOs.ExternalResponseDTOs;
+using API.Accounts.Application.Exceptions;
 using API.Accounts.Application.HttpClientService;
 
 namespace API.Accounts.Application.Data.StocksData
@@ -16,9 +17,20 @@ namespace API.Accounts.Application.Data.StocksData
 
         public async Task<decimal> GetCurrentStockPrice(string stockName)
         {
-            var response = await _httpService.GetAsync<StockApiResponseDTO>(_httpClientRoutes.GetCurrentStockInfoRoute(stockName));
+            decimal currentPrice;
 
-            return (decimal)response!.Close;
+            try
+            {
+                var response = await _httpService.GetAsync<StockApiResponseDTO>(_httpClientRoutes.GetCurrentStockInfoRoute(stockName));
+                currentPrice = (decimal)response!.Close;
+            }
+            catch (HttpRequestException ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new StockAPIConnectionException(ExceptionMessages.StockAPIServiceException, ex);
+            }
+
+            return currentPrice;
         }
     }
 }

@@ -1,15 +1,10 @@
 ﻿using API.Settlement.Domain.Entities.Emails;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace API.Settlement.Domain.Interfaces
+namespace API.Settlement.Domain.Interfaces.EmailInterfaces
 {
-    public interface IEmailService
+	public interface IEmailService
 	{
-		Task SendEmailWithoutAttachment(NotifyingEmail emailDTO);
-		Task SendEmailWithAttachment(FinalizingEmail emailDTO);
+		Task SendEmailWithoutAttachment(BaseEmail emailDTO);
+		Task SendEmailWithAttachment(EmailWithAttachment emailDTO);
 	}
 }

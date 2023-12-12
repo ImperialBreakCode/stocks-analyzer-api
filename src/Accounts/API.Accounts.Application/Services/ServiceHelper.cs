@@ -8,7 +8,7 @@ namespace API.Accounts.Application.Services
     {
         public static string? GetUserWallet(IAccountsDbContext context, string username, out Wallet? wallet)
         {
-            string? userId = context.Users.GetConfirmedByUserName(username)?.Id;
+            string? userId = context.Users.GetConfirmedByUsername(username)?.Id;
 
             if (userId is null)
             {

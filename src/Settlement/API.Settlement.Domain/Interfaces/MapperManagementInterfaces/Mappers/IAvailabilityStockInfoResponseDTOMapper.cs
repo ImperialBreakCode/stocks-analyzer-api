@@ -1,6 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Request;
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
-using API.Settlement.Infrastructure.Helpers.Enums;
+using API.Settlement.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers
 {
-    public interface IAvailabilityStockInfoResponseDTOMapper
+	public interface IAvailabilityStockInfoResponseDTOMapper
     {
         AvailabilityStockInfoResponseDTO MapToAvailabilityStockInfoResponseDTO(StockInfoRequestDTO stockInfoRequestDTO,
                                                                                 decimal totalPriceIncludingCommission,

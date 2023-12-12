@@ -1,6 +1,7 @@
 ﻿using API.Accounts.Application.Data.StocksData;
 using API.Accounts.Application.DTOs.ExternalRequestDTOs;
 using API.Accounts.Application.DTOs.ExternalResponseDTOs;
+using API.Accounts.Application.Exceptions;
 using API.Accounts.Application.HttpClientService;
 using API.Accounts.Application.Services.StockService.SubServiceInterfaces;
 using API.Accounts.Domain.Entities;
@@ -22,18 +23,28 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
         public async Task<FinalizeStockResponseDTO> ExecutePurchase(FinalizeStockActionDTO finalizeDto, ICollection<Stock> stocks)
         {
-            finalizeDto.StockInfoRequestDTOs = stocks
-                .Select(s => CreateStockActionInfo(s.WaitingForPurchaseCount, s).Result)
-                .ToList();
+            ICollection<StockActionInfo> stockInfoList = new List<StockActionInfo>();
+
+            foreach (var stock in stocks)
+            {
+                stockInfoList.Add(await CreateStockActionInfo(stock.WaitingForPurchaseCount, stock));
+            }
+
+            finalizeDto.StockInfoRequestDTOs = stockInfoList;
 
             return await FinishAction(finalizeDto);
         }
 
         public async Task<FinalizeStockResponseDTO> ExecuteSell(FinalizeStockActionDTO finalizeDto, ICollection<Stock> stocks)
         {
-            finalizeDto.StockInfoRequestDTOs = stocks
-                .Select(s => CreateStockActionInfo(s.WaitingForSaleCount, s).Result)
-                .ToList();
+            ICollection<StockActionInfo> stockInfoList = new List<StockActionInfo>();
+
+            foreach (var stock in stocks)
+            {
+                stockInfoList.Add(await CreateStockActionInfo(stock.WaitingForSaleCount, stock));
+            }
+
+            finalizeDto.StockInfoRequestDTOs = stockInfoList;
 
             return await FinishAction(finalizeDto);
         }
@@ -51,8 +62,16 @@ namespace API.Accounts.Application.Services.StockService.SubServices
 
         private async Task<FinalizeStockResponseDTO> FinishAction(FinalizeStockActionDTO finalizeDto)
         {
-            return await _httpService
+            try
+            {
+                return await _httpService
                 .PostAsync<FinalizeStockResponseDTO>(_httpRoutes.FinalizeStockActionRoute, finalizeDto);
+            }
+            catch (HttpRequestException ex)
+            {
+                await Console.Out.WriteLineAsync(ex.Message);
+                throw new SettlementConnectionException(ExceptionMessages.SettlementServiceException, ex);
+            }
         }
     }
 }

@@ -1,19 +1,29 @@
-﻿using API.Accounts.Application.Services.TransactionService;
+﻿using API.Accounts.Application.RabbitMQ.Interfaces;
+using API.Accounts.Application.Services.TransactionService;
 using RabbitMQ.Client.Exceptions;
 
 namespace API.Accounts.Application.RabbitMQ
 {
     public class RabbitMQSetupService : IRabbitMQSetupService
     {
-        private readonly IRabbitMQConsumer _consumer;
+        private const string _hostName  = "localhost";
+
+        private readonly IRabbitMQConnection _connection;
+        private readonly ICollection<IRabbitMQConsumer> _consumers;
+
         private readonly ITransactionSaleHandler _transactionSaleHandler;
+
         private bool _setupDelayed;
 
-        public RabbitMQSetupService(IRabbitMQConsumer consumer, ITransactionSaleHandler transactionSaleHandler)
+        public RabbitMQSetupService(ITransactionSaleHandler transactionSaleHandler, IRabbitMQConnection rabbitMQConnection)
         {
-            _consumer = consumer;
+            _connection = rabbitMQConnection;
             _transactionSaleHandler = transactionSaleHandler;
+
+            _consumers = new List<IRabbitMQConsumer>();
             _setupDelayed = false;
+
+            AddConsumers();
         }
 
         public bool SetupDelayed => _setupDelayed;
@@ -30,9 +40,13 @@ namespace API.Accounts.Application.RabbitMQ
         {
             try
             {
-                _consumer.Connect();
-                _consumer.RegisterRecievedEvent(_transactionSaleHandler.HandleSale);
-                _consumer.StartConsumer();
+                _connection.Connect(_hostName);
+
+                foreach (var consumer in _consumers)
+                {
+                    consumer.StartConsumer();
+                }
+
                 _setupDelayed = false;
             }
             catch (BrokerUnreachableException)
@@ -40,6 +54,14 @@ namespace API.Accounts.Application.RabbitMQ
                 _setupDelayed = true;
                 Console.WriteLine("Failed to connect to RabbitMQ");
             }
+        }
+
+        private void AddConsumers()
+        {
+            var transactionSellStockConsumer = new RabbitMQConsumer(_connection, "transactionSellStock");
+            transactionSellStockConsumer.RegisterRecievedEvent(_transactionSaleHandler.HandleSale);
+
+            _consumers.Add(transactionSellStockConsumer);
         }
     }
 }

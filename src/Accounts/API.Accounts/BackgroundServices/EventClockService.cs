@@ -1,6 +1,6 @@
 ﻿using API.Accounts.Application.EventClocks;
-using API.Accounts.Application.RabbitMQ;
-using API.Accounts.Application.Services.WalletService;
+using API.Accounts.Application.RabbitMQ.Interfaces;
+using API.Accounts.Application.Services.WalletService.Interfaces;
 using API.Accounts.Application.Settings.UpdateHandlers;
 
 namespace API.Accounts.BackgroundServices
@@ -9,6 +9,7 @@ namespace API.Accounts.BackgroundServices
     {
         private readonly IEventClock _eventClock;
         private readonly IDemoWalletDeleteHandler _deleteDemoWalletHandler;
+        private readonly IWalletDeleteRabbitMQProducer _walletDeleteRabbitMQProducer;
         private readonly IAuthTokenGatewayNotifyer _secretKeyGatewayNotifyer;
         private readonly IRabbitMQSetupService _rabbitMQSetupService;
 
@@ -16,12 +17,14 @@ namespace API.Accounts.BackgroundServices
             IEventClock eventClock,
             IDemoWalletDeleteHandler deleteDemoWalletHandler,
             IAuthTokenGatewayNotifyer secretKeyGatewayNotifyer,
-            IRabbitMQSetupService rabbitMQSetupService)
+            IRabbitMQSetupService rabbitMQSetupService,
+            IWalletDeleteRabbitMQProducer walletDeleteRabbitMQProducer)
         {
             _eventClock = eventClock;
             _deleteDemoWalletHandler = deleteDemoWalletHandler;
             _secretKeyGatewayNotifyer = secretKeyGatewayNotifyer;
             _rabbitMQSetupService = rabbitMQSetupService;
+            _walletDeleteRabbitMQProducer = walletDeleteRabbitMQProducer;
 
             RegisterHandlers();
         }
@@ -36,6 +39,7 @@ namespace API.Accounts.BackgroundServices
             _eventClock.RegisterClockHandler(_deleteDemoWalletHandler.DeleteWallet);
             _eventClock.RegisterClockHandler(_secretKeyGatewayNotifyer.NotifyGateway);
             _eventClock.RegisterClockHandler(_rabbitMQSetupService.DelayedSetupHandler);
+            _eventClock.RegisterClockHandler(_walletDeleteRabbitMQProducer.SendWaitingWalletIdsForDeletion);
         }
     }
 }
