@@ -1,4 +1,4 @@
-﻿namespace API.Settlement.Domain.DTOs.Response
+﻿namespace API.Settlement.Domain.DTOs.Response.FinalizeDTOs
 {
 	public class StockInfoResponseDTO
 	{
