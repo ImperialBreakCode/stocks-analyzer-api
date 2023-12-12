@@ -26,9 +26,13 @@ namespace API.Accounts.Application.Services.WalletService
 
         public void SendWalletIdForDeletion(string walletId)
         {
-            if (!_rabbitMQConnection.IsConnected && !_waitingIds.WaitingIds.Contains(walletId))
+            if (!_rabbitMQConnection.IsConnected)
             {
-                _waitingIds.WaitingIds.Add(walletId);
+                if (!_waitingIds.WaitingIds.Contains(walletId))
+                {
+                    _waitingIds.WaitingIds.Add(walletId);
+                }
+                
                 return;
             }
 
