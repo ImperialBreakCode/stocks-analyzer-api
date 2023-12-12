@@ -1,4 +1,4 @@
-﻿using API.Settlement.Domain.DTOs.Response;
+﻿using API.Settlement.Domain.DTOs.Response.FinalizeDTOs;
 using API.Settlement.Domain.Entities.Emails;
 using System;
 using System.Collections.Generic;
@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers
 {
-    public interface IFinalizingEmailMapper
+	public interface IFinalizingEmailMapper
     {
-        FinalizingEmail CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject);
+        EmailWithAttachment CreateTransactionSummaryEmailDTO(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO, string subject);
     }
 }

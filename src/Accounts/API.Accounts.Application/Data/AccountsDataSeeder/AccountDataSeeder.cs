@@ -19,7 +19,7 @@ namespace API.Accounts.Application.Data.AccountsDataSeeder
         {
             _context = context;
 
-            if (_context.Users.GetOneByUserName(_username) is not null)
+            if (_context.Users.GetOneByUsername(_username) is not null)
             {
                 return;
             }

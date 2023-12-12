@@ -1,7 +1,9 @@
 ﻿using API.StockAPI.Domain.InterFaces;
 using API.StockAPI.Domain.Models;
+using API.StockAPI.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace API.StockAPI.Services
 {
@@ -15,7 +17,6 @@ namespace API.StockAPI.Services
         {
             apiKey = "RYTD2DP3YZJU5IR1";
             _client = client;
-
         }
         public string QueryStringGenerator(string? symbol, string type)
         {
@@ -29,15 +30,20 @@ namespace API.StockAPI.Services
             };
         }
 
-        public async Task<string?> GetDataFromQuery(string query)
+        public async Task<HttpResponseMessage?> ExecuteQuery(string symbol, string query, string type)
         {
             HttpResponseMessage response = await _client.GetAsync(query);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
                 return null;
             }
 
+            return response;
+        }
+
+        public async Task<string?> GetDataFromQuery(HttpResponseMessage response)
+        {
             string data = await response.Content.ReadAsStringAsync();
 
             return data;

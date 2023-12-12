@@ -6,13 +6,6 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-
-	<ItemGroup>
-		<Content Include="C:\Users\denkaty\.nuget\packages\dinktopdfincludesdependencies\1.0.8\lib\netcoreapp2.0\libwkhtmltox.dll">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />

@@ -10,6 +10,7 @@
         public const string UserNameAlreadyExists = "User with such username already exists.";
         public const string UserEmailAlreadyExists = "User with such email already exists.";
         public const string UserNotFound = "User not found";
+        public const string UserUpdatedSuccessfully = "The user is updated successfully";
 
         // Wallet
         public const string CannotDepositWithCurrencyType = "Cannot deposit with the given currency type";
@@ -18,6 +19,7 @@
         public const string WalletCreated = "Wallet created.";
         public const string WalletAlreadyExists = "The user already has a wallet.";
         public const string NotEnoughBalance = "Not enough balance.";
+        public const string WalletDeletedSuccessfully = "The wallet is deleted successfully";
 
         // Stocks
         public const string NoStocksAddedForPurchaseSale = "No stocks added for transaction processing";

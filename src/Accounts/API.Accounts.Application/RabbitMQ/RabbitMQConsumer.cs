@@ -1,37 +1,27 @@
-﻿using RabbitMQ.Client;
+﻿using API.Accounts.Application.RabbitMQ.Interfaces;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace API.Accounts.Application.RabbitMQ
 {
     internal class RabbitMQConsumer : IRabbitMQConsumer
     {
-        private IConnection _connection;
         private IModel _channel;
 
-        private EventingBasicConsumer _consumer;
-        private ConnectionFactory _connectionFactory;
-        private string _queueName;
+        private readonly IRabbitMQConnection _connection;
+        private readonly EventingBasicConsumer _consumer;
+        private readonly string _queueName;
 
-        public RabbitMQConsumer(string hostName, string queueName)
+        public RabbitMQConsumer(IRabbitMQConnection rabbitMQConnection, string queueName)
         {
-            _connectionFactory = new()
-            {
-                HostName = hostName
-            };
-
-            _queueName = queueName;
-        }
-
-        public void Connect()
-        {
-            _connection = _connectionFactory.CreateConnection();
-            _channel = _connection.CreateModel();
-
+            _connection = rabbitMQConnection;
             _consumer = new EventingBasicConsumer(_channel);
+            _queueName = queueName;
         }
 
         public void StartConsumer()
         {
+            _channel = _connection.CreateChannel();
             _channel.QueueDeclare(_queueName, exclusive: false);
             _channel.BasicConsume(_queueName, true, _consumer);
         }
@@ -43,7 +33,7 @@ namespace API.Accounts.Application.RabbitMQ
 
         public void Dispose()
         {
-            _connection?.Close();
+            _channel?.Close();
         }
     }
 }

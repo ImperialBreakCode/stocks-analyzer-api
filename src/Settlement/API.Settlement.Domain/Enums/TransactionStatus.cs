@@ -1,4 +1,4 @@
-﻿namespace API.Settlement.Infrastructure.Helpers.Enums
+﻿namespace API.Settlement.Domain.Enums
 {
 	public enum Status
 	{

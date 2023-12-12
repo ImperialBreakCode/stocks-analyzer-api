@@ -65,8 +65,13 @@ namespace API.Accounts.Infrastructure.Mockup.MemoryData
 
         public void Update<T>(T item) where T : IEntity
         {
-            GetMemoryTable<T>(_updateData).Remove(item.Id);
-            GetMemoryTable<T>(_updateData).Add(item.Id, item);
+            Update<T>(item, item.Id);
+        }
+
+        public void Update<T>(T item, string currentId) where T : IEntity
+        {
+            GetMemoryTable<T>(_updateData).Remove(currentId);
+            GetMemoryTable<T>(_updateData).Add(currentId, item);
         }
 
         public void SaveChanges()
@@ -100,7 +105,8 @@ namespace API.Accounts.Infrastructure.Mockup.MemoryData
                     if (_data[updateTable.Key].ContainsKey(item.Key))
                     {
                         value = item.Value;
-                        _data[updateTable.Key][item.Key] = item.Value;
+                        _data[updateTable.Key].Remove(item.Key);
+                        _data[updateTable.Key].Add(((IEntity)item.Value).Id, item.Value);
                     }
                 }
 

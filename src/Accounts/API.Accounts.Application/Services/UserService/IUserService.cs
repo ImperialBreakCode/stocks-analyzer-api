@@ -8,7 +8,7 @@ namespace API.Accounts.Application.Services.UserService
         string? RegisterUser(RegisterUserDTO registerDTO);
         LoginResponseDTO LoginUser(LoginUserDTO loginDTO);
         GetUserResponseDTO? GetUserByUserName(string username);
-        string? UpdateUser(UpdateUserDTO updateDTO, string username);
+        string UpdateUser(UpdateUserDTO updateDTO, string username);
         void DeleteUser(string username);
         bool ConfirmUser(string userId);
     }

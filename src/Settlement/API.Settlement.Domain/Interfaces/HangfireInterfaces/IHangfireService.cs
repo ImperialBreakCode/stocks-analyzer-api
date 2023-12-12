@@ -1,7 +1,6 @@
 ﻿using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
-using API.Settlement.Domain.Enums;
 
-namespace API.Settlement.Domain.Interfaces
+namespace API.Settlement.Domain.Interfaces.HangfireInterfaces
 {
 	public interface IHangfireService
 	{
