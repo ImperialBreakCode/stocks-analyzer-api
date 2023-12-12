@@ -9,7 +9,7 @@ using API.Settlement.Domain.Interfaces.HelpersInterfaces;
 using API.Settlement.Domain.Interfaces.MapperManagementInterfaces;
 using Newtonsoft.Json.Linq;
 
-namespace API.Settlement.Application.Services
+namespace API.Settlement.Infrastructure.MongoDbServices.WalletDatabaseServices
 {
 	public class WalletService : IWalletService
 	{
@@ -108,7 +108,7 @@ namespace API.Settlement.Application.Services
 			{
 				_walletRepository.DeleteWallet(walletId);
 			}
-			
+
 		}
 
 		private async Task SendNotifyingEmail(Wallet wallet, double percentageDifference)

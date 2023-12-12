@@ -23,31 +23,16 @@ namespace API.Settlement.Application.Services
 		}
 		public async Task<AvailabilityResponseDTO> ProcessTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var availabilityResponseDTO = await ProcessTransactionRequests(finalizeTransactionRequestDTO);
+			var availabilityResponseDTO = await _transactionProcessingService.ProcessTransactions(finalizeTransactionRequestDTO);
 
-			var copiedAvailabilityResponseDTO = CreateCopyOfAvailabilityResponseDTO(availabilityResponseDTO);
-			var filteredAvailabilityResponseDTO = FilterSuccessfulAvailabilityStockInfo(copiedAvailabilityResponseDTO);
+			var copiedAvailabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.CreateCopyOfAvailabilityResponseDTO(availabilityResponseDTO);
+			var filteredSuccessfulAvailabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.FilterSuccessfulAvailabilityStockInfoDTOs(copiedAvailabilityResponseDTO);
 
-			ScheduleStockProcessingJob(filteredAvailabilityResponseDTO);
+			ScheduleStockProcessingJob(filteredSuccessfulAvailabilityResponseDTO);
 			InitializeRecurringJobs();
 
 			return availabilityResponseDTO;
 		}
-
-		private async Task<AvailabilityResponseDTO> ProcessTransactionRequests(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
-		{
-			return await _transactionProcessingService.ProcessTransactions(finalizeTransactionRequestDTO);
-		}
-
-		private AvailabilityResponseDTO CreateCopyOfAvailabilityResponseDTO(AvailabilityResponseDTO availabilityResponseDTO)
-		{
-			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.CreateCopyOfAvailabilityResponseDTO(availabilityResponseDTO);
-		}
-		private AvailabilityResponseDTO FilterSuccessfulAvailabilityStockInfo(AvailabilityResponseDTO availabilityResponseDTO)
-		{
-			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.FilterSuccessfulAvailabilityStockInfoDTOs(availabilityResponseDTO);
-		}
-
 		private void ScheduleStockProcessingJob(AvailabilityResponseDTO filteredSuccessfulAvailabilityResponseDTO)
 		{
 			_hangfireService.ScheduleStockProcessingJob(filteredSuccessfulAvailabilityResponseDTO);

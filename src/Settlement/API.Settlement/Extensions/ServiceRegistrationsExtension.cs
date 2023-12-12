@@ -42,7 +42,7 @@ using API.Settlement.Domain.Entities.Emails;
 
 namespace API.Settlement.Extensions
 {
-    public static class ServiceRegistrationsExtension
+	public static class ServiceRegistrationsExtension
     {
 
         public static void AddCustomServiceRegistrations(this IServiceCollection services)

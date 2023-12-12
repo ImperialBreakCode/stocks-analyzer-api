@@ -31,7 +31,8 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 		{
 			var availabilityStockInfoResponseDTOs = await GenerateAvailabilityStockInfoList(finalizeTransactionRequestDTO);
 
-			return MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
+			var availabilityResponseDTO = _mapperManagementWrapper.AvailabilityResponseDTOMapper.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
+			return availabilityResponseDTO;
 		}
 
 
@@ -66,7 +67,7 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 
 		private AvailabilityStockInfoResponseDTO GenerateAvailabilityStockInfoResponse(StockInfoRequestDTO stockInfoRequestDTO, UserRank userRank, ref decimal walletBalance)
 		{
-			decimal totalPriceIncludingCommission = CalculateTotalPriceIncludingCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, userRank);
+			decimal totalPriceIncludingCommission = _userCommissionCalculatorHelper.CalculatePriceAfterAddingBuyCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, userRank);
 			if (walletBalance < totalPriceIncludingCommission)
 			{
 				return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Declined);
@@ -76,14 +77,5 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 			return _mapperManagementWrapper.AvailabilityStockInfoResponseDTOMapper.MapToAvailabilityStockInfoResponseDTO(stockInfoRequestDTO, totalPriceIncludingCommission, Status.Scheduled);
 		}
 
-		private decimal CalculateTotalPriceIncludingCommission(decimal totalPriceExcludingCommission, UserRank userRank)
-		{
-			return _userCommissionCalculatorHelper.CalculatePriceAfterAddingBuyCommission(totalPriceExcludingCommission, userRank);
-		}
-
-		private AvailabilityResponseDTO MapToAvailabilityResponseDTO(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, IEnumerable<AvailabilityStockInfoResponseDTO> availabilityStockInfoResponseDTOs)
-		{
-			return _mapperManagementWrapper.AvailabilityResponseDTOMapper.MapToAvailabilityResponseDTO(finalizeTransactionRequestDTO, availabilityStockInfoResponseDTOs);
-		}
 	}
 }

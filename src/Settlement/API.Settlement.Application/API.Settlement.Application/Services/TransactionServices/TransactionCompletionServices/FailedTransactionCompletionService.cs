@@ -75,7 +75,7 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 		{
 			return _transactionUnitOfWork.FailedTransactions.GetAll();
 		}
-
+		 
 		private async Task<HttpResponseMessage> SendFinalizingTransactionRequest(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
 		{
 			HttpResponseMessage response = null;
