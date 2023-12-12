@@ -3,6 +3,7 @@ using API.Accounts.Application.Data.ExchangeRates;
 using API.Accounts.Application.DTOs;
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
+using API.Accounts.Application.Services.WalletService.Interfaces;
 using API.Accounts.Domain.Entities;
 using API.Accounts.Domain.Interfaces.RepositoryBase;
 
@@ -12,28 +13,28 @@ namespace API.Accounts.Application.Services.WalletService
     {
         private readonly IAccountsData _accountData;
         private readonly IExchangeRatesData _exchangeRatesData;
+        private readonly IWalletDeleteRabbitMQProducer _walletDeleteRabbitMQProducer;
 
-        public WalletService(IAccountsData accountData, IExchangeRatesData exchangeRatesData)
+        public WalletService(IAccountsData accountData, IExchangeRatesData exchangeRatesData, IWalletDeleteRabbitMQProducer walletDeleteRabbitMQProducer)
         {
             _accountData = accountData;
             _exchangeRatesData = exchangeRatesData;
+            _walletDeleteRabbitMQProducer = walletDeleteRabbitMQProducer;
         }
 
         public string CreateWallet(string username)
         {
             using (var context = _accountData.CreateDbContext())
             {
-                User? user = context.Users.GetConfirmedByUserName(username);
+                User? user = context.Users.GetConfirmedByUsername(username);
 
-                if (user is null)
-                {
+                if (user is null) 
                     return ResponseMessages.UserNotFound;
-                }
+                
 
                 if (context.Wallets.GetUserWallet(user.Id) is not null)
-                {
                     return ResponseMessages.WalletAlreadyExists;
-                }
+                
 
                 Wallet wallet = new Wallet()
                 {
@@ -47,25 +48,23 @@ namespace API.Accounts.Application.Services.WalletService
             return ResponseMessages.WalletCreated;
         }
 
-        public string? DeleteWallet(string username)
+        public string DeleteWallet(string username)
         {
             using (var context = _accountData.CreateDbContext())
             {
                 string? error = ServiceHelper.GetUserWallet(context, username, out Wallet? wallet);
                 if (error is not null)
-                {
                     return error;
-                }
                 else if (wallet is null)
-                {
                     return ResponseMessages.WalletNotFound;
-                }
 
                 context.Wallets.DeleteWalletWithItsChildren(wallet.Id);
                 context.Commit();
+
+                _walletDeleteRabbitMQProducer.SendWalletIdForDeletion(wallet.Id);
             }
 
-            return null;
+            return ResponseMessages.WalletDeletedSuccessfully;
         }
 
         public string Deposit(DepositWalletDTO depositDTO, string username)

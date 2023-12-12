@@ -1,4 +1,4 @@
-﻿namespace API.Accounts.Application.Services.WalletService
+﻿namespace API.Accounts.Application.Services.WalletService.Interfaces
 {
     public interface IDemoWalletDeleteHandler
     {

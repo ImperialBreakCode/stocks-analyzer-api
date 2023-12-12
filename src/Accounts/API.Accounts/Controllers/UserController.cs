@@ -2,6 +2,7 @@
 using API.Accounts.Application.DTOs.Request;
 using API.Accounts.Application.DTOs.Response;
 using API.Accounts.Application.Services.UserService;
+using API.Accounts.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Accounts.Controllers
@@ -25,7 +26,7 @@ namespace API.Accounts.Controllers
 
             if (errorMessage is not null)
             {
-                return Conflict(errorMessage);
+                return this.ParseAndReturnMessage(errorMessage);
             }
 
             return Created($"/api/User/{userDTO.Username}", userDTO);
@@ -74,22 +75,9 @@ namespace API.Accounts.Controllers
         [Route("UpdateUser/{username}")]
         public IActionResult UpdateUser([FromBody] UpdateUserDTO updateUserDTO, [FromRoute] string username)
         {
-            string? errorMessage = _userService.UpdateUser(updateUserDTO, username);
-            if (errorMessage is not null)
-            {
-                ResponseType responseType = ResponseParser.ParseResponseMessage(errorMessage);
-
-                switch (responseType)
-                {
-                    case ResponseType.NotFound:
-                        return NotFound(errorMessage);
-                    case ResponseType.Conflict:
-                        return Conflict(errorMessage);
-                    default:
-                        break;
-                }
-            }
-            return Ok();
+            string response = _userService.UpdateUser(updateUserDTO, username);
+            
+            return this.ParseAndReturnMessage(response);
         }
 
         [HttpDelete]

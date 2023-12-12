@@ -1,5 +1,5 @@
 ﻿using API.Accounts.Application.Data;
-using API.Accounts.Application.RabbitMQ;
+using API.Accounts.Application.RabbitMQ.Interfaces;
 using API.Accounts.Application.Settings;
 
 namespace API.Accounts.BackgroundServices

@@ -1,4 +1,4 @@
-﻿namespace API.Accounts.Application.RabbitMQ
+﻿namespace API.Accounts.Application.RabbitMQ.Interfaces
 {
     public interface IRabbitMQSetupService
     {
