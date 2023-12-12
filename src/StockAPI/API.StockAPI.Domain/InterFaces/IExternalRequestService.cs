@@ -9,7 +9,8 @@ namespace API.StockAPI.Domain.InterFaces
 {
     public interface IExternalRequestService
     {
-        string QueryStringGenerator(string symbol, string function);
-        Task<string?> GetDataFromQuery(string query);
+        string QueryStringGenerator(string symbol, string type);
+        Task<HttpResponseMessage?> ExecuteQuery(string symbol, string query, string type);
+        Task<string?> GetDataFromQuery(HttpResponseMessage response);
     }
 }

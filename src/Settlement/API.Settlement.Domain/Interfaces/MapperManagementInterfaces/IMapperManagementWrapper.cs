@@ -1,8 +1,8 @@
 ﻿using API.Settlement.Domain.Interfaces.MapperManagementInterfaces.Mappers;
 
-namespace API.Settlement.Domain.Interfaces
+namespace API.Settlement.Domain.Interfaces.MapperManagementInterfaces
 {
-    public interface IMapperManagementWrapper
+	public interface IMapperManagementWrapper
 	{
 		public IAvailabilityStockInfoResponseDTOMapper AvailabilityStockInfoResponseDTOMapper { get; }
 		public IAvailabilityResponseDTOMapper AvailabilityResponseDTOMapper { get; }

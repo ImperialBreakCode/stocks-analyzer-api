@@ -1,13 +1,12 @@
 ﻿using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
-using API.Settlement.Domain.Enums;
 
-namespace API.Settlement.Domain.Interfaces
+namespace API.Settlement.Domain.Interfaces.HangfireInterfaces
 {
 	public interface IHangfireJobService
 	{
 		Task ProcessNextDayAccountTransaction(AvailabilityResponseDTO availabilityResponseDTO);
 		Task RecurringFailedTransactionsJob();
 		Task RecurringCapitalCheckJob();
-		Task RecurringRabbitMQMessageSenderJob();
+		void RecurringRabbitMQMessageSenderJob();
 	}
 }

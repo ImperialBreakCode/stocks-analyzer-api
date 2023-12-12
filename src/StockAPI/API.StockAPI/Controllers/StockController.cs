@@ -3,6 +3,7 @@ using API.StockAPI.Infrastructure.Interfaces;
 using API.StockAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.StockAPI.Controllers
 {
@@ -13,19 +14,24 @@ namespace API.StockAPI.Controllers
         private readonly IExternalRequestService _externalRequestServices;
         private readonly IStockService _stockServices;
         private readonly IContextServices _contextServices;
+        private readonly ITimedOutCallServices _callServices;
 
-        public StockController(IStockService services, IExternalRequestService externalServices, IContextServices contextServices)
+        public StockController(IStockService services,
+            IExternalRequestService externalServices,
+            IContextServices contextServices,
+            ITimedOutCallServices callServices)
         {
             _stockServices = services;
             _externalRequestServices = externalServices;
             _contextServices = contextServices;
+            _callServices = callServices;
         }
 
         [HttpGet]
         [Route("{type}/{symbol}")]
         public async Task<IActionResult> GetStock(string symbol, string type)
         {
-            if(symbol == "" || type == "")
+            if(string.IsNullOrEmpty(symbol) || string.IsNullOrEmpty(type))
             {
                 return BadRequest();
             }
@@ -40,19 +46,26 @@ namespace API.StockAPI.Controllers
             try
             {
                 var query = _externalRequestServices.QueryStringGenerator(symbol, type);
-                if (query == null)
+                if (string.IsNullOrEmpty(query))
                 {
                     return BadRequest();
                 }
 
-                var data = await _externalRequestServices.GetDataFromQuery(query);
-                if (data == null)
+                var response = await _externalRequestServices.ExecuteQuery(symbol, query, type);
+                if(response.StatusCode >= HttpStatusCode.InternalServerError)
+                {
+                    await _callServices.InsertFailedCallInDB(symbol, query, type);
+                    return StatusCode(500);
+                }
+
+                var data = await _externalRequestServices.GetDataFromQuery(response);
+                if (string.IsNullOrEmpty(data))
                 {
                     return BadRequest();
                 }
 
                 var result = await _stockServices.GetStockFromResponse(symbol, data, type);
-                if (result == null)
+                if (result is null)
                 {
                     return NotFound();
                 }
