@@ -16,7 +16,7 @@ namespace API.Accounts.Extensions
                 .AddBackgroundServices()
                 .AddAccountServices()
                 .AddAccountAuthentication()
-                .AddRabbitMQConsumer();
+                .AddRabbitMQServices();
         }
 
         public static IServiceCollection InjectData(this IServiceCollection services)

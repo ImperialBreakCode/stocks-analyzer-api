@@ -29,16 +29,42 @@ namespace Analyzer.APi.Controllers
             
         }
 
-        [HttpGet("PercentageChange/{walletId}")]
-        public async Task<ActionResult<decimal?>> GetInvestmentPercentageChange(string walletId)
+        [HttpGet("CurrentProfitability/{username}/{symbol}/{type}")]
+        public async Task<ActionResult<decimal?>> GetCurrentProfitability(string username, string symbol, string type)
         {
             try
             {
-                decimal? shareValue = await service.GetShareValue(walletId);
+                decimal? currentProfitability = await service.GetCurrentProfitability(username,symbol,type);
+
+                if (currentProfitability.HasValue)
+                {
+                    return Ok(currentProfitability.Value);
+                }
+                else
+                {
+                    return NotFound("Unable to calculate current profitability.");
+                }
+            }
+            catch (HttpRequestException)
+            {
+                return StatusCode(500, "Internal Server Error: Unable to retrieve data from external services.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("PercentageChange/{username}/{symbol}/{type}")]
+        public async Task<ActionResult<decimal?>> GetInvestmentPercentageChange(string username,string symbol,string type)
+        {
+            try
+            {
+                decimal? shareValue = await service.GetShareValue(username);
 
                 if (shareValue.HasValue)
                 {
-                    decimal? investmentPercentageGain = await service.CalculateInvestmentPercentageGain(walletId, shareValue.Value);
+                    decimal? investmentPercentageGain = await service.CalculateInvestmentPercentageGain(symbol,type, shareValue.Value);
 
                     if (investmentPercentageGain.HasValue)
                     {
@@ -60,5 +86,33 @@ namespace Analyzer.APi.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+
+        [HttpGet("CalculateAverageProfitability/{username}/{symbol}/{type}")]
+        public async Task<ActionResult<decimal?>> CalculateAverageProfitability(string username, string symbol, string type)
+        {
+            try
+            {
+                decimal? averageProfitability = await service.CalculateAverageProfitability(username, symbol, type);
+
+                if (averageProfitability.HasValue)
+                {
+                    return Ok(averageProfitability.Value);
+                }
+                else
+                {
+                    return NotFound("Unable to calculate average profitability.");
+                }
+            }
+            catch (HttpRequestException)
+            {
+                return StatusCode(500, "Internal Server Error: Unable to retrieve data from external services.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+
     }
 }

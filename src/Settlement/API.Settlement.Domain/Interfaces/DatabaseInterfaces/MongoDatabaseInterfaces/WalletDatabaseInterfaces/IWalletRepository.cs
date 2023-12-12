@@ -1,13 +1,8 @@
-﻿using API.Settlement.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using API.Settlement.Domain.Entities.MongoDatabaseEntities.WalletDatabaseEntities;
 
 namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInterfaces.WalletDatabaseInterfaces
 {
-    public interface IWalletRepository
+	public interface IWalletRepository
     {
         IEnumerable<Wallet> GetWallets();
         Wallet? GetWalletById(string id);
@@ -18,5 +13,6 @@ namespace API.Settlement.Domain.Interfaces.DatabaseInterfaces.MongoDatabaseInter
         void AddStock(string walletId, Stock stock);
         void RemoveStock(string walletId, string stockId);
         void UpdateStock(string walletId, Stock? existingStock);
-    }
+		bool ContainsWallet(string walletId);
+	}
 }

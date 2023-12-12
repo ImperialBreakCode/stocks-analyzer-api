@@ -5,6 +5,6 @@ namespace API.Settlement.Domain.Interfaces
 {
 	public interface ISettlementService
 	{
-		Task<AvailabilityResponseDTO> ProcessTransactions(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
+		Task<AvailabilityResponseDTO> ProcessTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO);
 	}
 }

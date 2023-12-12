@@ -18,7 +18,7 @@ namespace API.Settlement.Controllers
 		[Route("processTransactions")]
 		public async Task<IActionResult> ProcessTransactions([FromBody] FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
 		{
-			var availabilityResponseDTO = await _settlementService.ProcessTransactions(finalizeTransactionRequestDTO);
+			var availabilityResponseDTO = await _settlementService.ProcessTransaction(finalizeTransactionRequestDTO);
 
 			return StatusCode(200, availabilityResponseDTO);
 		}
