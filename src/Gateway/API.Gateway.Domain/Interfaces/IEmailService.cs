@@ -3,9 +3,9 @@
 namespace API.Gateway.Domain.Interfaces
 {
     public interface IEmailService
-	{
-		Task Create(Email email);
-		bool Exists(string email);
-		Task Delete(string email);
-	}
+    {
+        Task Create(Email email);
+        bool Exists(string email);
+        Task Delete(string email);
+    }
 }

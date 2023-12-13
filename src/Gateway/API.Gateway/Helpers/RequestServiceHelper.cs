@@ -1,4 +1,5 @@
 ﻿using API.Gateway.Domain.Entities.MongoDBEntities;
+using API.Gateway.Domain.Interfaces;
 using API.Gateway.Infrastructure.Services.MongoDB;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -6,7 +7,7 @@ using Serilog;
 
 namespace API.Gateway.Infrastructure.Helpers
 {
-	public class RequestServiceHelper : IRequestServiceHelper
+    public class RequestServiceHelper : IRequestServiceHelper
 	{
 		private readonly IMongoCollection<Request> _requestCollection;
 

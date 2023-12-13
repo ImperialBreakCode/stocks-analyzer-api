@@ -6,7 +6,7 @@ using System.Net.Http;
 
 namespace API.Gateway.Services
 {
-	public class AnalyzerService : IAnalyzerService
+    public class AnalyzerService : IAnalyzerService
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;

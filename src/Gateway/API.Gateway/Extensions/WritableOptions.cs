@@ -5,7 +5,7 @@ using API.Gateway.Domain.Interfaces;
 
 namespace API.Gateway.Extensions
 {
-	public class WritableOptions<T> : IWritableOptions<T> where T : class, new()
+    public class WritableOptions<T> : IWritableOptions<T> where T : class, new()
 	{
 		private readonly IWebHostEnvironment _environment;
 		private readonly IOptionsMonitor<T> _options;

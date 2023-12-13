@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace API.Gateway.Extensions
 {
-	public static class ServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
 	{
 		public static void ConfigureWritable<T>(
 			this IServiceCollection services,

@@ -1,7 +1,8 @@
 ﻿using API.Gateway.Domain.DTOs;
+using API.Gateway.Domain.Entities.Factories;
 using API.Gateway.Domain.Entities.SQLiteEntities;
 using API.Gateway.Domain.Interfaces;
-using API.Gateway.Infrastructure.Provider;
+using API.Gateway.Domain.Responses;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -14,20 +15,25 @@ namespace API.Gateway.Services
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
 		private readonly IJwtTokenParser _jwtTokenParser;
-		private readonly IMemoryCache _memoryCache;
 		private readonly IEmailService _emailService;
+		private readonly ResponseDTOFactory _responseDTOFactory;
+		private readonly ICacheHelper _cacheHelper;
+
 		public AccountService(
 			IHttpClient httpClient,
 			IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts,
 			IJwtTokenParser jwtTokenParser,
-			IMemoryCache memoryCache,
-			IEmailService emailService)
+			IEmailService emailService,
+			ResponseDTOFactory responseDTOFactory,
+			ICacheHelper cacheHelper)
 		{
 			_httpClient = httpClient;
 			_microserviceHosts = microserviceHosts.CurrentValue;
 			_jwtTokenParser = jwtTokenParser;
-			_memoryCache = memoryCache;
 			_emailService = emailService;
+			_responseDTOFactory = responseDTOFactory;
+			_cacheHelper = cacheHelper;
+
 		}
 
 		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
@@ -38,14 +44,7 @@ namespace API.Gateway.Services
 			}
 			else
 			{
-				ResponseDTO responseDTO = new ResponseDTO()
-				{
-					Message = $"The email '{regUserDTO.Email}' has already been used or is blacklisted!"
-				};
-				return new ObjectResult(responseDTO)
-				{
-					StatusCode = 403
-				};
+				return new ObjectResult(_responseDTOFactory.Create(ResponseMessages.BlacklistedEmail)) { StatusCode = 403 };
 			}
 		}
 
@@ -56,49 +55,43 @@ namespace API.Gateway.Services
 
 		public async Task<IActionResult> UserInformation(string username)
 		{
-			if (_memoryCache.TryGetValue(username, out User dto))
+			var cacheKey = $"UserData_{username}";
+
+			var cachedUser = _cacheHelper.Get<User>(cacheKey);
+
+			if (cachedUser != null)
 			{
-				return new OkObjectResult(dto);
+				return new OkObjectResult(cachedUser);
 			}
 
-			IActionResult res = await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UserInformation/{username}");
+			var response = await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UserInformation/{username}");
 
-			User user = null;
-
-			if (res is OkObjectResult okObjectResult)
+			if (response is OkObjectResult okObjectResult)
 			{
-				user = okObjectResult.Value as User;
+				var newUser = okObjectResult.Value as User;
+				var cacheOptions = new MemoryCacheEntryOptions
+				{
+					AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15),
+					SlidingExpiration = TimeSpan.FromMinutes(10)
+				};
+				_cacheHelper.Set(cacheKey, newUser, cacheOptions);
 			}
-			else
-			{
-				return res;
-			}
 
-			var cacheEntryOptions = new MemoryCacheEntryOptions
-			{
-				AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15),
-				SlidingExpiration = TimeSpan.FromMinutes(10)
-			};
-
-			_memoryCache.Set(username, user, cacheEntryOptions);
-
-			return res;
+			return response;
 		}
 
 		public async Task<IActionResult> UpdateUser(UpdateUserDTO dto)
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			ObjectResult res = (ObjectResult)await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
+			var res = await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
 
 			if (res is OkObjectResult && dto.Email != null)
 			{
 				string email = _jwtTokenParser.GetEmailFromToken();
 				await _emailService.Delete(email);
-				Email mail = new Email
-				{
-					Mail = dto.Email
-				};
+
+				Email mail = new() { Mail = dto.Email};
 				await _emailService.Create(mail);
 			}
 
@@ -109,17 +102,15 @@ namespace API.Gateway.Services
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			ObjectResult res = (ObjectResult)await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
+			var res = await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
 
-			if (res is OkObjectResult) 
+			if (res is OkObjectResult)
 			{
 				string email = _jwtTokenParser.GetEmailFromToken();
 				await _emailService.Delete(email);
 			}
 
 			return res;
-
 		}
-
 	}
 }

@@ -1,11 +1,11 @@
-﻿using API.Gateway.Domain.Interfaces;
-using API.Gateway.Infrastructure.Contexts;
+﻿using API.Gateway.Infrastructure.Contexts;
 using API.Gateway.Domain.DTOs;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Serilog;
 using API.Gateway.Domain.Entities.SQLiteEntities;
+using API.Gateway.Domain.Interfaces;
 
 namespace API.Gateway.Infrastructure.Init
 {

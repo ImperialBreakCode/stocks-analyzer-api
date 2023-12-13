@@ -1,13 +1,12 @@
 ﻿using API.Gateway.Domain.Entities.MongoDBEntities;
 using API.Gateway.Domain.Interfaces;
-using API.Gateway.Infrastructure.Helpers;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Serilog;
 
 namespace API.Gateway.Infrastructure.Services.MongoDB
 {
-	public class RequestService : IRequestService
+    public class RequestService : IRequestService
 	{
 		private readonly IRequestServiceHelper _helper;
 

@@ -12,7 +12,7 @@ using System.Text;
 
 namespace API.Gateway.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class WebSocketController : Controller
 	{

@@ -7,12 +7,15 @@ using Microsoft.Extensions.Options;
 
 namespace API.Gateway.Services
 {
-	public class StockService : IStockService
+    public class StockService : IStockService
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
 		private readonly IJwtTokenParser _jwtTokenParser;
-		public StockService(IHttpClient httpClient, IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts, IJwtTokenParser jwtTokenParser)
+
+		public StockService(IHttpClient httpClient,
+			IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts,
+			IJwtTokenParser jwtTokenParser)
 		{
 			_httpClient = httpClient;
 			_microserviceHosts = microserviceHosts.CurrentValue;

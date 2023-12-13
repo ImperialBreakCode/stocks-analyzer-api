@@ -5,7 +5,7 @@ using System.Text;
 
 namespace API.Gateway.Middleware
 {
-	public class RequestLoggingMiddleware
+    public class RequestLoggingMiddleware
 	{
 		private readonly RequestDelegate _next;
 		private readonly IJwtTokenParser _jwtTokenParser;

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace API.Gateway.Domain.Interfaces
 {
-	public interface IAccountService
-	{
-		Task<IActionResult> Register(RegisterUserDTO regUserDTO);
-		Task<IActionResult> Login(LoginUserDTO userDTO);
-		Task<IActionResult> UserInformation(string username);
-		Task<IActionResult> UpdateUser(UpdateUserDTO dto);
-		Task<IActionResult> DeleteUser();
-	}
+    public interface IAccountService
+    {
+        Task<IActionResult> Register(RegisterUserDTO regUserDTO);
+        Task<IActionResult> Login(LoginUserDTO userDTO);
+        Task<IActionResult> UserInformation(string username);
+        Task<IActionResult> UpdateUser(UpdateUserDTO dto);
+        Task<IActionResult> DeleteUser();
+    }
 }

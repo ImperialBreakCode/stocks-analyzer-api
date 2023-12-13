@@ -7,7 +7,7 @@ using System.Text;
 
 namespace API.Gateway.Services
 {
-	public class WebSocketService : IWebSocketService
+    public class WebSocketService : IWebSocketService
 	{
 		private readonly IWritableOptions<JwtOptionsConfiguration> _options;
 

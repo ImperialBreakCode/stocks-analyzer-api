@@ -2,8 +2,8 @@
 using Dapper;
 using Serilog;
 using System.Data;
-using API.Gateway.Domain.Interfaces;
 using API.Gateway.Domain.Entities.SQLiteEntities;
+using API.Gateway.Domain.Interfaces;
 
 namespace API.Gateway.Infrastructure.Provider
 {

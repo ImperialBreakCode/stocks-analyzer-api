@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace API.Gateway.Domain.Interfaces
 {
-	public interface IJwtTokenParser
-	{
-		string GetUsernameFromToken();
-		string GetEmailFromToken();
-	}
+    public interface IJwtTokenParser
+    {
+        string GetUsernameFromToken();
+        string GetEmailFromToken();
+    }
 }

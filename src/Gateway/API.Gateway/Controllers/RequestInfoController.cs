@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Gateway.Controllers
 {
-	[Controller]
+    [Controller]
 	[Route("api/[controller]")]
 	public class RequestInfoController : Controller
 	{

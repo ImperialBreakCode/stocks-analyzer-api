@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace API.Gateway.Domain.Interfaces
 {
-	public interface IWebSocketService
-	{
-		Task ProcessWebSocketRequest(HttpContext httpContext);
-	}
+    public interface IWebSocketService
+    {
+        Task ProcessWebSocketRequest(HttpContext httpContext);
+    }
 }

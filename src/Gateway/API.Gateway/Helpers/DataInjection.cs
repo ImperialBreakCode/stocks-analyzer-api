@@ -1,4 +1,5 @@
-﻿using API.Gateway.Domain.Interfaces;
+﻿using API.Gateway.Domain.Entities.Factories;
+using API.Gateway.Domain.Interfaces;
 using API.Gateway.Extensions;
 using API.Gateway.Infrastructure.Contexts;
 using API.Gateway.Infrastructure.Helpers;
@@ -35,8 +36,10 @@ namespace API.Gateway.Helpers
             services.AddTransient<IWebSocketService, WebSocketService>();
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<IRequestServiceHelper, RequestServiceHelper>();
+            services.AddTransient<ResponseDTOFactory>();
+			services.AddTransient<ICacheHelper, CacheHelper>();
 
-            services.AddHttpContextAccessor();
+			services.AddHttpContextAccessor();
             services.AddMemoryCache();
 
             return services;
