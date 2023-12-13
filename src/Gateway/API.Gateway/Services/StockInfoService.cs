@@ -22,7 +22,7 @@ namespace API.Gateway.Services
 
 		public async Task<IActionResult> GetDailyData(string companyName)
 		{
-			return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/caily/{companyName}");
+			return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/daily/{companyName}");
 		}
 
 		public async Task<IActionResult> GetWeeklyData(string companyName)
