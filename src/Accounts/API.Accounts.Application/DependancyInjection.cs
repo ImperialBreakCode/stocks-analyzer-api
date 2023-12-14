@@ -48,20 +48,9 @@ namespace API.Accounts.Application
             services.AddTransient<IExchangeRatesData, ExchangeRateDataMockup>();
 
             services.AddTransient<IAccountsDataSeeder, AccountDataSeeder>();
-
-            return services;
-        }
-
-        public static IServiceCollection UseSqlDatabase(this IServiceCollection services) 
-        {
             services.AddTransient<IAccountsData, AccountData>();
             services.AddTransient<IAccountsDbManager, AccountsDbManager>();
-            return services;
-        }
 
-        public static IServiceCollection UseMemoryMockupDb(this IServiceCollection services)
-        {
-            services.AddSingleton<IAccountsData, AccountMockupData>();
             return services;
         }
 
