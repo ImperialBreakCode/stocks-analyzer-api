@@ -21,8 +21,8 @@ using API.Accounts.Application.Settings;
 using API.Accounts.Application.Settings.GatewayAuthSettingsSender;
 using API.Accounts.Application.Settings.GatewaySettingsSender;
 using API.Accounts.Application.Settings.UpdateHandlers;
-using API.Accounts.Domain.Interfaces.DbManager;
 using API.Accounts.Infrastructure.DbManager;
+using API.Accounts.Domain.Interfaces.DbManager;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -37,14 +37,14 @@ namespace API.Accounts.Application
 
             services.AddTransient<ITransactionSaleHandler, TransactionSaleHandler>();
             services.AddTransient<IWalletDeleteRabbitMQProducer, WalletDeleteRabbitMQProducer>();
-            services.AddSingleton<IWaitingDeletedWalletIdsList, WaitingDeletedWalletIdsLIst>();
+            services.AddSingleton<IWaitingDeletedWalletIdsList, WaitingDeletedWalletIdsList>();
 
             return services;
         }
 
         public static IServiceCollection AddApplicationData(this IServiceCollection services)
         {
-            services.AddTransient<IStocksData, StocksDataMockup>();
+            services.AddTransient<IStocksData, StocksData>();
             services.AddTransient<IExchangeRatesData, ExchangeRateDataMockup>();
 
             services.AddTransient<IAccountsDataSeeder, AccountDataSeeder>();
@@ -57,7 +57,7 @@ namespace API.Accounts.Application
         public static IServiceCollection AddHttpClientServices<T>(this IServiceCollection services)
             where T : class, IHttpService
         {
-            services.AddSingleton<IHttpClientRoutes, HttpClientRoutes>();
+            services.AddTransient<IHttpClientRoutes, HttpClientRoutes>();
             services.AddTransient<IHttpService, T>();
 
             return services;
