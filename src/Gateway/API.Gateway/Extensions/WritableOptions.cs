@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Helpers;
 
 namespace API.Gateway.Extensions
 {

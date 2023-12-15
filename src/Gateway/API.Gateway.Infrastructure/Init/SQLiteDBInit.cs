@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Serilog;
 using API.Gateway.Domain.Entities.SQLiteEntities;
 using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Services;
+using API.Gateway.Domain.Interfaces.Helpers;
 
 namespace API.Gateway.Infrastructure.Init
 {
@@ -46,7 +48,7 @@ namespace API.Gateway.Infrastructure.Init
 			}
 			catch (Exception ex)
 			{
-				Log.Information($"Error creating database: {ex.Message}");
+				Log.Error($"Error creating database: {ex.Message}");
 			}
 		}
 		private async Task PopulateDB()
@@ -61,15 +63,12 @@ namespace API.Gateway.Infrastructure.Init
 				var stringResult = response.Value.ToString();
 				var users = JsonConvert.DeserializeObject<List<UserDTO>>(stringResult);
 
-				int a = 0;
 				foreach (var x in users)
 				{
 					Email email = new Email()
 					{
 						Mail = x.Email
 					};
-					a++;
-					Console.WriteLine(a);
 
 					_service.Create(email);
 
@@ -77,7 +76,7 @@ namespace API.Gateway.Infrastructure.Init
 			}
 			catch (Exception ex)
 			{
-				Log.Information($"Error populating db: {ex.Message}");
+				Log.Error($"Error populating db: {ex.Message}");
 				await Task.Delay(1000);
 			}
 		}

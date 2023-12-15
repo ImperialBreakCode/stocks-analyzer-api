@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Gateway.Domain.Interfaces
+namespace API.Gateway.Domain.Interfaces.Services
 {
     public interface IStockInfoService
     {

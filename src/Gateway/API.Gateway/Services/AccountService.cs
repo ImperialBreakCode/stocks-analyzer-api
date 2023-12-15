@@ -2,11 +2,14 @@
 using API.Gateway.Domain.Entities.Factories;
 using API.Gateway.Domain.Entities.SQLiteEntities;
 using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Helpers;
+using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Domain.Responses;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace API.Gateway.Services
 {
@@ -38,13 +41,21 @@ namespace API.Gateway.Services
 
 		public async Task<IActionResult> Register(RegisterUserDTO regUserDTO)
 		{
-			if (!_emailService.Exists(regUserDTO.Email))
+			try
 			{
-				return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Register", regUserDTO);
+				if (!_emailService.Exists(regUserDTO.Email))
+				{
+					return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/Register", regUserDTO);
+				}
+				else
+				{
+					return new ObjectResult(_responseDTOFactory.Create(ResponseMessages.BlacklistedEmail)) { StatusCode = 403 };
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				return new ObjectResult(_responseDTOFactory.Create(ResponseMessages.BlacklistedEmail)) { StatusCode = 403 };
+				Log.Error($"Error in AccountService, Register method: {ex.Message}");
+				return new StatusCodeResult(500);
 			}
 		}
 
@@ -55,62 +66,98 @@ namespace API.Gateway.Services
 
 		public async Task<IActionResult> UserInformation(string username)
 		{
-			var cacheKey = $"UserData_{username}";
-
-			var cachedUser = _cacheHelper.Get<User>(cacheKey);
-
-			if (cachedUser != null)
+			try
 			{
-				return new OkObjectResult(cachedUser);
-			}
+				var cacheKey = $"UserData_{username}";
 
-			var response = await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UserInformation/{username}");
+				var cachedUser = _cacheHelper.Get<User>(cacheKey);
 
-			if (response is OkObjectResult okObjectResult)
-			{
-				var newUser = okObjectResult.Value as User;
-				var cacheOptions = new MemoryCacheEntryOptions
+				if (cachedUser != null)
 				{
-					AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15),
-					SlidingExpiration = TimeSpan.FromMinutes(10)
-				};
-				_cacheHelper.Set(cacheKey, newUser, cacheOptions);
-			}
+					return new OkObjectResult(cachedUser);
+				}
 
-			return response;
+				var response = await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UserInformation/{username}");
+
+				if (response is OkObjectResult okObjectResult)
+				{
+					var newUser = okObjectResult.Value as User;
+					var cacheOptions = new MemoryCacheEntryOptions
+					{
+						AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15),
+						SlidingExpiration = TimeSpan.FromMinutes(10)
+					};
+					_cacheHelper.Set(cacheKey, newUser, cacheOptions);
+				}
+
+				return response;
+			}
+			catch (Exception ex)
+			{
+				Log.Error($"Error in AccountService, UserInformation method: {ex.Message}");
+				return new StatusCodeResult(500);
+			}
 		}
 
 		public async Task<IActionResult> UpdateUser(UpdateUserDTO dto)
 		{
-			string username = _jwtTokenParser.GetUsernameFromToken();
-
-			var res = await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
-
-			if (res is OkObjectResult && dto.Email != null)
+			try
 			{
-				string email = _jwtTokenParser.GetEmailFromToken();
-				await _emailService.Delete(email);
+				string username = _jwtTokenParser.GetUsernameFromToken();
 
-				Email mail = new() { Mail = dto.Email};
-				await _emailService.Create(mail);
+				var res = await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
+
+				if (res is OkObjectResult && dto.Email != null)
+				{
+					string email = _jwtTokenParser.GetEmailFromToken();
+					await _emailService.Delete(email);
+
+					Email mail = new() { Mail = dto.Email };
+					await _emailService.Create(mail);
+				}
+
+				return res;
 			}
-
-			return res;
+			catch (Exception ex)
+			{
+				Log.Error($"Error in AccountService, UpdateUser method: {ex.Message}");
+				return new StatusCodeResult(500);
+			}
 		}
 
 		public async Task<IActionResult> DeleteUser()
 		{
+			try
+			{
+				string username = _jwtTokenParser.GetUsernameFromToken();
+
+				var res = await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
+
+				if (res is OkObjectResult)
+				{
+					string email = _jwtTokenParser.GetEmailFromToken();
+					await _emailService.Delete(email);
+				}
+
+				return res;
+			}
+			catch (Exception ex)
+			{
+				Log.Error($"Error in AccountService, DeleteUser method: {ex.Message}");
+				return new StatusCodeResult(500);
+			}
+		}
+
+		public async Task<IActionResult> ConfirmUser(string userId)
+		{
+			return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/ConfirmUser/{userId}");
+		}
+
+		public async Task<IActionResult> GetTransactions()
+		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			var res = await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/DeleteUser/{username}");
-
-			if (res is OkObjectResult)
-			{
-				string email = _jwtTokenParser.GetEmailFromToken();
-				await _emailService.Delete(email);
-			}
-
-			return res;
+			return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Transaction/GetTransactionsByUsername/{username}");
 		}
 	}
 }

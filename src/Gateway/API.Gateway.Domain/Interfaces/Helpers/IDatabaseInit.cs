@@ -1,4 +1,4 @@
-﻿namespace API.Gateway.Domain.Interfaces
+﻿namespace API.Gateway.Domain.Interfaces.Helpers
 {
     public interface IDatabaseInit
     {

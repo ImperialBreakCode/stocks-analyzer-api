@@ -1,6 +1,7 @@
 ﻿using API.Gateway.Domain.DTOs;
 using API.Gateway.Domain.Interfaces;
-using API.Gateway.Extensions;
+using API.Gateway.Domain.Interfaces.Helpers;
+using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -42,10 +43,5 @@ namespace API.Gateway.Services
 
 			return await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/DeleteWallet/{username}");
 		}
-		//public async Task<IActionResult> GetWallet(string walletId)
-		//{
-		//	return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/GetWallet/{walletId}");
-		//}
-
 	}
 }

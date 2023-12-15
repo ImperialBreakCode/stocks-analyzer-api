@@ -1,6 +1,6 @@
 ﻿using API.Gateway.Domain.Entities.SQLiteEntities;
 
-namespace API.Gateway.Domain.Interfaces
+namespace API.Gateway.Domain.Interfaces.Services
 {
     public interface IEmailService
     {

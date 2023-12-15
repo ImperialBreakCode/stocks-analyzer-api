@@ -1,5 +1,5 @@
 ﻿using API.Gateway.Domain.DTOs;
-using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -54,6 +54,22 @@ namespace API.Gateway.Controllers
 		public async Task<IActionResult> DeleteUser()
 		{
 			return await _accountService.DeleteUser();
+		}
+
+		[Authorize]
+		[HttpGet]
+		[Route("ConfirmUser/{userId}")]
+		public async Task<IActionResult> ConfirmUser(string userId)
+		{
+			return await _accountService.ConfirmUser(userId);
+		}
+
+		[Authorize]
+		[HttpGet]
+		[Route("GetTransactions")]
+		public async Task<IActionResult> GetTransactions()
+		{
+			return await _accountService.GetTransactions();
 		}
 	}
 }

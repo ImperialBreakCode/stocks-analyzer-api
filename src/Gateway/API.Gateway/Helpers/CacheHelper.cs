@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Helpers;
 
 namespace API.Gateway.Helpers
 {

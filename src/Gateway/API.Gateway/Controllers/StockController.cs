@@ -1,5 +1,5 @@
 ﻿using API.Gateway.Domain.DTOs;
-using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

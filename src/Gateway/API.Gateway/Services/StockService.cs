@@ -1,6 +1,7 @@
 ﻿using API.Gateway.Domain.DTOs;
 using API.Gateway.Domain.Interfaces;
-using API.Gateway.Extensions;
+using API.Gateway.Domain.Interfaces.Helpers;
+using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

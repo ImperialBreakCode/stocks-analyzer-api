@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Gateway.Domain.Interfaces
+namespace API.Gateway.Domain.Interfaces.Helpers
 {
     public interface IWritableOptions<out T> : IOptionsSnapshot<T> where T : class, new()
     {

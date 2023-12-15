@@ -1,12 +1,14 @@
 ﻿using API.Gateway.Domain.Entities.Factories;
 using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Helpers;
+using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Extensions;
 using API.Gateway.Infrastructure.Contexts;
-using API.Gateway.Infrastructure.Helpers;
 using API.Gateway.Infrastructure.Init;
 using API.Gateway.Infrastructure.Provider;
 using API.Gateway.Infrastructure.Services.MongoDB;
 using API.Gateway.Services;
+using API.Gateway.Services.RequestService;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -38,6 +40,7 @@ namespace API.Gateway.Helpers
             services.AddTransient<IRequestServiceHelper, RequestServiceHelper>();
             services.AddTransient<ResponseDTOFactory>();
 			services.AddTransient<ICacheHelper, CacheHelper>();
+            AddSwagger(services);
 
 			services.AddHttpContextAccessor();
             services.AddMemoryCache();
@@ -99,7 +102,7 @@ namespace API.Gateway.Helpers
 			);
 		}
 
-		public static void AddSwaggerGen(IServiceCollection services)
+		public static void AddSwagger(IServiceCollection services)
 		{
 			services.AddSwaggerGen(options =>
 			{

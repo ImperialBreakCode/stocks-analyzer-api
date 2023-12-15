@@ -1,5 +1,6 @@
 ﻿using API.Gateway.Domain.Entities.MongoDBEntities;
 using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Helpers;
 using Serilog;
 using System.Text;
 

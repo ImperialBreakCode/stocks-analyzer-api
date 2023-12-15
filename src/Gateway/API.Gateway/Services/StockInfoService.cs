@@ -1,4 +1,5 @@
 ﻿using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -34,6 +35,5 @@ namespace API.Gateway.Services
 		{
 			return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["StockAPI"]}/Stock/monthly/{companyName}");
 		}
-
 	}
 }

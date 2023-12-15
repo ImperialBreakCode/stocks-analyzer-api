@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
-namespace API.Gateway.Domain.Interfaces
+namespace API.Gateway.Domain.Interfaces.Helpers
 {
     public interface ICacheHelper
     {
