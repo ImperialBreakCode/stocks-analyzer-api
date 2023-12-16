@@ -45,12 +45,8 @@ namespace API.Accounts.Controllers
             {
                 return StatusCode(StatusCodes.Status201Created, response);
             }
-            else if (response == ResponseMessages.WalletAlreadyExists)
-            {
-                return BadRequest(response);
-            }
 
-            return NotFound(response);
+            return this.ParseAndReturnMessage(response);
         }
 
         [HttpGet]
