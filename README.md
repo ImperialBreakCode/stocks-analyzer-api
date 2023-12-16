@@ -127,6 +127,7 @@
 
     - **Input:** **`FinalizeTransactionDTO`** in the request body.
     - **Description:** Completes a transaction based on the information provided in the **`FinalizeTransactionDTO`**. Returns a 200 OK status if the transaction is completed successfully; otherwise, returns a 404 Not Found status with an appropriate error message if the user wallet is not found.
+    - **Note:** This route is only used by the settlement microservice
 
     ***<code style="color:#5295ff;">GET /api/Transaction/GetTransactionsByUsername/{username}</code>***
 
