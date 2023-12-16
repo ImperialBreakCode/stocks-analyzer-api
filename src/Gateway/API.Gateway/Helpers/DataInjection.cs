@@ -39,7 +39,10 @@ namespace API.Gateway.Helpers
             services.AddTransient<IRequestService, RequestService>();
             services.AddTransient<IRequestServiceHelper, RequestServiceHelper>();
             services.AddTransient<ResponseDTOFactory>();
+			services.AddTransient<RequestFactory>();
+			services.AddTransient<IRequestManager, RequestManager>();
 			services.AddTransient<ICacheHelper, CacheHelper>();
+
             AddSwagger(services);
 
 			services.AddHttpContextAccessor();

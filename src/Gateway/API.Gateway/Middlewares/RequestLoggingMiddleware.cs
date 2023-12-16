@@ -9,35 +9,17 @@ namespace API.Gateway.Middleware
     public class RequestLoggingMiddleware
 	{
 		private readonly RequestDelegate _next;
-		private readonly IJwtTokenParser _jwtTokenParser;
-		private readonly IRequestService _requestService;
+		private readonly IRequestManager _requestManager;
 
-		public RequestLoggingMiddleware(RequestDelegate next, IJwtTokenParser jwtTokenParser, IRequestService requestService)
+		public RequestLoggingMiddleware(RequestDelegate next, IRequestManager requestManager)
 		{
 			_next = next;
-			_jwtTokenParser = jwtTokenParser;
-			_requestService = requestService;
+			_requestManager = requestManager;
 		}
 
 		public async Task Invoke(HttpContext context)
 		{
-			DateTime dateTime = DateTime.UtcNow.AddHours(2);
-			string controller = context.GetRouteData().Values["controller"]?.ToString();
-			string ip = context.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? context.Connection.RemoteIpAddress?.ToString();
-			string username = _jwtTokenParser.GetUsernameFromToken();
-			string route = context.GetRouteData().Values["action"]?.ToString();
-
-
-			Request request = new Request
-			{
-				DateTime = dateTime,
-				Controller = controller,
-				Ip = ip,
-				Username = username,
-				Route = route
-			};
-
-			_requestService.Create(request);
+			await _requestManager.Invoke(context);
 
 			Log.Information("=============================================================================================");
 			Log.Information("Incoming Request: {RequestMethod} {RequestPath}", context.Request.Method, context.Request.Path);
@@ -76,11 +58,11 @@ namespace API.Gateway.Middleware
 					{
 						Log.Information("Response Body: {ResponseBody}", FormatJsonHelper.FormatJson(responseBody));
 					}
+					responseBodyStream.Seek(0, SeekOrigin.Begin);
+					await responseBodyStream.CopyToAsync(originalResponseBody);
 				}
-
 				context.Response.Body = originalResponseBody;
 			}
-
 		}
 	}
 }
