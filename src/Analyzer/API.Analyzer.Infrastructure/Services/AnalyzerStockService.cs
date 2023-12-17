@@ -214,7 +214,7 @@ namespace API.Analyzer.Infrastructure.Services
                                     var stockData = JsonConvert.DeserializeObject<StockData>(stockJsonContent);
 
                                     decimal closePrice = (decimal)stockData.Close;
-                                    decimal purchasePrice = shareValue;
+                                    decimal purchasePrice = shareValue * -1;
 
                                     if (purchasePrice != 0)
                                     {
@@ -305,6 +305,11 @@ namespace API.Analyzer.Infrastructure.Services
 
                         foreach (var transaction in transactions)
                         {
+                            if(transaction.TotalAmount > 0 || transaction.StockName != symbol)
+                            {
+                                continue;
+                            }
+
                             decimal totalAmount = transaction.TotalAmount;
                             int totalQuantity = transaction.Quantity;
 
@@ -321,7 +326,7 @@ namespace API.Analyzer.Infrastructure.Services
                                     var stockData = JsonConvert.DeserializeObject<StockData>(stockJsonContent);
 
                                     decimal closePrice = (decimal)stockData.Close;
-                                    decimal purchasePrice = shareValue;
+                                    decimal purchasePrice = shareValue * -1;
 
                                     if (purchasePrice != 0)
                                     {
