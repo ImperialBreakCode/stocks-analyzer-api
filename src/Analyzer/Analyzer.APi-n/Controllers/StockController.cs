@@ -25,7 +25,7 @@ namespace Analyzer.APi.Controllers
                 {
                     return Ok(jsonContent);
                 }
-                return StatusCode(500, "User profile not found");
+                return StatusCode(404, "User profile not found");
             
         }
 
@@ -55,37 +55,64 @@ namespace Analyzer.APi.Controllers
             }
         }
 
+        //[HttpGet("PercentageChange/{username}/{symbol}/{type}")]
+        //public async Task<ActionResult<decimal?>> GetInvestmentPercentageChange(string username,string symbol,string type)
+        //{
+        //    try
+        //    {
+        //        decimal? shareValue = await service.GetShareValue(username);
+
+        //        if (shareValue.HasValue)
+        //        {
+        //            decimal? percentageGainFormattedNumber = await service.CalculateInvestmentPercentageGain(symbol,type, shareValue.Value);
+
+        //            if (percentageGainFormattedNumber.HasValue)
+        //            {
+        //                return Ok(percentageGainFormattedNumber.Value);
+        //            }
+        //            else
+        //            {
+        //                return NotFound("Unable to calculate investment percentage gain.");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return NotFound("Unable to retrieve share value.");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error in GetInvestmentPercentageChange: {ex.Message}");
+        //        return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        //    }
+        //}
+
         [HttpGet("PercentageChange/{username}/{symbol}/{type}")]
-        public async Task<ActionResult<decimal?>> GetInvestmentPercentageChange(string username,string symbol,string type)
+        public async Task<ActionResult<List<decimal>>> PersentageChange(string username, string symbol, string type)
         {
             try
             {
-                decimal? shareValue = await service.GetShareValue(username);
+                List<decimal> investmentPercentageGains = await service.PersentageChange(username, symbol, type);
 
-                if (shareValue.HasValue)
+                if (investmentPercentageGains.Count > 0)
                 {
-                    decimal? investmentPercentageGain = await service.CalculateInvestmentPercentageGain(symbol,type, shareValue.Value);
-
-                    if (investmentPercentageGain.HasValue)
-                    {
-                        return Ok(investmentPercentageGain.Value);
-                    }
-                    else
-                    {
-                        return NotFound("Unable to calculate investment percentage gain.");
-                    }
+                    return Ok(investmentPercentageGains);
                 }
                 else
                 {
-                    return NotFound("Unable to retrieve share value.");
+                    return NotFound("Unable to calculate investment percentage gains.");
                 }
+            }
+            catch (HttpRequestException)
+            {
+                return StatusCode(500, "Internal Server Error: Unable to retrieve data from external services.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in GetInvestmentPercentageChange: {ex.Message}");
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+
 
         [HttpGet("CalculateAverageProfitability/{username}/{symbol}/{type}")]
         public async Task<ActionResult<decimal?>> CalculateAverageProfitability(string username, string symbol, string type)
