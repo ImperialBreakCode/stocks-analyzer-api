@@ -2,6 +2,6 @@
 {
     public interface IEmailConfirmation
     {
-        void SendEmail(string email, string userId);
+        bool SendEmail(string email, string userId);
     }
 }

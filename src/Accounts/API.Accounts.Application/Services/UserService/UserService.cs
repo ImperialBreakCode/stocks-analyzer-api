@@ -88,9 +88,13 @@ namespace API.Accounts.Application.Services.UserService
                 };
 
                 context.Users.Insert(user);
-                context.Commit();
 
-                _emailConfirmation.SendEmail(user.Email, user.Id);
+                if (!_emailConfirmation.SendEmail(user.Email, user.Id))
+                {
+                    return ResponseMessages.UserBadEmailSyntax;
+                }
+
+                context.Commit();
             }
 
             return result;
