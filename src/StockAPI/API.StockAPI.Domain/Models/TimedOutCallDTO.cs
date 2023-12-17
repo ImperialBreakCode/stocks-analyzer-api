@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.StockAPI.Domain.Models
 {
-    public class TimedOutCall
+    public class TimedOutCallDTO
     {
         public string? Date { get; set; }
         public string? Query { get; set; }

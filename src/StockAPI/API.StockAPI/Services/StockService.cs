@@ -1,5 +1,6 @@
 ﻿using API.StockAPI.Domain.InterFaces;
 using API.StockAPI.Domain.Models;
+using API.StockAPI.Infrastructure.Interfaces;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -8,13 +9,16 @@ namespace API.StockAPI.Services
 {
     public class StockService : IStockService
     {
+        private readonly IStockTypesConfigServices _configServices;
+        public StockService(IStockTypesConfigServices configServices)
+        {
+            _configServices = configServices;
+        }
         public async Task<StockDataDTO> GetStockFromResponse(string symbol, string response, string type)
         {
-            int skipValue = 2;
-            if(type == "current")
-            {
-                skipValue = 1;
-            }
+            var stockTypesConfig = _configServices.GetStockTypesConfig(type);
+
+            int skipValue = stockTypesConfig.SkipValue;
 
             var csvLine = response.Split(Environment.NewLine).Skip(skipValue).ToList().First();
 
@@ -25,29 +29,10 @@ namespace API.StockAPI.Services
 
         public async Task<IEnumerable<StockDataDTO>> GetStockList(string symbol, string response, string type)
         {
-            int skipValue = 0;
-            int entriesCount = 0;
-            switch (type)
-            {
-                case "current":
-                    skipValue = 1;
-                    entriesCount = 7;
-                    break;
-                case "daily":
-                    skipValue = 2;
-                    entriesCount = 7;
-                    break;
-                case "weekly":
-                    skipValue = 2;
-                    entriesCount = 3;
-                    break;
-                case "monthly":
-                    skipValue = 2;
-                    entriesCount = 3;
-                    break;
-                default:
-                    break;
-            }
+            var stockTypesConfig = _configServices.GetStockTypesConfig(type);
+
+            int skipValue = stockTypesConfig.SkipValue;
+            int entriesCount = stockTypesConfig.EntriesCount;
 
             var data = response.Split(Environment.NewLine).Skip(skipValue);
             var result = new Collection<StockDataDTO>();
