@@ -12,7 +12,7 @@ namespace API.StockAPI.Infrastructure.Interfaces
         Task<IEnumerable<TimedOutCall>> GetFailedCallsFromDB();
         Task<IEnumerable<TimedOutCall>> GetFailedCallsFromDBByQuery(string call);
         Task<TimedOutCall> InsertFailedCallInDB(string symbol, string? call, string type);
-        Task<StockData?> RecallFailedCall(TimedOutCall call);
+        Task<StockDataDTO?> RecallFailedCall(TimedOutCall call);
         void DeleteFailedCallInDB(TimedOutCall call);
     }
 }

@@ -19,7 +19,7 @@ namespace API.StockAPI.Infrastructure.Services
             _context = context;
         }
 
-        public async Task<StockData> GetStockFromDB(string symbol, string type)
+        public async Task<StockDataDTO> GetStockFromDB(string symbol, string type)
         {
             var date = "";
             var table = "";
@@ -47,13 +47,13 @@ namespace API.StockAPI.Infrastructure.Services
             using (var connection = _context.CreateConnection())
             {
                 connection.Open();
-                var stock = await connection.QueryFirstOrDefaultAsync<StockData>(query, parameters);
+                var stock = await connection.QueryFirstOrDefaultAsync<StockDataDTO>(query, parameters);
                 connection.Close();
                 return stock;
             }
         }
 
-        public async Task<StockData> InsertStockInDB(StockData data, string type)
+        public async Task<StockDataDTO> InsertStockInDB(StockDataDTO data, string type)
         {
             var table = "";
 
@@ -83,7 +83,7 @@ namespace API.StockAPI.Infrastructure.Services
             return data;
         }
 
-        public DynamicParameters AssignParameters(StockData data)
+        public DynamicParameters AssignParameters(StockDataDTO data)
         {
             var parameters = new DynamicParameters();
 
@@ -100,7 +100,7 @@ namespace API.StockAPI.Infrastructure.Services
 
         private string GetLastBusinessDayOfLastWeek()
         {
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.UtcNow;
 
             DateTime lastWeekEndDate = currentDate.AddDays(-((int)currentDate.DayOfWeek + 1));
 
@@ -110,7 +110,7 @@ namespace API.StockAPI.Infrastructure.Services
         }
         private string GetLastBusinessDayOfLastMonth()
         {
-            var lastDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month-1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month-1));
+            var lastDayOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month-1, DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month-1));
 
             if (lastDayOfMonth.DayOfWeek == DayOfWeek.Sunday)
             {

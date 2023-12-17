@@ -79,5 +79,33 @@ namespace API.StockAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet]
+        [Route("stocks/{type}/{symbol}")]
+        public async Task<IActionResult> GetStockList(string symbol, string type)
+        {
+            if (symbol == "" || type == "")
+            {
+                return BadRequest();
+            }
+
+            var query = _externalRequestServices.QueryStringGenerator(symbol, type);
+            if (string.IsNullOrEmpty(query))
+            {
+                return BadRequest();
+            }
+
+            var response = await _externalRequestServices.ExecuteQuery(symbol, query, type);
+
+            var data = await _externalRequestServices.GetDataFromQuery(response);
+            if (string.IsNullOrEmpty(data))
+            {
+                return BadRequest();
+            }
+
+            var result = await _stockServices.GetStockList(symbol, data, type);
+
+            return Ok(result);
+        }
     }
 }

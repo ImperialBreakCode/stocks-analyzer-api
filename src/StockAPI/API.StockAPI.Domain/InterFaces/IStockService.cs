@@ -9,6 +9,7 @@ namespace API.StockAPI.Domain.InterFaces
 {
     public interface IStockService
     {
-        public Task<StockData> GetStockFromResponse(string symbol, string? data, string type);
+        public Task<StockDataDTO> GetStockFromResponse(string symbol, string? data, string type);
+        public Task<IEnumerable<StockDataDTO>> GetStockList(string symbol, string response, string type);
     }
 }
