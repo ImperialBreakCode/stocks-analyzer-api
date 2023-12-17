@@ -1,60 +1,65 @@
-﻿using API.Gateway.Domain.Interfaces;
-using API.Gateway.Services;
+﻿using API.Gateway.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Gateway.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class AnalyzerController : Controller
 	{
 		private readonly IAnalyzerService _analyzerService;
-        public AnalyzerController(IAnalyzerService service)
-        {
-            _analyzerService = service;
-        }
-
-		[Authorize]
-		[HttpGet]
-		[Route("PortfolioSummary")]
-		public async Task<IActionResult> PortfolioSummary()
+		public AnalyzerController(IAnalyzerService service)
 		{
-			return await _analyzerService.PortfolioRisk();
+			_analyzerService = service;
 		}
 
 		[Authorize]
 		[HttpGet]
-		[Route("CurrentProfitability")]
-		public async Task<IActionResult> CurrentProfitability()
+		[Route("PortfolioSummary/{walletId}")]
+		public async Task<IActionResult> PortfolioSummary(string walletId)
 		{
-			return await _analyzerService.CurrentProfitability();
+			return await _analyzerService.PortfolioSummary(walletId);
 		}
 
 		[Authorize]
 		[HttpGet]
-		[Route("PercentageChange")]
-		public async Task<IActionResult> PercentageChange()
+		[Route("CurrentBalanceInWallet/{walletId}")]
+		public async Task<IActionResult> CurrentBalanceInWallet(string walletId)
 		{
-			return await _analyzerService.PercentageChange();
+			return await _analyzerService.CurrentBalanceInWallet(walletId);
 		}
 
 		[Authorize]
 		[HttpGet]
-		[Route("PortfolioRisk")]
-		public async Task<IActionResult> PortfolioRisk()
+		[Route("GetUserStocksInWallet/{walletId}")]
+		public async Task<IActionResult> GetUserStocksInWallet(string walletId)
 		{
-			return await _analyzerService.PortfolioRisk();
+			return await _analyzerService.GetUserStocksInWallet(walletId);
 		}
 
 		[Authorize]
 		[HttpGet]
-		[Route("DailyProfitabilityChanges")]
-		public async Task<IActionResult> DailyProfitabilityChanges()
+		[Route("CurrentProfitability/{username}/{symbol}/{type}")]
+		public async Task<IActionResult> CurrentProfitability(string username, string symbol, string type)
 		{
-			return await _analyzerService.DailyProfitabilityChanges();
+			return await _analyzerService.CurrentProfitability(username, symbol, type);
 		}
 
+		[Authorize]
+		[HttpGet]
+		[Route("PercentageChange/{username}/{symbol}/{type}")]
+		public async Task<IActionResult> PercentageChange(string username, string symbol, string type)
+		{
+			return await _analyzerService.PercentageChange(username, symbol, type);
+		}
+
+		[Authorize]
+		[HttpGet]
+		[Route("CalculateAverageProfitability/{username}/{symbol}/{type}")]
+		public async Task<IActionResult> CalculateAverageProfitability(string username, string symbol, string type)
+		{
+			return await _analyzerService.CalculateAverageProfitability(username, symbol, type);
+		}
 	}
 }

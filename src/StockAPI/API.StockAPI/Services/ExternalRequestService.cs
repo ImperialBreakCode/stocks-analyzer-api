@@ -44,9 +44,7 @@ namespace API.StockAPI.Services
 
         public async Task<string?> GetDataFromQuery(HttpResponseMessage response)
         {
-            string data = await response.Content.ReadAsStringAsync();
-
-            return data;
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

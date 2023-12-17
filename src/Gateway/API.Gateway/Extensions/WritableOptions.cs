@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Helpers;
 
 namespace API.Gateway.Extensions
 {
-	public class WritableOptions<T> : IWritableOptions<T> where T : class, new()
+    public class WritableOptions<T> : IWritableOptions<T> where T : class, new()
 	{
 		private readonly IWebHostEnvironment _environment;
 		private readonly IOptionsMonitor<T> _options;

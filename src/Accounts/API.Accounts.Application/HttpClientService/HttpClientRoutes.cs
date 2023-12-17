@@ -16,7 +16,7 @@ namespace API.Accounts.Application.HttpClientService
 
         public string GetCurrentStockInfoRoute(string stockName)
         {
-            return $"{_settingsManager.ExternalHosts.StockApiHost}/api/Stock/Current/{stockName}";
+            return $"{_settingsManager.ExternalHosts.StockApiHost}/api/Stock/current/{stockName}";
         }
     }
 }

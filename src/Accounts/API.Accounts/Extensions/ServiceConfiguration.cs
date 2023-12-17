@@ -9,7 +9,7 @@ namespace API.Accounts.Extensions
         public static void AddAccountServicesConfiguration(this IServiceCollection services)
         {
             services
-                .InjectData()
+                .AddApplicationData()
                 .AddHttpClient()
                 .AddHttpClientServices<HttpServiceDecorator>()
                 .AddSettings<AccountSettingsAdapter>()
@@ -17,17 +17,6 @@ namespace API.Accounts.Extensions
                 .AddAccountServices()
                 .AddAccountAuthentication()
                 .AddRabbitMQServices();
-        }
-
-        public static IServiceCollection InjectData(this IServiceCollection services)
-        {
-            services.AddApplicationData()
-                // Sql Db
-                //.UseSqlDatabase();
-                // memory db
-                .UseMemoryMockupDb();
-
-            return services;
         }
 
         public static IServiceCollection AddBackgroundServices(this IServiceCollection services)

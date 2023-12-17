@@ -36,9 +36,11 @@ namespace API.Accounts.Implementations
         public EmailConfiguration EmailConfiguration 
             => _accountSettings.CurrentValue.EmailConfig;
 
+        public string EmailConfirmationLink => _accountSettings.CurrentValue.EmailConfirmationLink;
 
         public string AccountDbConnection 
             => _databaseConnections.Value.AccountsDbContextConnection;
+
 
         public void Dispose()
         {

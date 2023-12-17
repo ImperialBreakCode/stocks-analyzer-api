@@ -5,6 +5,7 @@
         public decimal TotalAmount { get; set; }
         public int Quantity { get; set; }
         public DateTime Date { get; set; }
+        public string StockName { get; set; }
         public string StockId { get; set; }
         public string Walletid { get; set; }
     }

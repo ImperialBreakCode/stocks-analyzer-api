@@ -33,6 +33,7 @@
                 case ResponseMessages.NoStocksAddedForPurchaseSale:
                 case ResponseMessages.NotEnoughBalance:
                 case ResponseMessages.StockNotEnoughStocksToSale:
+                case ResponseMessages.UserBadEmailSyntax:
                     return ResponseType.BadRequest;
 
                 default:

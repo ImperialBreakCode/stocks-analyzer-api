@@ -1,12 +1,11 @@
 ﻿using API.Gateway.Domain.DTOs;
-using API.Gateway.Domain.Interfaces;
-using API.Gateway.Services;
+using API.Gateway.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Gateway.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class WalletController : Controller
 	{
@@ -41,12 +40,12 @@ namespace API.Gateway.Controllers
 			return await _walletService.DeleteWallet();
 		}
 
-		//[Authorize]
-		//[HttpGet]
-		//[Route("GetWallet/{walletId}")]
-		//public async Task<IActionResult> GetWallet(string walletId)
-		//{
-		//	return await _walletService.GetWallet(walletId);
-		//}
+		[Authorize]
+		[HttpGet]
+		[Route("GetWallet/{walletId}")]
+		public async Task<IActionResult> GetWallet(string walletId)
+		{
+			return await _walletService.GetWallet(walletId);
+		}
 	}
 }

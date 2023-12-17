@@ -116,7 +116,8 @@ namespace API.Accounts.Application.Services.TransactionService
                         Quantity = t.Quantity,
                         TotalAmount = t.TotalAmount,
                         Walletid = walletId,
-                        StockId = t.StockId
+                        StockId = t.StockId,
+                        StockName = context.Stocks.GetOneById(t.StockId)!.StockName
                     })
                     .ToList();
             }
