@@ -49,8 +49,8 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 			var finalizeTransactionResponseDTOs = MapFailedTransactionsToFinalizeDTOs(failedTransactionEntities);
 			foreach (var finalizeTransactionResponseDTO in finalizeTransactionResponseDTOs)
 			{
-				//var response = await SendFinalizingTransactionRequest(finalizeTransactionResponseDTO);
-				var response = new HttpResponseMessage(HttpStatusCode.OK); //TODO: Hardcoded for testing!
+				//var response = new HttpResponseMessage(HttpStatusCode.OK); //TODO: Hardcoded for testing!
+				var response = await SendFinalizingTransactionRequest(finalizeTransactionResponseDTO);
 				if (response != null && response.IsSuccessStatusCode)
 				{
 					var updatedFinalizeTransactionResponseDTO = UpdateStockInfoMessageToSuccessful(finalizeTransactionResponseDTO);

@@ -2,6 +2,7 @@
 using API.Settlement.Domain.DTOs.Response.AvailabilityDTOs;
 using API.Settlement.Domain.Enums;
 using API.Settlement.Domain.Interfaces.CommissionInterfaces;
+using API.Settlement.Domain.Interfaces.HelpersInterfaces;
 using API.Settlement.Domain.Interfaces.MapperManagementInterfaces;
 using API.Settlement.Domain.Interfaces.TransactionInterfaces.OrderProcessingInterfaces;
 using Newtonsoft.Json;
@@ -13,14 +14,18 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IMapperManagementWrapper _mapperManagementWrapper;
 		private readonly IUserCommissionCalculatorHelper _userCommissionCalculatorHelper;
+		private readonly IConstantsHelperWrapper _infrastructureConstants;
+
 
 		public SellService(IHttpClientFactory httpClientFactory,
 						   IMapperManagementWrapper mapperManagementWrapper,
-						   IUserCommissionCalculatorHelper userCommissionCalculatorHelper)
+						   IUserCommissionCalculatorHelper userCommissionCalculatorHelper,
+						   IConstantsHelperWrapper infrastructureConstants)
 		{
 			_httpClientFactory = httpClientFactory;
 			_mapperManagementWrapper = mapperManagementWrapper;
 			_userCommissionCalculatorHelper = userCommissionCalculatorHelper;
+			_infrastructureConstants = infrastructureConstants;
 		}
 
 		public async Task<AvailabilityResponseDTO> SellStocks(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO)
@@ -36,8 +41,8 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 			var availabilityStockInfoResponseDTOs = new List<AvailabilityStockInfoResponseDTO>();
 			foreach (var stockInfoRequestDTO in finalizeTransactionRequestDTO.StockInfoRequestDTOs)
 			{
-				//var stockDTO = await GetStockDTO(_infrastructureConstants.GETStockRoute(stockInfoRequestDTO.StockId));
-				var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" }; //TODO: Hardcoded for testing!
+				var stockDTO = await GetStockDTO(_infrastructureConstants.RouteConstants.GETStockRoute(stockInfoRequestDTO.StockId));//TODO: ?
+				//var stockDTO = new StockDTO { Quantity = 1, StockId = "1", StockName = "mc", WalletId = "1" }; //TODO: Hardcoded for testing!
 
 				decimal totalPriceIncludingCommission = _userCommissionCalculatorHelper.CalculatePriceAfterAddingSaleCommission(stockInfoRequestDTO.TotalPriceExcludingCommission, finalizeTransactionRequestDTO.UserRank);
 
