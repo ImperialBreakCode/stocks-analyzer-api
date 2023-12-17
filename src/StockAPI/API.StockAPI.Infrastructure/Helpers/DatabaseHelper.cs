@@ -7,7 +7,7 @@ namespace API.StockAPI.Infrastructure.Helpers
     {
         private const string CREATE_WEEKLY = "CREATE TABLE IF NOT EXISTS Weekly (Symbol TEXT , Date TEXT, Open REAL, Low REAL, High REAL, Close REAL, Volume INTEGER)";
         private const string CREATE_MONTHLY = "CREATE TABLE IF NOT EXISTS Monthly (Symbol TEXT , Date TEXT, Open REAL, Low REAL, High REAL, Close REAL, Volume INTEGER)";
-        private const string CREATE_TIMED_OUT_CALLS = "CREATE TABLE IF NOT EXISTS Weekly (Symbol TEXT , Date TEXT, Open REAL, Low REAL, High REAL, Close REAL, Volume INTEGER)";
+        private const string CREATE_TIMED_OUT_CALLS = "CREATE TABLE IF NOT EXISTS TimedOutCalls (Date TEXT NOT NULL, Symbol TEXT NOT NULL, Call TEXT NOT NULL, Type TEXT NOT NULL)";
         public static void EnsureDatabaseExists(string connectionString)
         {
             using (SqliteConnection connection = new SqliteConnection(connectionString))

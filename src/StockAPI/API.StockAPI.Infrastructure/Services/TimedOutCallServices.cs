@@ -87,7 +87,7 @@ namespace API.StockAPI.Infrastructure.Services
             return data;
         }
 
-        public async Task<StockData?> RecallFailedCall(TimedOutCall call)
+        public async Task<StockDataDTO?> RecallFailedCall(TimedOutCall call)
         {
             if (!GetFailedCallsFromDBByQuery(call.Query).Result.Any())
             {
