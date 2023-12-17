@@ -66,11 +66,10 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 				try
 				{
 					response = await httpClient.PostAsync(_infrastructureConstants.RouteConstants.POSTCompleteTransactionRoute(finalizeTransactionResponseDTO), content);
-					//response = new HttpResponseMessage(HttpStatusCode.BadRequest);
 				}
 				catch (Exception ex)
 				{
-					response = new HttpResponseMessage(HttpStatusCode.BadGateway);
+					response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
 				}
 				return response;
 			}
@@ -89,14 +88,6 @@ namespace API.Settlement.Application.Services.TransactionServices.TransactionCom
 			var transactions = _mapperManagementWrapper.TransactionMapper.MapToTransactionEntities(finalizeTransactionResponseDTO);
 			_transactionResponseHandlerService.HandleTransactionResponse(response, transactions);
 		}
-
-
-
-
-
-
-
-
 
 	}
 }
