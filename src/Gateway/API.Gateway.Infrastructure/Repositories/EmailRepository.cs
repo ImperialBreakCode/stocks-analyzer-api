@@ -5,13 +5,13 @@ using Dapper;
 using Serilog;
 using System.Data;
 
-namespace API.Gateway.Infrastructure.Provider
+namespace API.Gateway.Infrastructure.Repositories
 {
-    public class EmailService : IEmailService
+	public class EmailRepository : IEmailRepository
 	{
 		private readonly SQLiteContext _context;
 
-		public EmailService(SQLiteContext context)
+		public EmailRepository(SQLiteContext context)
 		{
 			_context = context;
 		}

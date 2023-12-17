@@ -16,9 +16,9 @@ namespace API.Gateway.Controllers
 	[ApiController]
 	public class WebSocketController : Controller
 	{
-		private readonly IWebSocketService _webSocketService;
+		private readonly IWebSocketHandler _webSocketService;
 
-		public WebSocketController(IWebSocketService webSocketService)
+		public WebSocketController(IWebSocketHandler webSocketService)
 		{
 			_webSocketService = webSocketService;
 		}

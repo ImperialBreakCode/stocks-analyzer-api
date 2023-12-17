@@ -1,10 +1,4 @@
-﻿using API.Gateway.Domain.DTOs;
-using API.Gateway.Domain.Entities.MongoDBEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using API.Gateway.Domain.Entities.MongoDBEntities;
 
 namespace API.Gateway.Domain.Entities.Factories
 {

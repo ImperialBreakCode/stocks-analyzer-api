@@ -1,22 +1,22 @@
-﻿using API.Gateway.Infrastructure.Contexts;
-using API.Gateway.Domain.DTOs;
+﻿using API.Gateway.Domain.DTOs;
+using API.Gateway.Domain.Entities.SQLiteEntities;
+using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Helpers;
+using API.Gateway.Domain.Interfaces.Services;
+using API.Gateway.Infrastructure.Contexts;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Serilog;
-using API.Gateway.Domain.Entities.SQLiteEntities;
-using API.Gateway.Domain.Interfaces;
-using API.Gateway.Domain.Interfaces.Services;
-using API.Gateway.Domain.Interfaces.Helpers;
 
 namespace API.Gateway.Infrastructure.Init
 {
-    public class SQLiteDBInit : IDatabaseInit
+	public class SQLiteDBInit : IDatabaseInit
 	{
 		private readonly IHttpClient _httpClient;
-		private readonly IEmailService _service;
+		private readonly IEmailRepository _service;
 		private readonly SQLiteContext _context;
-		public SQLiteDBInit(IHttpClient httpClient, IEmailService emailService, SQLiteContext context)
+		public SQLiteDBInit(IHttpClient httpClient, IEmailRepository emailService, SQLiteContext context)
 		{
 			_httpClient = httpClient;
 			_service = emailService;

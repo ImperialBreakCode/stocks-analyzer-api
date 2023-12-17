@@ -1,6 +1,4 @@
-﻿using API.Gateway.Domain.Entities;
-using API.Gateway.Domain.Interfaces;
-using API.Gateway.Infrastructure.Services.MongoDB;
+﻿using API.Gateway.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Gateway.Controllers

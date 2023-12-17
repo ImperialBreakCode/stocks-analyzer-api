@@ -8,11 +8,11 @@ using System.Text;
 
 namespace API.Gateway.Services
 {
-    public class WebSocketService : IWebSocketService
+    public class WebSocketHandler : IWebSocketHandler
 	{
 		private readonly IWritableOptions<JwtOptionsConfiguration> _options;
 
-		public WebSocketService(IWritableOptions<JwtOptionsConfiguration> options)
+		public WebSocketHandler(IWritableOptions<JwtOptionsConfiguration> options)
 		{
 			_options = options;
 		}

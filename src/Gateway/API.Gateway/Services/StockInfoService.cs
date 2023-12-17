@@ -10,6 +10,7 @@ namespace API.Gateway.Services
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
+
 		public StockInfoService(IHttpClient httpClient, IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts)
 		{
 			_httpClient = httpClient;

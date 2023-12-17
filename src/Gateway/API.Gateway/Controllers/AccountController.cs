@@ -32,7 +32,7 @@ namespace API.Gateway.Controllers
 			return await _accountService.Login(userDTO);
 		}
 
-		//[Authorize]
+		[Authorize]
 		[HttpGet]
 		[Route("UserInformation/{username}")]
 		public async Task<IActionResult> UserInformation(string username)

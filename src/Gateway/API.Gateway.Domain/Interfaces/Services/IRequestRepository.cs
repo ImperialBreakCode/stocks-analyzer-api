@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 namespace API.Gateway.Domain.Interfaces
 {
-    public interface IRequestServiceHelper
+    public interface IRequestRepository
     {
         Task Create(Request request);
         Task<List<Request>?> FindByQuery(FilterDefinition<Request> query);

@@ -40,12 +40,12 @@ namespace API.Gateway.Controllers
 			return await _walletService.DeleteWallet();
 		}
 
-		//[Authorize]
-		//[HttpGet]
-		//[Route("GetWallet/{walletId}")]
-		//public async Task<IActionResult> GetWallet(string walletId)
-		//{
-		//	return await _walletService.GetWallet(walletId);
-		//}
+		[Authorize]
+		[HttpGet]
+		[Route("GetWallet/{walletId}")]
+		public async Task<IActionResult> GetWallet(string walletId)
+		{
+			return await _walletService.GetWallet(walletId);
+		}
 	}
 }

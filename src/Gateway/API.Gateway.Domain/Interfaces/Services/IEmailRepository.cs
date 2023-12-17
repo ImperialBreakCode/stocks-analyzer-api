@@ -2,7 +2,7 @@
 
 namespace API.Gateway.Domain.Interfaces.Services
 {
-    public interface IEmailService
+    public interface IEmailRepository
     {
         Task Create(Email email);
         bool Exists(string email);

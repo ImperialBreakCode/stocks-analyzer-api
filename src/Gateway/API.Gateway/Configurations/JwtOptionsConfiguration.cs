@@ -1,6 +1,4 @@
-﻿using API.Gateway.Domain.DTOs;
-
-namespace API.Gateway.Settings
+﻿namespace API.Gateway.Settings
 {
 	public class JwtOptionsConfiguration
 	{

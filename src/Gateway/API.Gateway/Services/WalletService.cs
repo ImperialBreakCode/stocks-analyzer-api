@@ -43,5 +43,11 @@ namespace API.Gateway.Services
 
 			return await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/DeleteWallet/{username}");
 		}
+
+		public async Task<IActionResult> GetWallet(string walletId)
+		{
+
+			return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/GetWallet/{walletId}");
+		}
 	}
 }

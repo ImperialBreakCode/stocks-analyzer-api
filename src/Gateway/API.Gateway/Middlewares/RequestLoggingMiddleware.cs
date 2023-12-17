@@ -1,12 +1,9 @@
-﻿using API.Gateway.Domain.Entities.MongoDBEntities;
-using API.Gateway.Domain.Interfaces;
-using API.Gateway.Domain.Interfaces.Helpers;
-using Serilog;
+﻿using Serilog;
 using System.Text;
 
 namespace API.Gateway.Middlewares
 {
-    public class RequestLoggingMiddleware
+	public class RequestLoggingMiddleware
 	{
 		private readonly RequestDelegate _next;
 

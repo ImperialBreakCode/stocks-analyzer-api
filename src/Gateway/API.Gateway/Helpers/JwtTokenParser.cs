@@ -1,12 +1,10 @@
 ﻿using API.Gateway.Domain.Interfaces.Helpers;
-using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace API.Gateway.Helpers
 {
-    public class JwtTokenParser : IJwtTokenParser
+	public class JwtTokenParser : IJwtTokenParser
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 

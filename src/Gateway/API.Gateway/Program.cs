@@ -1,4 +1,4 @@
-using API.Gateway.Helpers;
+using API.Gateway.DependancyInjection;
 using API.Gateway.Middlewares;
 using Serilog;
 
@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddOptions();
 
-builder.Services.AddServices();
+builder.Services.AddData();
 builder.Services.InjectAuthentication(config);
 builder.Services.ConfigureAppSettings(config);
 

@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-
-namespace API.Gateway.Domain.Interfaces.Helpers
+﻿namespace API.Gateway.Domain.Interfaces.Helpers
 {
-    public interface ICacheHelper
+	public interface ICacheHelper
     {
         T? Get<T>(string key);
-        void Set<T>(string key, T data, MemoryCacheEntryOptions options);
-    }
+		void Set<T>(string key, T data, int AbsoluteExpInM, int SlidingExpInM);
+	}
 }

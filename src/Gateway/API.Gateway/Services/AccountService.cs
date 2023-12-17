@@ -7,21 +7,18 @@ using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Domain.Responses;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Serilog;
-using System.Net;
-using ThirdParty.Json.LitJson;
 
 namespace API.Gateway.Services
 {
-    public class AccountService : IAccountService
+	public class AccountService : IAccountService
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
 		private readonly IJwtTokenParser _jwtTokenParser;
-		private readonly IEmailService _emailService;
+		private readonly IEmailRepository _emailService;
 		private readonly ResponseDTOFactory _responseDTOFactory;
 		private readonly ICacheHelper _cacheHelper;
 
@@ -29,7 +26,7 @@ namespace API.Gateway.Services
 			IHttpClient httpClient,
 			IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts,
 			IJwtTokenParser jwtTokenParser,
-			IEmailService emailService,
+			IEmailRepository emailService,
 			ResponseDTOFactory responseDTOFactory,
 			ICacheHelper cacheHelper)
 		{
@@ -85,13 +82,8 @@ namespace API.Gateway.Services
 				if (response is OkObjectResult okObjectResult)
 				{
 					var newUser = JsonConvert.DeserializeObject<User>((string)okObjectResult.Value);
-					//var newUser = okObjectResult.Value as User;
-					var cacheOptions = new MemoryCacheEntryOptions
-					{
-						AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15),
-						SlidingExpiration = TimeSpan.FromMinutes(10)
-					};
-					_cacheHelper.Set(cacheKey, newUser, cacheOptions);
+
+					_cacheHelper.Set(cacheKey, newUser, 15, 10);
 				}
 
 				return response;
