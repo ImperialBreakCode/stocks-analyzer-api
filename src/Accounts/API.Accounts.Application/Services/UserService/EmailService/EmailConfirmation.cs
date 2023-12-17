@@ -54,7 +54,7 @@ namespace API.Accounts.Application.Services.UserService.EmailService
 
         private string LoadEmailTemlate(string userId)
         {
-            return string.Format(EmailTemplate.HtmlTemplate, $"https://localhost:5032/api/User/ConfirmUser/{userId}", EmailTemplate.Styles);
+            return string.Format(EmailTemplate.HtmlTemplate, $"{_settingsManager.EmailConfirmationLink}/{userId}", EmailTemplate.Styles);
         }
     }
 }

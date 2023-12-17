@@ -6,6 +6,7 @@ namespace API.Accounts.Application.Settings
     {
         string AccountDbConnection { get; }
 
+        string EmailConfirmationLink { get; }
         ExternalMicroservicesHosts ExternalHosts { get; }
         ICollection<string> AllowedHosts { get; }
         string SecretKey { get; }
