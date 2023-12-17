@@ -1,18 +1,22 @@
 ﻿using API.Gateway.Domain.DTOs;
 using API.Gateway.Domain.Interfaces;
-using API.Gateway.Extensions;
+using API.Gateway.Domain.Interfaces.Helpers;
+using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace API.Gateway.Services
 {
-	public class WalletService : IWalletService
+    public class WalletService : IWalletService
 	{
 		private readonly IHttpClient _httpClient;
 		private readonly MicroserviceHostsConfiguration _microserviceHosts;
 		private readonly IJwtTokenParser _jwtTokenParser;
-		public WalletService(IHttpClient httpClient, IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts, IJwtTokenParser jwtTokenParser)
+
+		public WalletService(IHttpClient httpClient,
+			IOptionsMonitor<MicroserviceHostsConfiguration> microserviceHosts,
+			IJwtTokenParser jwtTokenParser)
 		{
 			_httpClient = httpClient;
 			_microserviceHosts = microserviceHosts.CurrentValue;
@@ -39,10 +43,11 @@ namespace API.Gateway.Services
 
 			return await _httpClient.Delete($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/DeleteWallet/{username}");
 		}
-		//public async Task<IActionResult> GetWallet(string walletId)
-		//{
-		//	return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/GetWallet/{walletId}");
-		//}
 
+		public async Task<IActionResult> GetWallet(string walletId)
+		{
+
+			return await _httpClient.Get($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/GetWallet/{walletId}");
+		}
 	}
 }

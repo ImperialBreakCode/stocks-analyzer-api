@@ -1,4 +1,6 @@
-﻿using API.StockAPI.Domain.Models;
+﻿using API.StockAPI.Domain.Interfaces;
+using API.StockAPI.Domain.Models;
+using API.StockAPI.Domain.Utilities;
 using API.StockAPI.Infrastructure.Context;
 using API.StockAPI.Infrastructure.Interfaces;
 using Dapper;
@@ -14,27 +16,31 @@ namespace API.StockAPI.Infrastructure.Services
     public class ContextServices : IContextServices
     {
         private readonly DapperContext _context;
-        public ContextServices(DapperContext context)
+        private readonly IStockTypesConfigServices _configServices;
+        private readonly IDateCalculator _dateCalculator;
+        private readonly IParametersAssigner _parametersAssigner;
+        public ContextServices(DapperContext context,
+            IStockTypesConfigServices configServices,
+            IDateCalculator dateCalculator,
+            IParametersAssigner parametersAssigner)
         {
             _context = context;
+            _configServices = configServices;
+            _dateCalculator = dateCalculator;
+            _parametersAssigner = parametersAssigner;
         }
 
-        public async Task<StockData> GetStockFromDB(string symbol, string type)
+        public async Task<StockDataDTO> GetStockFromDB(string symbol, string type)
         {
-            var date = "";
-            var table = "";
-            switch (type)
+            var stockTypesConfig = _configServices.GetStockTypesConfig(type);
+
+            var table = stockTypesConfig.Table;
+
+            var date = _dateCalculator.GetLastBusinessDay(type);
+
+            if (string.IsNullOrEmpty(table) || string.IsNullOrEmpty(date))
             {
-                case "weekly":
-                    table = "Weekly";
-                    date = GetLastBusinessDayOfLastWeek();
-                    break;
-                case "monthly":
-                    table = "Monthly";
-                    date = GetLastBusinessDayOfLastMonth();
-                    break;
-                default:
-                    return null;
+                return null;
             }
 
             var query = $"SELECT * FROM {table} WHERE Symbol = @Symbol AND Date = @Date LIMIT 5";
@@ -47,31 +53,26 @@ namespace API.StockAPI.Infrastructure.Services
             using (var connection = _context.CreateConnection())
             {
                 connection.Open();
-                var stock = await connection.QueryFirstOrDefaultAsync<StockData>(query, parameters);
+                var stock = await connection.QueryFirstOrDefaultAsync<StockDataDTO>(query, parameters);
                 connection.Close();
                 return stock;
             }
         }
 
-        public async Task<StockData> InsertStockInDB(StockData data, string type)
+        public async Task<StockDataDTO> InsertStockInDB(StockDataDTO data, string type)
         {
-            var table = "";
+            var stockTypesConfig = _configServices.GetStockTypesConfig(type);
 
-            switch (type)
+            var table = stockTypesConfig.Table;
+
+            if (string.IsNullOrEmpty(table))
             {
-                case "weekly":
-                    table = "Weekly";
-                    break;
-                case "monthly":
-                    table = "Monthly";
-                    break;
-                default:
-                    return null;
+                return null;
             }
 
             var query = $"INSERT INTO {table} (Symbol, Date, Open, High, Low, Close, Volume) VALUES (@Symbol, @Date, @Open, @High, @Low, @Close, @Volume)";
 
-            var parameters = AssignParameters(data);
+            var parameters = _parametersAssigner.AssignParametersToStockDataDTO(data);
 
             using (var connection = _context.CreateConnection())
             {
@@ -81,47 +82,6 @@ namespace API.StockAPI.Infrastructure.Services
             }
 
             return data;
-        }
-
-        public DynamicParameters AssignParameters(StockData data)
-        {
-            var parameters = new DynamicParameters();
-
-            parameters.Add("Symbol", data.Symbol, DbType.String);
-            parameters.Add("Date", data.Date, DbType.String);
-            parameters.Add("Open", data.Open, DbType.Double);
-            parameters.Add("High", data.High, DbType.Double);
-            parameters.Add("Low", data.Low, DbType.Double);
-            parameters.Add("Close", data.Close, DbType.Double);
-            parameters.Add("Volume", data.Volume, DbType.Int32);
-
-            return parameters;
-        }
-
-        private string GetLastBusinessDayOfLastWeek()
-        {
-            var currentDate = DateTime.Now;
-
-            DateTime lastWeekEndDate = currentDate.AddDays(-((int)currentDate.DayOfWeek + 1));
-
-            DateTime lastFriday = lastWeekEndDate.AddDays(-1);
-
-            return lastFriday.ToString("yyyy-MM-dd");
-        }
-        private string GetLastBusinessDayOfLastMonth()
-        {
-            var lastDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month-1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month-1));
-
-            if (lastDayOfMonth.DayOfWeek == DayOfWeek.Sunday)
-            {
-                lastDayOfMonth = lastDayOfMonth.AddDays(-2);
-            }   
-            else if (lastDayOfMonth.DayOfWeek == DayOfWeek.Saturday)
-            {
-                lastDayOfMonth = lastDayOfMonth.AddDays(-1);
-            }
-
-            return lastDayOfMonth.ToString("yyyy-MM-dd");
         }
     }
 }

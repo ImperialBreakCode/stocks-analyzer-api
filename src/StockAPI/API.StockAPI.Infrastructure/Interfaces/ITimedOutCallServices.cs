@@ -9,10 +9,10 @@ namespace API.StockAPI.Infrastructure.Interfaces
 {
     public interface ITimedOutCallServices
     {
-        Task<IEnumerable<TimedOutCall>> GetFailedCallsFromDB();
-        Task<IEnumerable<TimedOutCall>> GetFailedCallsFromDBByQuery(string call);
-        Task<TimedOutCall> InsertFailedCallInDB(string symbol, string? call, string type);
-        Task<StockData?> RecallFailedCall(TimedOutCall call);
-        void DeleteFailedCallInDB(TimedOutCall call);
+        Task<IEnumerable<TimedOutCallDTO>> GetFailedCallsFromDB();
+        Task<IEnumerable<TimedOutCallDTO>> GetFailedCallsFromDBByQuery(string call);
+        Task<TimedOutCallDTO> InsertFailedCallInDB(string symbol, string? call, string type);
+        Task<StockDataDTO?> RecallFailedCall(TimedOutCallDTO call);
+        void DeleteFailedCallInDB(TimedOutCallDTO call);
     }
 }

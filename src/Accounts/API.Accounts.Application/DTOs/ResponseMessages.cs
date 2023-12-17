@@ -9,6 +9,7 @@
         // User
         public const string UserNameAlreadyExists = "User with such username already exists.";
         public const string UserEmailAlreadyExists = "User with such email already exists.";
+        public const string UserBadEmailSyntax = "Bad email address syntax";
         public const string UserNotFound = "User not found";
         public const string UserUpdatedSuccessfully = "The user is updated successfully";
 

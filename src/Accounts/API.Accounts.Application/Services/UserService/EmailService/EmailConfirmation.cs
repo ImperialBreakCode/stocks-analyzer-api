@@ -14,10 +14,18 @@ namespace API.Accounts.Application.Services.UserService.EmailService
             _settingsManager = settingsManager;
         }
 
-        public void SendEmail(string email, string userId)
+        public bool SendEmail(string email, string userId)
         {
-            var mimeMessage = CreateMimeMessage(email, userId);
-            CreateSmtpAndSendMail(mimeMessage);
+            try
+            {
+                var mimeMessage = CreateMimeMessage(email, userId);
+                CreateSmtpAndSendMail(mimeMessage);
+                return true;
+            }
+            catch (SmtpCommandException)
+            {
+                return false;
+            }
         }
 
         private void CreateSmtpAndSendMail(MimeMessage mimeMessage)
@@ -46,7 +54,7 @@ namespace API.Accounts.Application.Services.UserService.EmailService
 
         private string LoadEmailTemlate(string userId)
         {
-            return string.Format(EmailTemplate.HtmlTemplate, $"https://localhost:5032/api/User/ConfirmUser/{userId}", EmailTemplate.Styles);
+            return string.Format(EmailTemplate.HtmlTemplate, $"{_settingsManager.EmailConfirmationLink}/{userId}", EmailTemplate.Styles);
         }
     }
 }
