@@ -2,11 +2,11 @@
 
 namespace API.Accounts.Application.Services.WalletService
 {
-    public class WaitingDeletedWalletIdsLIst : IWaitingDeletedWalletIdsList
+    public class WaitingDeletedWalletIdsList : IWaitingDeletedWalletIdsList
     {
         private readonly ICollection<string> _waitingIds;
 
-        public WaitingDeletedWalletIdsLIst()
+        public WaitingDeletedWalletIdsList()
         {
             _waitingIds = new HashSet<string>();
         }

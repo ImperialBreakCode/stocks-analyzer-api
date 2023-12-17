@@ -1,10 +1,10 @@
-﻿using API.Gateway.Domain.Interfaces;
+﻿using API.Gateway.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Gateway.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 
 	public class StockInfoController : Controller
@@ -17,7 +17,7 @@ namespace API.Gateway.Controllers
 		}
 
 		[HttpGet]
-		[Route("current/{companyName}")]
+		[Route("Current/{companyName}")]
 		public async Task<IActionResult> GetCurrentData(string companyName)
 		{
 			return await _stocksService.GetCurrentData(companyName);
@@ -25,7 +25,7 @@ namespace API.Gateway.Controllers
 
 		[Authorize]
 		[HttpGet]
-		[Route("daily/{companyName}")]
+		[Route("Daily/{companyName}")]
 		public async Task<IActionResult> GetDailyData(string companyName)
 		{
 			return await _stocksService.GetDailyData(companyName);
@@ -33,7 +33,7 @@ namespace API.Gateway.Controllers
 
 		[Authorize]
 		[HttpGet]
-		[Route("weekly/{companyName}")]
+		[Route("Weekly/{companyName}")]
 		public async Task<IActionResult> GetWeeklyData(string companyName)
 		{
 			return await _stocksService.GetWeeklyData(companyName);
@@ -41,7 +41,7 @@ namespace API.Gateway.Controllers
 
 		[Authorize]
 		[HttpGet]
-		[Route("monthly/{companyName}")]
+		[Route("Monthly/{companyName}")]
 		public async Task<IActionResult> GetMonthlyData(string companyName)
 		{
 			return await _stocksService.GetMonthlyData(companyName);

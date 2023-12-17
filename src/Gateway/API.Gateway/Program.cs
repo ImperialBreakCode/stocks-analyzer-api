@@ -1,5 +1,5 @@
-using API.Gateway.Helpers;
-using API.Gateway.Middleware;
+using API.Gateway.DependancyInjection;
+using API.Gateway.Middlewares;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,14 +10,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddOptions();
 
-builder.Services.AddServices();
+builder.Services.AddData();
 builder.Services.InjectAuthentication(config);
 builder.Services.ConfigureAppSettings(config);
 
 builder.Host.ConfigureSerilog();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -32,14 +31,16 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
 
-app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseRouting();
 
 app.UseDatabaseInit();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<RequestSavingMiddlewere>();
 
 app.UseWebSockets();
 
