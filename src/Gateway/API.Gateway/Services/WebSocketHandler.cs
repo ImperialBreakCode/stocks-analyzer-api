@@ -1,5 +1,6 @@
 ﻿using API.Gateway.Domain.DTOs;
-using API.Gateway.Domain.Interfaces;
+using API.Gateway.Domain.Interfaces.Helpers;
+using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Settings;
 using Newtonsoft.Json;
 using System.Net.WebSockets;
@@ -7,11 +8,11 @@ using System.Text;
 
 namespace API.Gateway.Services
 {
-	public class WebSocketService : IWebSocketService
+    public class WebSocketHandler : IWebSocketHandler
 	{
 		private readonly IWritableOptions<JwtOptionsConfiguration> _options;
 
-		public WebSocketService(IWritableOptions<JwtOptionsConfiguration> options)
+		public WebSocketHandler(IWritableOptions<JwtOptionsConfiguration> options)
 		{
 			_options = options;
 		}

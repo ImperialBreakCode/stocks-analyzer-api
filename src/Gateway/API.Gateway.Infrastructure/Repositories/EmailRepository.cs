@@ -1,17 +1,17 @@
-﻿using API.Gateway.Infrastructure.Contexts;
+﻿using API.Gateway.Domain.Entities.SQLiteEntities;
+using API.Gateway.Domain.Interfaces.Services;
+using API.Gateway.Infrastructure.Contexts;
 using Dapper;
 using Serilog;
 using System.Data;
-using API.Gateway.Domain.Interfaces;
-using API.Gateway.Domain.Entities.SQLiteEntities;
 
-namespace API.Gateway.Infrastructure.Provider
+namespace API.Gateway.Infrastructure.Repositories
 {
-    public class EmailService : IEmailService
+	public class EmailRepository : IEmailRepository
 	{
 		private readonly SQLiteContext _context;
 
-		public EmailService(SQLiteContext context)
+		public EmailRepository(SQLiteContext context)
 		{
 			_context = context;
 		}
@@ -35,7 +35,7 @@ namespace API.Gateway.Infrastructure.Provider
 			}
 			catch (Exception ex)
 			{
-				Log.Information($"Error creating email: {ex.Message}");
+				Log.Error($"Error creating email: {ex.Message}");
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace API.Gateway.Infrastructure.Provider
 			}
 			catch (Exception ex)
 			{
-				Log.Information($"Error checking if email exists: {ex.Message}");
+				Log.Error($"Error checking if email exists: {ex.Message}");
 				return false;
 			}
 		}
@@ -77,7 +77,7 @@ namespace API.Gateway.Infrastructure.Provider
 			}
 			catch (Exception ex)
 			{
-				Log.Information($"Error deleting email: {ex.Message}");
+				Log.Error($"Error deleting email: {ex.Message}");
 			}
 		}
 	}

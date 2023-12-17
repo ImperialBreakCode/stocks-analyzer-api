@@ -1,16 +1,17 @@
 ﻿using API.Gateway.Domain.Entities.MongoDBEntities;
-using API.Gateway.Infrastructure.Services.MongoDB;
+using API.Gateway.Domain.Interfaces;
+using API.Gateway.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Serilog;
 
-namespace API.Gateway.Infrastructure.Helpers
+namespace API.Gateway.Infrastructure.Repositories
 {
-	public class RequestServiceHelper : IRequestServiceHelper
+	public class RequestRepository : IRequestRepository
 	{
 		private readonly IMongoCollection<Request> _requestCollection;
 
-		public RequestServiceHelper(IOptions<MongoDBConfiguration> mongoDbSettings)
+		public RequestRepository(IOptions<MongoDBConfiguration> mongoDbSettings)
 		{
 			MongoClient client = new MongoClient(mongoDbSettings.Value.ConnectionURI);
 			IMongoDatabase database = client.GetDatabase(mongoDbSettings.Value.DatabaseName);
@@ -25,7 +26,7 @@ namespace API.Gateway.Infrastructure.Helpers
 			}
 			catch (Exception ex)
 			{
-				Log.Information($"Error inserting data in mongoDB: {ex.Message}");
+				Log.Error($"Error inserting data in mongoDB: {ex.Message}");
 			}
 		}
 
@@ -39,7 +40,7 @@ namespace API.Gateway.Infrastructure.Helpers
 			}
 			catch (Exception ex)
 			{
-				Log.Information($"Error finding by query: {ex.Message}");
+				Log.Error($"Error finding by query: {ex.Message}");
 
 				return null;
 			}
