@@ -4,22 +4,19 @@ using API.Gateway.Domain.Interfaces.Helpers;
 using Serilog;
 using System.Text;
 
-namespace API.Gateway.Middleware
+namespace API.Gateway.Middlewares
 {
     public class RequestLoggingMiddleware
 	{
 		private readonly RequestDelegate _next;
-		private readonly IRequestManager _requestManager;
 
-		public RequestLoggingMiddleware(RequestDelegate next, IRequestManager requestManager)
+		public RequestLoggingMiddleware(RequestDelegate next)
 		{
 			_next = next;
-			_requestManager = requestManager;
 		}
 
 		public async Task Invoke(HttpContext context)
 		{
-			await _requestManager.Invoke(context);
 
 			Log.Information("=============================================================================================");
 			Log.Information("Incoming Request: {RequestMethod} {RequestPath}", context.Request.Method, context.Request.Path);
@@ -56,7 +53,7 @@ namespace API.Gateway.Middleware
 					var responseBody = await reader.ReadToEndAsync();
 					if (responseBody.Length > 0)
 					{
-						Log.Information("Response Body: {ResponseBody}", FormatJsonHelper.FormatJson(responseBody));
+						Log.Information("Response Body: {ResponseBody}", responseBody);
 					}
 					responseBodyStream.Seek(0, SeekOrigin.Begin);
 					await responseBodyStream.CopyToAsync(originalResponseBody);

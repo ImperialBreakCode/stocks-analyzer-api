@@ -40,7 +40,7 @@ namespace API.Gateway.Helpers
             services.AddTransient<IRequestServiceHelper, RequestServiceHelper>();
             services.AddTransient<ResponseDTOFactory>();
 			services.AddTransient<RequestFactory>();
-			services.AddTransient<IRequestManager, RequestManager>();
+			//services.AddTransient<RequestManager>();
 			services.AddTransient<ICacheHelper, CacheHelper>();
 
             AddSwagger(services);

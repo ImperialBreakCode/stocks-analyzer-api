@@ -9,7 +9,10 @@ using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Serilog;
+using System.Net;
+using ThirdParty.Json.LitJson;
 
 namespace API.Gateway.Services
 {
@@ -81,7 +84,8 @@ namespace API.Gateway.Services
 
 				if (response is OkObjectResult okObjectResult)
 				{
-					var newUser = okObjectResult.Value as User;
+					var newUser = JsonConvert.DeserializeObject<User>((string)okObjectResult.Value);
+					//var newUser = okObjectResult.Value as User;
 					var cacheOptions = new MemoryCacheEntryOptions
 					{
 						AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15),

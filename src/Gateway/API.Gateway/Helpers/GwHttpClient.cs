@@ -1,5 +1,6 @@
 ﻿using API.Gateway.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.Gateway.Helpers
 {
@@ -43,10 +44,21 @@ namespace API.Gateway.Helpers
 
 		private async Task<IActionResult> CreateObjectResult(HttpResponseMessage response)
 		{
-			return new ObjectResult(await response.Content.ReadAsStringAsync())
+			var content = await response.Content.ReadAsStringAsync();
+
+			switch (response.StatusCode)
 			{
-				StatusCode = (int)response.StatusCode
-			};
+				case HttpStatusCode.OK:
+				case HttpStatusCode.Created:
+				case HttpStatusCode.Accepted:
+					return new OkObjectResult(content) { StatusCode = (int)response.StatusCode };
+
+				case HttpStatusCode.BadRequest:
+					return new BadRequestObjectResult(content) { StatusCode = (int)response.StatusCode };
+
+				default:
+					return new ObjectResult(content) { StatusCode = (int)response.StatusCode };
+			}
 		}
 	}
 }
