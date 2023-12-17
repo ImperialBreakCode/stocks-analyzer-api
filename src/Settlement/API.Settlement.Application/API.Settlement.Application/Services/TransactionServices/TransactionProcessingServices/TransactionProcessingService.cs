@@ -21,18 +21,13 @@ namespace API.Settlement.Application.Services.TransactionServices.OrderProcessin
 		{
 			var transactionType = finalizeTransactionRequestDTO.IsSale ? TransactionType.Sell : TransactionType.Buy;
 
-			return await ExecuteTransaction(finalizeTransactionRequestDTO, transactionType);
-		}
-
-		private async Task<AvailabilityResponseDTO> ExecuteTransaction(FinalizeTransactionRequestDTO finalizeTransactionRequestDTO, TransactionType transactionType)
-		{
 			if (transactionType == TransactionType.Buy)
 			{
 				return await BuyService.BuyStocks(finalizeTransactionRequestDTO);
 			}
 
 			return await SellService.SellStocks(finalizeTransactionRequestDTO);
-
 		}
+
 	}
 }

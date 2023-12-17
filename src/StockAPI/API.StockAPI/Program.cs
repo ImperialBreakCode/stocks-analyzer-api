@@ -1,4 +1,7 @@
+using API.StockAPI.Domain.Interfaces;
 using API.StockAPI.Domain.InterFaces;
+using API.StockAPI.Domain.Utilities;
+using API.StockAPI.Infrastructure.Configuration;
 using API.StockAPI.Infrastructure.Context;
 using API.StockAPI.Infrastructure.Helpers;
 using API.StockAPI.Infrastructure.Interfaces;
@@ -19,10 +22,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DapperContext>();
 DatabaseHelper.EnsureDatabaseExists(builder.Configuration.GetConnectionString("Default"));
 
+builder.Services.Configure<StockTypesConfig>(builder.Configuration.GetSection("StockTypesConfig"));
+
+builder.Services.AddScoped<IDateCalculator, DateCalculator>();
+builder.Services.AddScoped<IParametersAssigner, ParametersAssigner>();
+
 builder.Services.AddScoped<IContextServices, ContextServices>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IExternalRequestService, ExternalRequestService>();
 builder.Services.AddScoped<ITimedOutCallServices, TimedOutCallServices>();
+builder.Services.AddScoped<IStockTypesConfigServices, StockTypesConfigServices>();
 
 builder.Services.AddHttpClient<IExternalRequestService, ExternalRequestService>();
 

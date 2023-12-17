@@ -46,7 +46,7 @@ namespace Analyzer.APi.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving profitability for walletId {walletId}: {ex.Message}");
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+                return StatusCode(404,$"Error: {ex.Message}");
             }
         }
     }

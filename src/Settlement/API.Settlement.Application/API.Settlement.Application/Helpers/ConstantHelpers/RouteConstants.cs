@@ -10,8 +10,8 @@ namespace API.Settlement.Application.Helpers.ConstantHelpers
 {
 	public class RouteConstants : IRouteConstants
 	{
-		public string BaseAccountAPIHost =>  "https://localhost:5032";
-		public string BaseStockAPIHost => "https://localhost:";
+		public string BaseAccountAPIHost =>  "https://localhost:5032"; //TODO: ?
+		public string BaseStockAPIHost => "https://localhost:"; //TODO: ?
 		public string GETWalletBalanceRoute(string walletId)
 			=> $"{BaseAccountAPIHost}/api/Wallet/GetWalletBalance/{walletId}";
 		public string POSTCompleteTransactionRoute(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)
@@ -19,7 +19,7 @@ namespace API.Settlement.Application.Helpers.ConstantHelpers
 		public string GETStockRoute(string stockId)
 			=> $"{BaseAccountAPIHost}/api/Stock/GetStock/{stockId}";
 		public string GETStockPriceRoute(string stockName)
-			=> $"{BaseStockAPIHost}/api/StockAPI/Stock/Price/{stockName}";
+			=> $"{BaseStockAPIHost}/api/Stock/current/{stockName}";
 
 	}
 }
