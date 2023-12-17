@@ -21,8 +21,8 @@ using API.Accounts.Application.Settings;
 using API.Accounts.Application.Settings.GatewayAuthSettingsSender;
 using API.Accounts.Application.Settings.GatewaySettingsSender;
 using API.Accounts.Application.Settings.UpdateHandlers;
-using API.Accounts.Domain.Interfaces.DbManager;
 using API.Accounts.Infrastructure.DbManager;
+using API.Accounts.Domain.Interfaces.DbManager;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -37,38 +37,27 @@ namespace API.Accounts.Application
 
             services.AddTransient<ITransactionSaleHandler, TransactionSaleHandler>();
             services.AddTransient<IWalletDeleteRabbitMQProducer, WalletDeleteRabbitMQProducer>();
-            services.AddSingleton<IWaitingDeletedWalletIdsList, WaitingDeletedWalletIdsLIst>();
+            services.AddSingleton<IWaitingDeletedWalletIdsList, WaitingDeletedWalletIdsList>();
 
             return services;
         }
 
         public static IServiceCollection AddApplicationData(this IServiceCollection services)
         {
-            services.AddTransient<IStocksData, StocksDataMockup>();
+            services.AddTransient<IStocksData, StocksData>();
             services.AddTransient<IExchangeRatesData, ExchangeRateDataMockup>();
 
             services.AddTransient<IAccountsDataSeeder, AccountDataSeeder>();
-
-            return services;
-        }
-
-        public static IServiceCollection UseSqlDatabase(this IServiceCollection services) 
-        {
             services.AddTransient<IAccountsData, AccountData>();
             services.AddTransient<IAccountsDbManager, AccountsDbManager>();
-            return services;
-        }
 
-        public static IServiceCollection UseMemoryMockupDb(this IServiceCollection services)
-        {
-            services.AddSingleton<IAccountsData, AccountMockupData>();
             return services;
         }
 
         public static IServiceCollection AddHttpClientServices<T>(this IServiceCollection services)
             where T : class, IHttpService
         {
-            services.AddSingleton<IHttpClientRoutes, HttpClientRoutes>();
+            services.AddTransient<IHttpClientRoutes, HttpClientRoutes>();
             services.AddTransient<IHttpService, T>();
 
             return services;

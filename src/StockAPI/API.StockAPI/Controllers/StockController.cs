@@ -33,7 +33,7 @@ namespace API.StockAPI.Controllers
         {
             if(string.IsNullOrEmpty(symbol) || string.IsNullOrEmpty(type))
             {
-                return BadRequest();
+                return BadRequest("Invalid input.");
             }
 
             var dbResult = await _contextServices.GetStockFromDB(symbol, type);
@@ -48,26 +48,32 @@ namespace API.StockAPI.Controllers
                 var query = _externalRequestServices.QueryStringGenerator(symbol, type);
                 if (string.IsNullOrEmpty(query))
                 {
-                    return BadRequest();
+                    return NoContent();
                 }
 
                 var response = await _externalRequestServices.ExecuteQuery(symbol, query, type);
+
+                if (response is null)
+                {
+                    return NoContent();
+                }
+
                 if(response.StatusCode >= HttpStatusCode.InternalServerError)
                 {
                     await _callServices.InsertFailedCallInDB(symbol, query, type);
-                    return StatusCode(500);
+                    return StatusCode(500, "Connection to external resources failed, the request has been logged");
                 }
 
                 var data = await _externalRequestServices.GetDataFromQuery(response);
                 if (string.IsNullOrEmpty(data))
                 {
-                    return BadRequest();
+                    return NoContent();
                 }
 
                 var result = await _stockServices.GetStockFromResponse(symbol, data, type);
                 if (result is null)
                 {
-                    return NotFound();
+                    return NoContent();
                 }
 
                 await _contextServices.InsertStockInDB(result, type);
@@ -76,7 +82,42 @@ namespace API.StockAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, "An internal server error has ocurred: " + ex.Message    );
+            }
+        }
+
+        [HttpGet]
+        [Route("stocks/{type}/{symbol}")]
+        public async Task<IActionResult> GetStockList(string symbol, string type)
+        {
+            if (symbol == "" || type == "")
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var query = _externalRequestServices.QueryStringGenerator(symbol, type);
+                if (string.IsNullOrEmpty(query))
+                {
+                    return NoContent();
+                }
+
+                var response = await _externalRequestServices.ExecuteQuery(symbol, query, type);
+
+                var data = await _externalRequestServices.GetDataFromQuery(response);
+                if (string.IsNullOrEmpty(data))
+                {
+                    return NoContent();
+                }
+
+                var result = await _stockServices.GetStockList(symbol, data, type);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An internal server error has ocurred: " + ex.Message);
             }
         }
     }

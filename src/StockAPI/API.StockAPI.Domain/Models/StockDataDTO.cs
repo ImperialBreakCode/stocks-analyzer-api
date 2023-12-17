@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace API.StockAPI.Domain.Models
 {
-    public class StockData
+    public class StockDataDTO
     {
         public string? Symbol { get; set; }
         public string? Date { get; set; }

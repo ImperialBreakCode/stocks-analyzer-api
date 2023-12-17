@@ -1,15 +1,16 @@
 ﻿using API.StockAPI.Domain.Models;
+using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace API.StockAPI.Infrastructure.Interfaces
 {
-    public interface IContextServices
+    public interface IParametersAssigner
     {
-        public Task<StockDataDTO> GetStockFromDB(string symbol, string type);
-        public Task<StockDataDTO> InsertStockInDB(StockDataDTO data, string type);
+        public DynamicParameters AssignParametersToStockDataDTO(StockDataDTO data);
     }
 }
