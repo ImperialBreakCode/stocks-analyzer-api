@@ -18,7 +18,7 @@ namespace API.Settlement.Application.Services.RabbitMQServices
 	{
 		private readonly IConnection _connection;
 		private readonly IModel _channel;
-		private readonly string _queueName = "walletDeleteQueue";
+		private readonly string _queueName = "deleteWallet";
 		private readonly IServiceScopeFactory _serviceScopeFactory;
 
 		public RabbitMQWalletDeletionService(IServiceScopeFactory serviceScopeFactory)
@@ -26,7 +26,7 @@ namespace API.Settlement.Application.Services.RabbitMQServices
 			var factory = new ConnectionFactory { HostName = "localhost" };
 			_connection = factory.CreateConnection();
 			_channel = _connection.CreateModel();
-			_channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+			_channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: true, arguments: null);
 			_serviceScopeFactory = serviceScopeFactory;
 		}
 		public Task StartAsync(CancellationToken cancellationToken)
