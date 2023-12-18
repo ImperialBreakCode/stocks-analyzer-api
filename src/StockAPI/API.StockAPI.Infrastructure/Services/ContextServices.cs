@@ -59,7 +59,7 @@ namespace API.StockAPI.Infrastructure.Services
             }
         }
 
-        public async Task<StockDataDTO> InsertStockInDB(StockDataDTO data, string type)
+        public async void InsertStockInDB(StockDataDTO data, string type)
         {
             var stockTypesConfig = _configServices.GetStockTypesConfig(type);
 
@@ -67,7 +67,7 @@ namespace API.StockAPI.Infrastructure.Services
 
             if (string.IsNullOrEmpty(table))
             {
-                return null;
+                await Console.Out.WriteLineAsync("The data entry is invalid and was not inserted into the database.");
             }
 
             var query = $"INSERT INTO {table} (Symbol, Date, Open, High, Low, Close, Volume) VALUES (@Symbol, @Date, @Open, @High, @Low, @Close, @Volume)";
@@ -81,7 +81,7 @@ namespace API.StockAPI.Infrastructure.Services
                 connection.Close();
             }
 
-            return data;
+            await Console.Out.WriteLineAsync("Record inserted into the database successfully.");
         }
     }
 }

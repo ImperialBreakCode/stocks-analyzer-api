@@ -44,11 +44,11 @@ namespace API.StockAPI.Infrastructure.Services
         }
         public async Task<IEnumerable<TimedOutCallDTO>> GetFailedCallsFromDBByQuery(string call)
         {
-            var query = $"SELECT * FROM TimedOutCalls WHERE Query = @Query";
+            var query = $"SELECT * FROM TimedOutCalls WHERE Call = @Call";
 
             var parameters = new DynamicParameters();
 
-            parameters.Add("Query", call, DbType.String);
+            parameters.Add("Call", call, DbType.String);
 
             using (var connection = _context.CreateConnection())
             {
@@ -61,17 +61,19 @@ namespace API.StockAPI.Infrastructure.Services
 
         public async Task<TimedOutCallDTO> InsertFailedCallInDB(string symbol, string? call, string type)
         {
-            if (!GetFailedCallsFromDBByQuery(call).Result.Any())
+            var calls = await GetFailedCallsFromDBByQuery(call);
+            var check = calls.Any();
+            if (check is not false)
             {
                 return null;
             }
-            var query = $"INSERT INTO TimedOutCalls (Date, Symbol, Query, Type) VALUES (@Date, @Symbol, @Query, @Type)";
+            var query = $"INSERT INTO TimedOutCalls (Date, Symbol, Call, Type) VALUES (@Date, @Symbol, @Call, @Type)";
 
             var data = new TimedOutCallDTO()
             {
-                Date = DateTime.Now.ToString(),
+                Date = DateTime.Now.ToString(("MM/dd/yyyy HH")),
                 Symbol = symbol,
-                Query = call,
+                Call = call,
                 Type = type
             };
 
@@ -89,12 +91,12 @@ namespace API.StockAPI.Infrastructure.Services
 
         public async Task<StockDataDTO?> RecallFailedCall(TimedOutCallDTO call)
         {
-            if (!GetFailedCallsFromDBByQuery(call.Query).Result.Any())
+            if (!GetFailedCallsFromDBByQuery(call.Call).Result.Any())
             {
                 return null;
             }
 
-            var response = await _externalRequestService.ExecuteQuery(call.Symbol, call.Query, call.Type);
+            var response = await _externalRequestService.ExecuteQuery(call.Symbol, call.Call, call.Type);
 
             var data = await _externalRequestService.GetDataFromQuery(response);
             if (string.IsNullOrEmpty(data))
@@ -108,20 +110,20 @@ namespace API.StockAPI.Infrastructure.Services
                 return null;
             }
 
-            await _contextServices.InsertStockInDB(result, call.Type);
+            _contextServices.InsertStockInDB(result, call.Type);
 
             return result;
         }
 
         public async void DeleteFailedCallInDB(TimedOutCallDTO call)
         {
-            var query = $"DELETE FROM TimedOutCalls WHERE Query = @Call AND Date = @Date";
+            var query = $"DELETE FROM TimedOutCalls WHERE Call = @Call AND Date = @Date";
 
             var data = new TimedOutCallDTO()
             {
                 Date = DateTime.Now.ToString(),
                 Symbol = call.Symbol,
-                Query = call.Query,
+                Call = call.Call,
                 Type = call.Type
             };
 
@@ -141,7 +143,7 @@ namespace API.StockAPI.Infrastructure.Services
 
             parameters.Add("Date", data.Date, DbType.String);
             parameters.Add("Symbol", data.Symbol, DbType.String);
-            parameters.Add("Call", data.Query, DbType.String);
+            parameters.Add("Call", data.Call, DbType.String);
             parameters.Add("Type", data.Type, DbType.String);
 
             return parameters;

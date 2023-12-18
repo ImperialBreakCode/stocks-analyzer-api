@@ -3,6 +3,7 @@ using API.StockAPI.Domain.Models;
 using API.StockAPI.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Newtonsoft.Json;
+using System.ComponentModel;
 using System.Net;
 
 namespace API.StockAPI.Services
@@ -45,6 +46,19 @@ namespace API.StockAPI.Services
         public async Task<string?> GetDataFromQuery(HttpResponseMessage response)
         {
             return await response.Content.ReadAsStringAsync();
+        }
+
+        public bool CheckIfDataIsValid(HttpResponseMessage? response, string? data)
+        {
+            if (string.IsNullOrEmpty(data)
+            || data.Contains("Thank")
+            || response is null
+            || response.StatusCode >= HttpStatusCode.InternalServerError)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
