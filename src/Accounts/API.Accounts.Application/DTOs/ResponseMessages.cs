@@ -25,8 +25,8 @@
         // Stocks
         public const string NoStocksAddedForPurchaseSale = "No stocks added for transaction processing";
         public const string StockNotFoundInWallet = "This wallet does not contain the desired stock.";
-        public const string StockActionSuccessfull = "Stock added for transaction processing successfully.";
-        public const string TransactionSendForProccessing = "Transaction is send for proccessing.";
+        public const string StockActionSuccessfull = "The stock is successfully added for transaction processing.";
+        public const string TransactionSendForProccessing = "Transaction is sent for proccessing.";
         public const string StockNotEnoughStocksToSale = "Not enough stocks to sale.";
     }
 }
