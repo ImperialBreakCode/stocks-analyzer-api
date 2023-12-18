@@ -25,13 +25,12 @@ namespace API.Settlement.Application.Services.HTMLServices
 			if (data.StockInfoResponseDTOs != null && data.StockInfoResponseDTOs.Any())
 			{
 				htmlBuilder.Append("<h2>Stock Information</h2>");
-				htmlBuilder.Append("<table border='1'><tr><th>Transaction ID</th><th>Message</th><th>Stock ID</th><th>Stock Name</th><th>Quantity</th><th>Single Price (Including Commission)</th><th>Total Price (Including Commission)</th></tr>");
+				htmlBuilder.Append("<table border='1'><tr><th>Transaction ID</th><th>Stock ID</th><th>Stock Name</th><th>Quantity</th><th>Single Price (Including Commission)</th><th>Total Price (Including Commission)</th></tr>");
 
 				foreach (var stockInfo in data.StockInfoResponseDTOs)
 				{
 					htmlBuilder.Append("<tr>");
 					htmlBuilder.Append($"<td>{stockInfo.TransactionId}</td>");
-					htmlBuilder.Append($"<td>{stockInfo.Message}</td>");
 					htmlBuilder.Append($"<td>{stockInfo.StockId}</td>");
 					htmlBuilder.Append($"<td>{stockInfo.StockName}</td>");
 					htmlBuilder.Append($"<td>{stockInfo.Quantity}</td>");

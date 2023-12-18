@@ -1,5 +1,4 @@
-﻿using API.Gateway.Domain.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
+﻿using API.Gateway.Domain.Interfaces.Helpers;
 using Microsoft.Extensions.Options;
 
 namespace API.Gateway.Extensions

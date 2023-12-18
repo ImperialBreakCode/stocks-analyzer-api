@@ -1,10 +1,10 @@
-﻿using API.Gateway.Domain.Interfaces;
+﻿using API.Gateway.Domain.Interfaces.Helpers;
+using Serilog;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace API.Gateway.Helpers
 {
-    public class JwtTokenParser : IJwtTokenParser
+	public class JwtTokenParser : IJwtTokenParser
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -25,18 +25,26 @@ namespace API.Gateway.Helpers
 
         private string GetClaimValueFromToken(string claimType)
         {
-            var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
-            if (string.IsNullOrEmpty(jwtToken))
+            try
             {
-                return null;
+                var jwtToken = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+                if (string.IsNullOrEmpty(jwtToken))
+                {
+                    return null;
+                }
+
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(jwtToken) as JwtSecurityToken;
+
+                string claimValue = jsonToken?.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
+                return claimValue;
             }
-
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(jwtToken) as JwtSecurityToken;
-
-            string claimValue = jsonToken?.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
-            return claimValue;
-        }
+            catch (Exception ex)
+            {
+                Log.Error($"Error parsing token: {ex.Message}");
+                return string.Empty;
+            }
+		}
     }
 }
