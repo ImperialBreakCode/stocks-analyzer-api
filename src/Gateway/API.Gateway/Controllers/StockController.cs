@@ -46,7 +46,7 @@ namespace API.Gateway.Controllers
 		[Route("AddStockForSale")]
 		public async Task<IActionResult> AddStockForSale(StockDTO dto)
 		{
-			return await _stockService.AddStockForPurchase(dto);
+			return await _stockService.AddStockForSale(dto);
 		}
 
 		[Authorize]

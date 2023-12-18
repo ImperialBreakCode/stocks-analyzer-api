@@ -5,7 +5,6 @@ using API.Gateway.Domain.Interfaces;
 using API.Gateway.Domain.Interfaces.Helpers;
 using API.Gateway.Domain.Interfaces.Services;
 using API.Gateway.Domain.Responses;
-using API.Gateway.Helpers;
 using API.Gateway.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -104,19 +103,13 @@ namespace API.Gateway.Services
 
 				var res = await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/User/UpdateUser/{username}", dto);
 
-				if (res is OkObjectResult)
+				if (res is OkObjectResult && dto.Email != null)
 				{
-					_cacheHelper.Remove($"UserData_{username}");
+					string email = _jwtTokenParser.GetEmailFromToken();
+					await _emailService.Delete(email);
 
-					if (dto.Email != null)
-					{
-						string email = _jwtTokenParser.GetEmailFromToken();
-						await _emailService.Delete(email);
-
-						Email mail = new() { Mail = dto.Email };
-						await _emailService.Create(mail);
-
-					}
+					Email mail = new() { Mail = dto.Email };
+					await _emailService.Create(mail);
 				}
 
 				return res;
@@ -140,8 +133,6 @@ namespace API.Gateway.Services
 				{
 					string email = _jwtTokenParser.GetEmailFromToken();
 					await _emailService.Delete(email);
-
-					_cacheHelper.Remove($"UserData_{username}");
 				}
 
 				return res;

@@ -56,7 +56,6 @@ namespace API.Gateway.Controllers
 			return await _accountService.DeleteUser();
 		}
 
-		[Authorize]
 		[HttpGet]
 		[Route("ConfirmUser/{userId}")]
 		public async Task<IActionResult> ConfirmUser(string userId)

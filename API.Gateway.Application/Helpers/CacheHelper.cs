@@ -45,18 +45,6 @@ namespace API.Gateway.Helpers
 			}
 		}
 
-		public void Remove(string key)
-		{
-			try
-			{
-				_memoryCache.Remove(key);
-			}
-			catch (Exception ex)
-			{
-				Log.Error($"Error in CacheHelper, Remove method: {ex.Message}");
-			}
-		}
-
 		private MemoryCacheEntryOptions SetOptions(int AbsoluteExpInM, int SlidingExpInM)
 		{
 			var cacheOptions = new MemoryCacheEntryOptions

@@ -27,7 +27,7 @@ namespace API.Gateway.Services
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			return await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/Deposit/{username}", dto);
+			return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Wallet/Deposit/{username}", dto);
 		}
 
 		public async Task<IActionResult> CreateWallet()
