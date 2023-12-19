@@ -11,7 +11,7 @@ namespace API.Settlement.Application.Helpers.ConstantHelpers
 	public class RouteConstants : IRouteConstants
 	{
 		public string BaseAccountAPIHost =>  "https://localhost:5032"; //TODO: ?
-		public string BaseStockAPIHost => "https://localhost:"; //TODO: ?
+		public string BaseStockAPIHost => "https://localhost:5031"; //TODO: ?
 		public string GETWalletBalanceRoute(string walletId)
 			=> $"{BaseAccountAPIHost}/api/Wallet/GetWalletBalance/{walletId}";
 		public string POSTCompleteTransactionRoute(FinalizeTransactionResponseDTO finalizeTransactionResponseDTO)

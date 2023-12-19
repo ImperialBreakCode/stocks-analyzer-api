@@ -16,7 +16,7 @@ namespace API.Analyzer.Infrastructure.Services
             accountsClient.BaseAddress = new Uri("https://localhost:5032");
 
             stocksClient = new HttpClient();
-            stocksClient.BaseAddress = new Uri("https://localhost:7160");
+            stocksClient.BaseAddress = new Uri("https://localhost:5031");
         }
         public async Task<ICollection<GetStockResponseDTO>> UserStocksInWallet(string walletId)
         {
