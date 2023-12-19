@@ -24,7 +24,7 @@ namespace Analyzer.APi.Controllers
             {
                 return Ok(jsonContent);
             }
-            return StatusCode(500, "User profile not found");
+            return StatusCode(404, "User profile not found");
         }
     
 
@@ -45,8 +45,7 @@ namespace Analyzer.APi.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error retrieving profitability for walletId {walletId}: {ex.Message}");
-                return StatusCode(404,$"Error: {ex.Message}");
+                return BadRequest($"An error occurred while calculating current balance in wallet {ex.Message}");
             }
         }
     }
