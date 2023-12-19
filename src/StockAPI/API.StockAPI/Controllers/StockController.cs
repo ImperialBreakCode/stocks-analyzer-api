@@ -26,7 +26,7 @@ namespace API.StockAPI.Controllers
             _contextServices = contextServices;
             _callServices = callServices;
         }
-
+        //maybe make this route have "adjusted" or "averaged" or something in front of it
         [HttpGet]
         [Route("{type}/{symbol}")]
         public async Task<IActionResult> GetStock(string symbol, string type)
@@ -58,16 +58,11 @@ namespace API.StockAPI.Controllers
                     return NoContent();
                 }
 
-                if(response.StatusCode >= HttpStatusCode.InternalServerError)
+                var data = await _externalRequestServices.GetDataFromQuery(response);
+                if (!_externalRequestServices.CheckIfDataIsValid(response, data))
                 {
                     await _callServices.InsertFailedCallInDB(symbol, query, type);
-                    return StatusCode(500, "Connection to external resources failed, the request has been logged");
-                }
-
-                var data = await _externalRequestServices.GetDataFromQuery(response);
-                if (string.IsNullOrEmpty(data))
-                {
-                    return NoContent();
+                    return StatusCode(500, "Connection to external resources failed , the request has been logged.");
                 }
 
                 var result = await _stockServices.GetStockFromResponse(symbol, data, type);
@@ -76,16 +71,17 @@ namespace API.StockAPI.Controllers
                     return NoContent();
                 }
 
-                await _contextServices.InsertStockInDB(result, type);
+                _contextServices.InsertStockInDB(result, type);
 
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                return StatusCode(500, "An internal server error has ocurred: " + ex.Message    );
+                return StatusCode(500, "An internal server error has ocurred: " + exception.Message);
             }
         }
 
+        // if i do the above change, probably change the name of this route from "stocks" to "raw"
         [HttpGet]
         [Route("stocks/{type}/{symbol}")]
         public async Task<IActionResult> GetStockList(string symbol, string type)
@@ -106,9 +102,10 @@ namespace API.StockAPI.Controllers
                 var response = await _externalRequestServices.ExecuteQuery(symbol, query, type);
 
                 var data = await _externalRequestServices.GetDataFromQuery(response);
-                if (string.IsNullOrEmpty(data))
+                if (!_externalRequestServices.CheckIfDataIsValid(response, data))
                 {
-                    return NoContent();
+                    await _callServices.InsertFailedCallInDB(symbol, query, type);
+                    return StatusCode(500, "Connection to external resources failed , the request has been logged.");
                 }
 
                 var result = await _stockServices.GetStockList(symbol, data, type);
