@@ -5,24 +5,164 @@
 ## Routes
 
 ### 1. Gateway
-* .../Analyzer/CurrentProfitability
-* .../Analyzer/PercentageChange
-* .../Analyzer/PortfolioRisk
-* .../Analyzer/DailyProfitabilityChanges
 
-* .../Account/Register
-* .../Account/Login
-* .../Account/deposit
-* .../Account/CreateWallet
-* .../Account/UserInformation/{user}
+* ### Account
 
-* .../Stocks/BuyStock
-* .../Stocks/Finalize
-* .../Stocks/TrackStock
+    ***<code style="color:#c555ff;">POST /api/Account/Register</code>***
 
-* .../StockInfo/GetCurrentStocks
-* .../StockInfo/GetWeeklyStocks
-* .../StockInfo/GetMonthlyStocks
+    - **Input**: `RegisterUserDTO` in the request body.
+    - **Description:** Redirects to `api/Accounts/User/Register`.
+ 
+    ***<code style="color:#c555ff;">POST /api/Account/Login</code>***
+
+    - **Input**: `LoginUserDTO` in the request body.
+    - **Description:** Redirects to `api/Accounts/User/Login`.
+ 
+    ***<code style="color:#c555ff;">GET /api/Account/UserInformation/{username}</code>***
+
+    - **Input**: **`username`** as a route parameter.
+    - **Description:** Redirects to `api/Accounts/User/UserInformation/{username}`, if the information isn't cached.
+ 
+    ***<code style="color:#c555ff;">PUT /api/Account/UpdateUser</code>***
+
+    - **Input**: **`UpdateUserDTO`** in the request body.
+    - **Description:** Redirects to `api/Accounts/User/UpdateUser/{username}`, username is passed in from the JWT token.
+ 
+    ***<code style="color:#c555ff;">DELETE /api/Account/DeleteUser</code>***
+
+    - **Input**: **`None`**.
+    - **Description:** Redirects to `api/Accounts/User/DeleteUser/{username}`, username is passed in from the JWT token.
+ 
+    ***<code style="color:#c555ff;">GET /api/Account/ConfirmUser/{userId}</code>***
+
+    - **Input**: **`userId`** as a route parameter.
+    - **Description:** Redirects to `api/Accounts/User/ConfirmUser/{userId}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/Account/GetTransactions</code>***
+
+    - **Input**: **`None`**.
+    - **Description:** Redirects to `api/Accounts/Transaction/GetTransactionsByUsername/{username}`, username is passed in from the JWT token.
+ 
+* ### Analyzer
+
+    ***<code style="color:#c555ff;">GET /api/Analyzer/PortfolioSummary/{walletId}</code>***
+
+    - **Input**: `walletId` as a route parameter.
+    - **Description:** Redirects to `api/Analyzer/User/PortfolioSummary/{walletId}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/Analyzer/CurrentBalanceInWallet/{walletId}</code>***
+
+    - **Input**: `walletId` as a route parameter.
+    - **Description:** Redirects to `api/Analyzer/User/CurrentBalanceInWallet/{walletId}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/Analyzer/GetUserStocksInWallet/{walletId}</code>***
+
+    - **Input**: `walletId` as a route parameter.
+    - **Description:** Redirects to `api/Analyzer/Stock/GetUserStocksInWallet/{walletId}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/Analyzer/CurrentProfitability/{username}/{symbol}/{type}</code>***
+
+    - **Input**: `username`, `symbol` (stock symbol), and `type` (current, daily, weekly, monthly) as a route parameter.
+    - **Description:** Redirects to `api/Analyzer/Stock/CurrentProfitability/{username}/{symbol}/{type}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/Analyzer/PercentageChange/{username}/{symbol}/{type}</code>***
+
+    - **Input**: `username`, `symbol` (stock symbol), and `type` (current, daily, weekly, monthly) as a route parameter.
+    - **Description:** Redirects to `api/Analyzer/Stock/PercentageChange/{username}/{symbol}/{type}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/Analyzer/CalculateAverageProfitability/{username}/{symbol}/{type}</code>***
+
+    - **Input**: `username`, `symbol` (stock symbol), and `type` (current, daily, weekly, monthly) as a route parameter.
+    - **Description:** Redirects to `api/Analyzer/Stock/CalculateAverageProfitability/{username}/{symbol}/{type}`.
+ 
+* ### RequestInfo
+
+    ***<code style="color:#c555ff;">GET /api/RequestInfo/ThisRouteInfoForLast24H/{route}</code>***
+
+    - **Input**: `route` as a route parameter.
+    - **Description:** Returns the number of requests made to this route in the last 24 hours and the user who made the most requests to it.
+ 
+    ***<code style="color:#c555ff;">GET /api/RequestInfo/RouteInfoForLast24H</code>***
+
+    - **Input**: `None`.
+    - **Description:** Returns the number of requests made to the API in the past 24 hours, the user who made the most requests, the hour with the most requests and the most used route.
+ 
+* ### Stock
+
+    ***<code style="color:#c555ff;">GET /api/Stock/GetStock/{stockId}</code>***
+
+    - **Input**: `stockId` as a route parameter.
+    - **Description:** Redirects to `api/Stock/GetStock/{stockId}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/Stock/GetStocksInWallet/{walletId}</code>***
+
+    - **Input**: `walletId` as a route parameter.
+    - **Description:** Redirects to `api/Stock/GetStocksInWallet/{stockId}`.
+ 
+    ***<code style="color:#c555ff;">PUT /api/Stock/AddStockForPurchace/{StockDTO}</code>***
+
+    - **Input**: `StockDTO` in the request body.
+    - **Description:** Redirects to `api/Stock/AddStockForPurchace/{username}`, username is passed in from the JWT token.
+ 
+    ***<code style="color:#c555ff;">PUT /api/Stock/AddStockForSale/{StockDTO}</code>***
+
+    - **Input**: `StockDTO` in the request body.
+    - **Description:** Redirects to `api/Stock/AddStockForSale/{username}`, username is passed in from the JWT token.
+ 
+    ***<code style="color:#c555ff;">POST /api/Stock/ConfirmPurchase</code>***
+
+    - **Input**: `None`.
+    - **Description:** Redirects to `api/Stock/ConfirmPurchase/{username}`, username is passed in from the JWT token.
+ 
+    ***<code style="color:#c555ff;">POST /api/Stock/ConfirmSale</code>***
+
+    - **Input**: `None`.
+    - **Description:** Redirects to `api/Stock/ConfirmSale/{username}`, username is passed in from the JWT token.
+ 
+* ### StockInfo
+
+    ***<code style="color:#c555ff;">GET /api/StockInfo/Current/{companyName}</code>***
+
+    - **Input**: `companyName` as a route parameter.
+    - **Description:** Redirects to `api/Stock/current/{companyName}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/StockInfo/Daily/{companyName}</code>***
+
+    - **Input**: `companyName` as a route parameter.
+    - **Description:** Redirects to `api/Stock/daily/{companyName}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/StockInfo/Weekly/{companyName}</code>***
+
+    - **Input**: `companyName` as a route parameter.
+    - **Description:** Redirects to `api/Stock/weekly/{companyName}`.
+ 
+    ***<code style="color:#c555ff;">GET /api/StockInfo/Monthly/{companyName}</code>***
+
+    - **Input**: `companyName` as a route parameter.
+    - **Description:** Redirects to `api/Stock/monthly/{companyName}`.
+ 
+* ### Wallet
+
+    ***<code style="color:#c555ff;">PUT /api/Wallet/Deposit</code>***
+
+    - **Input**: `DepositWalletDTO` in the request body.
+    - **Description:** Redirects to `api/Wallet/Deposit/{username}`, username is passed in from the JWT token.
+ 
+    ***<code style="color:#c555ff;">POST /api/Wallet/CreateWallet</code>***
+
+    - **Input**: `None`.
+    - **Description:** Redirects to `api/Wallet/CreateWallet/{username}`, username is passed in from the JWT token.
+ 
+    ***<code style="color:#c555ff;">DELETE /api/Wallet/DeleteWallet</code>***
+
+    - **Input**: `None`.
+    - **Description:** Redirects to `api/Wallet/DeleteWallet/{username}`, username is passed in from the JWT token.
+ 
+    ***<code style="color:#c555ff;">GET /api/Wallet/GetWallet/{walletId}</code>***
+
+    - **Input**: `walletId` as a route parameter.
+    - **Description:** Redirects to `api/Wallet/GetWallet/{username}`, username is passed in from the JWT token.
+
 
 ---
 ### 2. Accounts
