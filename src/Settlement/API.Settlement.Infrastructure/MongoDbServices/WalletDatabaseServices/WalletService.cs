@@ -189,7 +189,7 @@ namespace API.Settlement.Infrastructure.MongoDbServices.WalletDatabaseServices
 				{
 					var json = await response.Content.ReadAsStringAsync();
 					var stockData = JObject.Parse(json);
-					price = (decimal)stockData["Close"];
+					price = (decimal)stockData["close"];
 				}
 			}
 			return price;
