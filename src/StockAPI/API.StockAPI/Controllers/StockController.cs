@@ -48,14 +48,14 @@ namespace API.StockAPI.Controllers
                 var query = _externalRequestServices.QueryStringGenerator(symbol, type);
                 if (string.IsNullOrEmpty(query))
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 var response = await _externalRequestServices.ExecuteQuery(symbol, query, type);
 
                 if (response is null)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 var data = await _externalRequestServices.GetDataFromQuery(response);
@@ -68,7 +68,7 @@ namespace API.StockAPI.Controllers
                 var result = await _stockServices.GetStockFromResponse(symbol, data, type);
                 if (result is null)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 _contextServices.InsertStockInDB(result, type);
@@ -96,7 +96,7 @@ namespace API.StockAPI.Controllers
                 var query = _externalRequestServices.QueryStringGenerator(symbol, type);
                 if (string.IsNullOrEmpty(query))
                 {
-                    return NoContent();
+                    return NotFound();
                 }
 
                 var response = await _externalRequestServices.ExecuteQuery(symbol, query, type);
