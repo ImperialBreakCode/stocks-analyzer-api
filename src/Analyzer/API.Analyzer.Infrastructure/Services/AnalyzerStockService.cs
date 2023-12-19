@@ -18,9 +18,6 @@ namespace API.Analyzer.Infrastructure.Services
             stocksClient = new HttpClient();
             stocksClient.BaseAddress = new Uri("https://localhost:7160");
         }
-
-        // Formula for Calculating Percentage Gain or Loss
-        // Investment percentage gain  = ((Price sold − purchase price) / purchase price ) × 100
         public async Task<ICollection<GetStockResponseDTO>> UserStocksInWallet(string walletId)
         {
             string getUrl = $"/api/Stock/GetStocksInWallet/{walletId}";
@@ -137,49 +134,6 @@ namespace API.Analyzer.Infrastructure.Services
         }
 
 
-
-        //public async Task<decimal?> CalculateInvestmentPercentageGain(string symbol, string type, decimal shareValue)
-        //{
-        //    try
-        //    {
-        //        string getUrl = $"/api/Stock/{type}/{symbol}";
-        //        HttpResponseMessage response = await stocksClient.GetAsync(getUrl);
-
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            string jsonContent = await response.Content.ReadAsStringAsync();
-        //            var stockData = JsonConvert.DeserializeObject<StockData>(jsonContent);
-
-        //            decimal closePrice = (decimal)stockData.Close;
-        //            decimal purchasePrice = shareValue;
-
-        //            if (purchasePrice != 0)
-        //            {
-        //                decimal investmentPercentageGain = ((closePrice - purchasePrice) / purchasePrice) * 100;
-        //                decimal percentageGainFormattedNumber = Math.Round(investmentPercentageGain, 2);
-        //                return percentageGainFormattedNumber;
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine("Purchase price is zero. Unable to calculate investment percentage gain.");
-        //                return null;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine($"HTTP Error: {response.StatusCode}");
-        //            string errorContent = await response.Content.ReadAsStringAsync();
-        //            Console.WriteLine($"Error Content: {errorContent}");
-        //            throw new Exception($"HTTP Error: {response.StatusCode}");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error retrieving stock data: {ex.Message}");
-        //        throw;
-        //    }
-        //}
-
         public async Task<decimal?> CalculateAverageProfitability(string username, string symbol, string type)
         {
             try
@@ -260,32 +214,6 @@ namespace API.Analyzer.Infrastructure.Services
                 throw;
             }
         }
-
-        //    public async Task <List<string?>> DailyProfitabilityChanges(string symbol,string type)
-        //    {
-        //        List<string?> dates = new List<string?>();
-
-        //        string getUrl = $"/api/Stock/{type}/{symbol}";
-
-        //        HttpResponseMessage response = await stocksClient.GetAsync(getUrl);
-
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            string jsonContent = await response.Content.ReadAsStringAsync();
-        //            var stockDataList = JsonConvert.DeserializeObject<List<StockData>>(jsonContent);
-
-        //            foreach (var stockData in stockDataList)
-        //            {
-        //                dates.Add(stockData.Date);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine($"Error: {response.StatusCode}");
-        //        }
-
-        //        return dates;
-        //    }
 
         public async Task<List<decimal>> PersentageChange(string username, string symbol, string type)
         {
