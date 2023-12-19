@@ -30,14 +30,14 @@ namespace API.Gateway.DataInjection
 			services.AddTransient<IStockService, StockService>();
 			services.AddTransient<IRequestService, RequestService>();
 
-			services.AddTransient<IWebSocketHandler, WebSocketHandler>();
+			services.AddScoped<IWebSocketHandler, WebSocketHandler>();
 
 			return services;
 		}
 
 		public static IServiceCollection AddHelpers(this IServiceCollection services)
 		{
-			services.AddSingleton<IJwtTokenParser, JwtTokenParser>();
+			services.AddTransient<IJwtTokenParser, JwtTokenParser>();
 			services.AddTransient<ICacheHelper, CacheHelper>();
 
 			return services;

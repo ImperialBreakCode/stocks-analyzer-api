@@ -44,21 +44,21 @@ namespace API.Gateway.Services
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			return await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/AddStockForSale/{username}", dto);
+			return await _httpClient.Put($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/AddStockForPurchase/{username}", dto);
 		}
 
 		public async Task<IActionResult> ConfirmPurchase()
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/ConfirmPurchase/{username}", null);
+			return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/AddStockForPurchase/{username}", null);
 		}
 
 		public async Task<IActionResult> ConfirmSale()
 		{
 			string username = _jwtTokenParser.GetUsernameFromToken();
 
-			return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/ConfirmSale/{username}", null);
+			return await _httpClient.Post($"{_microserviceHosts.MicroserviceHosts["Accounts"]}/Stock/AddStockForPurchase/{username}", null);
 		}
 
 	}
