@@ -1,5 +1,12 @@
 # Stocks Analyzer Api
 
+## Microservices and Contributors 
+   * API.Gateway - Йордан
+   * API.Accounts - Кристофър
+   * API.Analyzer - Даяна
+   * API.StockAPI - Стилиян
+   * API.Settlement - Денис
+
 ## Routes
 
 ### 1. Gateway
